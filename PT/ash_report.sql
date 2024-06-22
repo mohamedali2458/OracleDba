@@ -246,3 +246,13 @@ DBA_HIST_ACTIVE_SESS_HISTORY
 
 DBA_HIST_ACTIVE_SESS_HISTORY displays the history of the contents of the in-memory active session history of recent system activity. 
 This view contains snapshots of V$ACTIVE_SESSION_HISTORY.
+
+
+4. ASH Parameters
+
+_ash_size
+_ash_enable
+_ash_sampling_interval
+_ash_disk_write_enable
+_ash_disk_filter_ratio
+
