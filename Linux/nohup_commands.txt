@@ -1,0 +1,26 @@
+Running nohup commands
+
+The nohup command runs the command specified by the Command parameter and any related Arg parameters, ignoring all hang up signals (SIGHUP) or modifies the process specified with the -p option to ignore all SIGHUP signals. SIGHUP is a signal that is sent to a process when the controlling terminal of the process is closed.
+
+The nohup command can also be used to run programs in the background after logging off. To run a nohup command in the background, add an & (ampersand) to the end of the command.
+
+For example if we had a Bash script called test.sh we could run it as so.
+
+nohup ./test.sh
+
+If the script / command produces standard output, then that output is written to nohup.out and not the terminal. To check the output we can use tail to follow the updates made to the file.
+
+tail -f nohup.out
+
+–help	    Display a help message and exit.
+–version	Output version information and exit.
+
+nohup --help | --version
+
+Examples:
+
+nohup expdp "'/as sysdba'" schemas=Scott directory=expdp_asr dumpfile=exp_11062020.dmp logfile=expdp_11062020.log content=all &
+ 
+nohup expdp "'/as sysdba'" tables=Scott.emp directory=expdp_asr dumpfile=exp_11062020.dmp logfile=expdp_11062020.log content=all &
+ 
+nohup ./OSWatcher.sh 60 48 NONE /home/oracle/oswbb/oswbb/archive &
