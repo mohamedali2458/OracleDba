@@ -233,3 +233,16 @@ SERVICE_HASH                      NUMBER
 
 WAIT_TIME                         NUMBER       
 TIME_WAITED                       NUMBER       
+
+
+
+TIME_WAITED
+
+TIME_WAITED:  If the session was in a WAITING state, this column will show how long it had been waiting when Active Session History took the sample. It captures information on active sessions every second.
+WAIT_TIME:  If the session is doing productive work—not in a WAITING state—this column will show how long the session waited for the last wait event.
+
+
+DBA_HIST_ACTIVE_SESS_HISTORY
+
+DBA_HIST_ACTIVE_SESS_HISTORY displays the history of the contents of the in-memory active session history of recent system activity. 
+This view contains snapshots of V$ACTIVE_SESSION_HISTORY.
