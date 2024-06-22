@@ -178,3 +178,58 @@ Report written to raj_ash.html
 SQL>
 
 
+3. Desc V$active_session_history
+
+Session
+
+SESSION_ID                        NUMBER       
+SESSION_SERIAL#                   NUMBER       
+SESSION_TYPE                      VARCHAR2(10) 
+FLAGS                             NUMBER       
+USER_ID                           NUMBER       
+QC_INSTANCE_ID                    NUMBER       
+QC_SESSION_ID                     NUMBER       
+QC_SESSION_SERIAL#                NUMBER   
+SESSION_STATE                     VARCHAR2(7)  
+
+Wait
+
+EVENT                             VARCHAR2(64) 
+EVENT_ID                          NUMBER       
+EVENT#                            NUMBER       
+SEQ#                              NUMBER       
+P1TEXT                            VARCHAR2(64) 
+P1                                NUMBER       
+P2TEXT                            VARCHAR2(64) 
+P2                                NUMBER       
+P3TEXT                            VARCHAR2(64) 
+P3                                NUMBER       
+
+SQL
+
+SQL_ID                            VARCHAR2(13)
+IS_SQLID_CURRENT                  VARCHAR2(1)  
+SQL_CHILD_NUMBER                  NUMBER       
+SQL_FULL_PLAN_HASH_VALUE          NUMBER       
+SQL_PLAN_HASH_VALUE               NUMBER   
+SQL_OPCODE                        NUMBER       
+SQL_OPNAME                        VARCHAR2(64) 
+
+Object
+
+CURRENT_OBJ#                      NUMBER       
+CURRENT_FILE#                     NUMBER       
+CURRENT_BLOCK#                    NUMBER       
+CURRENT_ROW#                      NUMBER   
+
+Application
+
+PROGRAM                           VARCHAR2(64) 
+MODULE                            VARCHAR2(64) 
+ACTION                            VARCHAR2(64) 
+CLIENT_ID                         VARCHAR2(64) 
+MACHINE                           VARCHAR2(64) 
+SERVICE_HASH                      NUMBER  
+
+WAIT_TIME                         NUMBER       
+TIME_WAITED                       NUMBER       
