@@ -1,6 +1,7 @@
 Oracle Data Guard Manual Switchover and Failover on Physical Standby
 
-  
+Switchover
+==========
 Perform Manual Switchover on Physical Standby
 
 Connect to proddb database via client and keep querying below
@@ -55,3 +56,104 @@ On new standby – Initially your primary database: Start MRP
 alter database recover managed standby database disconnect;
 
 Revert back: Once again follow the above process from top and re-execute steps in proper databases to revert back to original setup.
+
+
+Failover
+========
+Performing Manual Failover on Physical Standby
+
+Failover is when your primary database is completely lost. When there is a failover, standby is converted into primary but primary 
+is not converted into standby as it is lost. If you do not have Flashback enabled on primary, you must re-create primary from 
+scratch (Using RMAN duplicate method). In this example, we have already enabled flashback on both primary and standby.
+
+  Crash Primary Database  
+  Perform Failover to Standby
+  Rebuild Primary After Failover  
+
+Our current physical standby server overview
+
+Primary Database  = Proddb
+Physical Standby  = proddb_st
+
+
+Crash Primary database
+
+Let’s crash primary (proddb): In order to simulate failure, we will shut down the primary server proddb. As root user, shutdown 
+the server without shutting down DB.
+
+Execute query on client: At this stage, there is no primary to accept queries from client. Run below query on client putty terminal. 
+The query will hang and wait until standby is converted to primary
+
+select name, open_mode, db_unique_name, database_role from v$database;
+
+
+Perform Failover to Standby
+
+Minimize data loss (proddb): If you can mount the primary database, then flush the logs to standby
+
+On primary:
+===========
+SQL> startup mount
+SQL> alter system flush redo to 'proddb_st';
+
+If you are not able to mount the database, then check if primary server is up. In that case manually copy archive logs from primary 
+to standby and register those logs on standby database
+
+On standby:
+===========
+SQL> alter database register physical logfile '&logfile_path';
+
+Check for redo gaps: If any gap exists, copy log files from primary and register on standby as per last step
+
+On standby:
+===========
+SQL> select THREAD#, LOW_SEQUENCE#, HIGH_SEQUENCE# from V$ARCHIVE_GAP;
+
+Start failover: We need to activate standby so that client can continue to access even after failover
+
+On standby:
+===========
+SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE FINISH;
+SQL> select SWITCHOVER_STATUS from V$DATABASE;
+
+You must see TO PRIMARY or SESSIONS ACTIVE. Switch standby to primary
+
+SQL> alter database commit to switchover to primary with session shutdown;
+SQL> alter database open;
+
+Check client query: Check the query you executed in step 2 on client, it must get executed
+
+
+Rebuild Primary After Failover
+
+Post failover, there are two methods of rebuilding your failed primary
+  Method 1:Rebuild from scratch à RMAN duplicate
+  Method 2: Flashback database à only if Flashback was enabled
+
+Note: In our earlier activity, we have performed Failover. Current state of your servers should be
+​proddb                ​ crashed (we shutdown the server)
+proddb_st              Primary
+
+Get the SCN at which standby became primary: We need to get the SCN at which the current primary(proddb_st) 
+was activated. This SCN will be used to flashback crashed (proddb) database
+
+SQL> select to_char(standby_became_primary_scn) from v$database;
+
+Flashback crashed primary(proddb): Start the proddb server, mount the database and flashback proddb to SCN from the last step
+
+SQL> startup mount;
+SQL> flashback database to scn <standby_became_primary_scn>;
+
+Convert crashed primary to physical standby(proddb): Now the old primary is at SCN when proddb_st was activated. 
+We can convert proddb into a physical standby and start redo apply
+
+SQL> alter database convert to physical standby;
+SQL> alter database recover managed standby database disconnect;
+
+Current state of your databases should be
+proddb              Physical Standby
+proddb_st           Primary
+
+Revert to original configuration: At this stage, if you would like to revert the current state of databases to 
+original, you can perform manual switchover!
