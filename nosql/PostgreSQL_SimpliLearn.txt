@@ -1,2 +1,66 @@
 PostgreSQL
 
+commands
+
+select
+update
+delete
+where clause
+group by
+having
+order by
+is null
+like operator
+logical operators
+built-in functions
+case statement
+subquery
+user defined functions
+
+
+sql shell (search) to start
+take all default values
+ppostgres-# 
+
+to see the version of posgresql
+select version();
+
+to see all the existing databases
+\l
+
+create database sql_demo;
+
+\l
+
+\c sql_demo
+to connect to the db
+
+We can also login to the using pdadmin gui
+Right-click on the db and select query-tool to open sql window
+
+inside query tool
+select version();
+
+click execute or F5
+
+select 5*3;
+
+select 5+3+6;
+
+terminal
+========
+select 7*10;
+
+pgadmin
+=======
+select 5*(3+4);
+35
+
+terminal
+inside a db
+
+create table movies(movie_id int, movie_name varchar(40), movie_genre varchar(30), imdb_ratings real);
+
+pgadmin - database - schemas - tables - table_name
+
+to create a table in pgadmin right click on tables in left pane and select create.
