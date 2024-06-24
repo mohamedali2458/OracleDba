@@ -1,7 +1,7 @@
 PostgreSQL
 
 commands
-
+========
 select
 update
 delete
@@ -35,7 +35,7 @@ create database sql_demo;
 \c sql_demo
 to connect to the db
 
-We can also login to the using pdadmin gui
+We can also login to the db using pgadmin GUI
 Right-click on the db and select query-tool to open sql window
 
 inside query tool
@@ -64,3 +64,30 @@ create table movies(movie_id int, movie_name varchar(40), movie_genre varchar(30
 pgadmin - database - schemas - tables - table_name
 
 to create a table in pgadmin right click on tables in left pane and select create.
+
+in pgadmin to view the columns in a table
+
+select * from movies;
+
+how to drop a table
+drop table students;
+
+or right click on table name in pgadmin and select drop
+
+insert
+======
+insert into moview(movie_id, movie_name, movie_genre, imdb_ratings)
+values (101, 'Vertigo', 'Mystery, Romance', 8.3),
+(102, 'The Shawshank Redemption', 'Crime Fiction', 9.3),
+(103, '12 Angry Men', 'Drama', 9.0),
+(104, 'The Dark Knight', 'Action', 9.0),
+(105, 'The Matrix', 'Sci-Fi', 8.7),
+(106, 'Se7en', 'Crime', 8.6),
+(107, 'Interstellar', 'Adventure', 8.6),
+(108, 'The Lion King', 'Animation, Adventure', 8.5);
+
+
+
+
+https://www.youtube.com/watch?v=eMIxuk0nOkU&list=PL7kWCcQSFwpbsY9ekhJm0iu-7f1uqkcFL
+7-47
