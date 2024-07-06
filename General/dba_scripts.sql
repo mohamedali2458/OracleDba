@@ -212,20 +212,27 @@ where start_time > SYSDATE -10
 and INPUT_TYPE != 'ARCHIVELOG'
 ORDER BY END_TIME DESC
 /
+
 Query to check archive Backup status
+
 In the 3rd last line and INPUT_TYPE != 'ARCHIVELOG', just remove '!' to
 get archivelog backup details
-DBA Genesis | How to check database backups via sqlplus
+
+
 How to display date and time in query output
+============================================
 By default, when you query a date column, oracle will only display dates
 and not time. Below query enables Oracle to display both date and time for
-a particular session
+a particular session.
+
 alter session set nls_date_format='dd-Mon-yyyy hh:mi:sspm';
+
 Note – this is only session level query.
-DBA Genesis | How to display date and time in query output
+
+
 How to check scheduler jobs in Oracle
-Below command will help you check Scheduler jobs which are con􀁓gured
-inside database
+=====================================
+Below command will help you check Scheduler jobs which are con􀁓gured inside database
 SELECT JOB_NAME, STATE FROM DBA_SCHEDULER_JOBS where job_name='RMAN_BACKUP';
 Query to check currently running scheduler jobs
 SELECT * FROM ALL_SCHEDULER_RUNNING_JOBS;
