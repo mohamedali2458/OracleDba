@@ -1,0 +1,4 @@
+Q. Why subnet of scan IP, Virtual IP and public IP is same in case of RAC.
+A. It makes network configuration simpler, meaning all these IPs can communicate directly within the same network and avoiding routing or additional configurations.
+It also allows seamless failover and relocation of services between the nodes.
+If a node hosting these IPs fails or need maintenance, other node(s) can take over the charge without changing the IP configuration, and clients continue using the same IP address.
