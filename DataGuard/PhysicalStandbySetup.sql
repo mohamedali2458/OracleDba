@@ -1,5 +1,5 @@
 Oracle Data Guard Physical Standby Configuration
-
+================================================
   
 Physical Standby Configuration Overview
 
