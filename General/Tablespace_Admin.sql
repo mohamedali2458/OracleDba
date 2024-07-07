@@ -1,4 +1,5 @@
 Tablespace Administration
+=========================
 
 Find Tablespace Utilization
 
@@ -40,11 +41,13 @@ Find Datafiles Associated with Tablespaces
 
 To find datafiles associated with tablespaces
 
-SQL> select tablespace_name, file_name, bytes/1024/1024 
-from dba_data_files where tablespace_name='&tablespace_name';
+SQL> select tablespace_name, file_name, bytes/1024/1024/1024 "Size GB" 
+from dba_data_files 
+where tablespace_name='&tablespace_name';
 
 To find temp files associated with a temp tablespace
-SQL> select file_name, bytes/1024/1024 from dba_temp_files;
+
+SQL> select file_name, bytes/1024/1024/1024 "Size GB" from dba_temp_files;
 
 
 Create Tablespace
@@ -53,8 +56,7 @@ To create new tablespace inside database
 
 SQL> Create tablespace test_tbs datafile '/u01/test_tbs_01.dbf' size 50m;
 
-Where
-test_tbs is the name of new tablespace
+Where test_tbs is the name of new tablespace
 /u01/test_tbs_01.dbf is the location of the datafile
 50m is the size of the datafile
 
@@ -62,7 +64,9 @@ test_tbs is the name of new tablespace
 Add Space to Tablespace
 
 There are two ways to add space to a tablespace:
+
 Resize existing datafile
+
 Add new datafile
 
 Make sure you have space at OS level before resizing or adding new datafile
@@ -79,13 +83,15 @@ SQL> Alter tablespace test_tbs add datafile '/u01/test_tbs_02.dbf' size 50m;
 Drop Tablespace
 
 Below command will drop tablespace including all its contents and associated datafiles
+
 SQL> drop tablespace test_tbs including contents and datafiles;
 
 
 Tablespace Coalesce
 
-Tablespace Coalesce combines all contiguous free extents into larger contiguous extents inside all datafiles
-It takes any free extents that are right next to some other free extent and make one bigger free extent
-SMON will perform this coalescing in the background but if you need it to happen right now, coalesce will do it
+Tablespace Coalesce combines all contiguous free extents into larger contiguous extents inside all datafiles.
+It takes any free extents that are right next to some other free extent and make one bigger free extent.
+SMON will perform this coalescing in the background but if you need it to happen right now, coalesce will do it.
 
 SQL> ALTER TABLESPACE USERS COALESCE;
+
