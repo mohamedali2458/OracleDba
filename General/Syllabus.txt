@@ -1,0 +1,70 @@
+Training Curriculum
+====================
+Module 1: Oracle 21c Architecture
+LRU Algorithm & User Connection
+SQL Parsing, DML & DDL Processing
+Oracle Background Processes
+Oracle Database Files
+ 
+Module 2: Oracle 21c Installation
+Oracle 21c Pre-requisites
+Install / Deinstall Oracle 21c
+Silent vs GUI Installation
+ 
+Module 3: Create Multi-Tenant Database
+Standalone vs Multi-Tenant
+CDB vs PDBs
+Create 21c Container Database
+Multi-Tenant Startup / Shutdown Modes
+Switching Containers
+ 
+Module 4: Instance Administraiton
+Oracle Memory Management
+Oracle Metadata
+Sizing Oracle Instance
+ 
+Module 5: Storage Administraiton
+Database Archive Log Mode
+Oracle Storage Structures
+Multi-Tenant Tablespace Administration
+Oracle Data Files Administration
+Database Capacity Planning
+ 
+Module 6: User Administration
+Database Users & Namespaces
+User Roles & Permissions
+Multi-Tenant Users
+Grant & Revoke User Permissions
+ 
+Module 7: Network Administration
+Oracle Listener & TNS
+Remote User Connectivity
+Automate Listener Startup
+ 
+Module 8: Oracle Data Pump
+Export Table / Schema / Full Database
+Import Table / Schema / Full Database
+Data Pump Performance Tuning
+ 
+Module 9: Oracle Backup & Recovery
+Export Table / Schema / Full Database
+Import Table / Schema / Full Database
+Data Pump Performance Tuning
+RMAN FULL Backup & Recovery
+RMAN Incremental Backup & Recovery
+Automate RMAN Backups
+ 
+Module 10: Oracle Performance Tuning
+What Slows Down Database?
+Database Locks & Deadlocks
+Database Indexes
+FULL Table Scan vs Index Scan
+Oracle Execution Plan
+Oracle AWR, ADDM & ASH Reports
+ 
+Module 11: Oracle Multi-Tenant Administration
+Clone PDB from Another PDB
+Pluggin & Un-plugging PDB
+Oracle Migration Methods
+ 
+Module 12: Oracle 21c Project Work
