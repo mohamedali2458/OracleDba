@@ -1,0 +1,104 @@
+Oracle Networking - I
+=====================
+Utilities to configure Listener and TNS Service:
+netmgr:	network manager
+netca:	network configuration assistant
+
+Location:
+default location of listener.ora and tnsnames.ora is:
+$ORACLE_HOME/network/admin
+
+Contents of listener.ora
+LISTENER(listener name) =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = mahi-PC)(PORT = 1521))
+  )  
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (GLOBAL_DBNAME = db1)
+      (ORACLE_HOME = C:\app\product\11.2.0\dbhome_1)
+      (SID_NAME = db1)
+    )
+  )
+ADR_BASE_LISTENER = C:\app\product\11.2.0\dbhome_1\log
+
+
+Tnsnames.ora
+DB1 =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = mahi-PC)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = db1)
+    )
+  )
+
+
+Listener control utility
+$lsnrctl
+$lsnrctl 	<option> 	listener_name
+		reload	to reload the settings of listener file
+		status	to see the status of listener
+		start		to start the listener
+		stop		to stop the listener
+		services	db/instances currently serve by
+
+$lsnrctl <enter>
+$lsnrctl>
+
+Checking listener at  OS level
+$ps -ef | grep tns
+
+Testing Oracle Networking
+$tnsping <service_name> 
+$tnsping db1
+
+
+
+Oracle Networking - II
+TNS_ADMIN, TWO_TASK environment variable
+
+TNS_ADMIN
+---------
+Changing default location of listener and tnsname files
+Syntax:
+$lsnrctl stop list_primdb
+$export TNS_ADMIN='/u01'
+$cd $ORACLE_HOME/network/admin
+$mv listener.ora /u01
+$lsnrctl start list_primdb
+Now the system looks for listener.ora in /u01
+$echo $TNS_ADMIN
+will show /u01
+
+TWO_TASK
+--------
+To set the tns service alias one time.
+We can use TWO_TASK Environment Variable:
+$export TWO_TASK=<tnsservice-name>
+$export TWO_TASK=primdb
+
+after setting the TWO_TASK environment variable we can do the following:
+$sqlplus u1/u1      (no need of giving @tnsservice)
+
+Creating and deleting an environment variable in bash
+Test if the DUALCASE variable exists:
+$env | grep DUALCASE
+nothing
+If does not, so create the variable and export it:
+$DUALCASE=1
+export DUALCASE
+Check if it is there:
+env | grep DUALCASE
+DUALCASE=1
+It is there.  So get rid of it:
+$unset DUALCASE
+Check if it's still there:
+env | grep DUALCASE
+nothing
+
+Shared Server Architecture(SSA)
+What ? A shared server process can serve multiple user sessions.
+The sessions communicate to Shared Server processes through Dispatcher process.
