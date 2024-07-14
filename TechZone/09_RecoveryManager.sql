@@ -13,9 +13,11 @@ $rman target / nocatalog
 
 To backup the db (all datafiles)
 RMAN> backup database;
-It generates backup pieces and stores in $ORACLE_HOME/dbs folder and backup set (backup info) into the target db controlfile.
+It generates backup pieces and stores in $ORACLE_HOME/dbs folder and backup 
+set (backup info) into the target db controlfile.
 
 Basic commands for rman:
+========================
 To backup a single datafile
 RMAN> backup datafile 4;
 
@@ -92,13 +94,17 @@ RMAN> backup database;
 
 
 Virtual Private Catalog
+=======================
 - catalog db (rman), target db -> prod, one more production db -> db1
 At catalog side
 - create one more catalog user (vcat) in catalog db
+
 create user vcat identified by pwd
 default tablespace rmants
 quota unlimited on rmants;
+
 grant resource, recovery_catalog_owner to vcat;
+
 From target database (db1)
 $export ORACLE_SID=db1
 $rman target / catalog rman/pwd@torman
@@ -116,6 +122,7 @@ now for "db1" database backup information will be stored in virtual private cata
 
 
 CONFIGURE commands
+==================
 RMAN> configure controlfile autobackup on;
 (on backup of database/datafile controlfile & spfile will be auto backed up)
 RMAN> configure retention policy to redundancy 2;
@@ -125,11 +132,12 @@ RMAN> configure backup optimization on;
 RMAN> configure controlfile autobackup on;
 
 run block
+=========
 To execute multiple commands at a time.
 Eg:
 RMAN>run{
-		backup current controlfile;
-		backup datafile 4;}
+backup current controlfile;
+backup datafile 4;}
 
 Configure FRA (flash recovery area)
 configure parameters
@@ -139,12 +147,13 @@ SQL> alter system set db_recovery_file_dest_size=4g scope=both;
 SQL> alter system set db_recovery_file_dest='/u01/fra' scope=both;
 
 RMAN Scripts
+============
 1. Creating RMAN Script:
 	RMAN> create script bkp{
-			backup database;
-			backup spfile;
-			backup current controlfile;
-			backup archivelog all;}
+	backup database;
+	backup spfile;
+	backup current controlfile;
+	backup archivelog all;}
 2. Executing rman script:
 	RMAN>run{execute script bkp;}
 3. To see the code of script:
@@ -160,23 +169,8 @@ note: we can create rman script in catalog mode only.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Recovery Manager - 3
+====================
 Restore and Recovery Scenarios:
 Loss of non system datafile: Ex: USERS01.DBF / 4 (file id)
 Steps: 
@@ -215,14 +209,15 @@ before deleting log files, notedown the current logfile sequence.
 		SQL> archive log list;
 	3. Set the log sequence restore and recover the database and open database with resetlogs.
 		RMAN>run{
-                                                   set until logseq 6;
-		                        restore database;
-		                        recover database;
-		                        sql 'alter database open resetlogs';
-                                                 }
+                        set until logseq 6;
+		        restore database;
+		        recover database;
+		        sql 'alter database open resetlogs';
+                                        }
 	4. Take full database backup;
 
 Disaster Recovery
+=================
 Loss of all files (spfile, datafile and controlfiles, online redo log files)
 Before deleting all these files note down current log sequence and dbid.
 steps:
@@ -244,6 +239,7 @@ steps:
 
 
 INCREMENTAL and CUMULATIVE backups:
+===================================
 backup incremental level 0 database;
 backup incremental level 1 database;
 backup incremental level 2 database;
@@ -289,24 +285,38 @@ order by completion_time;
 
 
 Change Tracking
-Checking wheter change tracking is enabled or disable:
+===============
+Checking whether change tracking is enabled or disable:
 select * from v$block_change_tracking;
+
 SQL>desc V$BLOCK_CHANGE_TRACKING
-We can also create the change tracking file in a location we choose our self, using the following SQL statement:
+
+We can also create the change tracking file in a location we choose 
+our self, using the following SQL statement:
+
 $mkdir bkptrc
+
 alter database enable block change tracking using file '/u01/bkptrc/bkptrc.trc';
 alter database enable block change tracking using file '/u01/bkptrc/bkptrc.trc' reuse;
+
 The REUSE option tells Oracle to overwrite any existing file with the specified name.
 
-To store the change tracking file in the database area, set DB_CREATE_FILE_DEST in the target database, then issue the following SQL statement to enable change tracking:
+To store the change tracking file in the database area, set DB_CREATE_FILE_DEST in 
+the target database, then issue the following SQL statement to enable change tracking:
+
 alter database enable block change tracking;
+
 Note: After enabling block change tracking CTWR process will be started and starts writing to the created file.
+
 $ps -eaf | grep ctwr
+
 [oracle@m1 bkptrc]$ ps -eaf|grep ctwr
 oracle    7809     1  0 11:57 ?        00:00:00 ora_ctwr_prod
 oracle    8396  5621  0 11:59 pts/1    00:00:00 grep ctwr
+
 To disable change tracking:
 alter database disable block change tracking;
+
 If the change tracking file was stored in the database area, then it is deleted when you disable change tracking.
 
 Moving or relocating the change tracking file:
@@ -318,7 +328,9 @@ startup mount;
 alter database rename file '/u01/bkptrc/bkptrc.trc' to '/u01/new/bkptrc.trc';
 alter database open;
 
-Sometimes we cannot shutdown the database, then we must disable the change tracking and re-enable it at the new location:
+Sometimes we cannot shutdown the database, then we must disable the change tracking 
+and re-enable it at the new location:
+
 alter database disable block change tracking;
 alter database enable block change tracking using file 'new_location_file';
 
@@ -334,12 +346,15 @@ backup archivelog all;
 exit;
 <<EOF
 :wq
+
 Once the file is created check its permissions using 'll' command.
 chmod -R 777 hotbkp.sh
 Run the script:
 $sh hotbkp.sh
 
+
 Recovery Manager - 4
+====================
 Tablespace Point in time recovery (TSPITR):
 Push the tablespace to past time.
 Steps:
@@ -365,6 +380,7 @@ Maintenance commands
 		RMAN> backup as copy database;
 		RMAN> backup as copy datafile 4;
 		RMAN> backup as copy tablespace users;
+
 Block Recovery
 Using rman we can recover corrupted block using following commands:
 RMAN> block recover datafile 4 block 1233;
