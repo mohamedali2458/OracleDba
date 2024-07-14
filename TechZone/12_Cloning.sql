@@ -127,7 +127,10 @@ sql> alter database open resetlogs;
 primary database 	= prod
 clone database 	= clone
 
-To do this type of cloning we need cold backup files of a database. We only need online redo log files and datafiles. Controlfiles will be created when we execute control.sql file.
+To do this type of cloning we need cold backup files of a database. We only need 
+online redo log files and datafiles. 
+Controlfiles will be created when we execute control.sql file.
+
 export ORACLE_SID=prod
 sqlplus / as sysdba
 startup
@@ -184,7 +187,13 @@ select name,open_mode from v$database;
 CLONE READ WRITE
 
 3. Cloning using RMAN with backup piece (without active db)
-In Oracle 10g version or earlier, while duplicating a database using RMAN, we had to connect to the Target database along with the Auxiliary Database. In oracle 11g, there is a new feature available; where in the duplication from the Target Database to the Auxiliary Database can be done using RMAN without connecting to the Target database or to the Catalog Database. Only thing what is required the full backup of the Target database. Below are the details on how to go ahead with duplicating the database without connecting to the Target Database or to the Auxiliary Database.
+In Oracle 10g version or earlier, while duplicating a database using RMAN, we had 
+to connect to the Target database along with the Auxiliary Database. In oracle 11g, 
+there is a new feature available; where in the duplication from the Target Database 
+to the Auxiliary Database can be done using RMAN without connecting to the Target 
+database or to the Catalog Database. Only thing what is required the full backup of 
+the Target database. Below are the details on how to go ahead with duplicating the 
+database without connecting to the Target Database or to the Auxiliary Database.
 Steps:
 -------
 Create the necessary directory structure.
@@ -250,7 +259,8 @@ startup nomount
 exit
 
 Connect the auxiliary instance through RMAN and start the duplication.
-The duplication is done by specifying the location of the backup pieces. The command to be used is DUPLICATE DATABASE TO ‘<auxiliary dbname>’ BACKUP LOCATION ‘<location of the backup pieces on the auxiliary server>’
+The duplication is done by specifying the location of the backup pieces. The command 
+to be used is DUPLICATE DATABASE TO ‘<auxiliary dbname>’ BACKUP LOCATION ‘<location of the backup pieces on the auxiliary server>’
 $rman auxiliary /
 duplicate database to 'clone' backup location='/u01/bkp' nofilenamecheck;
 
@@ -265,6 +275,7 @@ Once it’s over connect to the clone db and check for the data.
 
 
 4. Cloning using RMAN with Active Database
+==========================================
 Steps:
 -------
 production db name 	= prod
@@ -318,3 +329,4 @@ $rman target / nocatalog auxiliary sys/manager@toclone
 RMAN> DUPLICATE TARGET DATABASE TO 'clone' FROM ACTIVE DATABASE;
 
 Connect to the database and check.
+
