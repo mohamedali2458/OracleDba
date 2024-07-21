@@ -1,0 +1,152 @@
+Group Administration
+====================
+1. To add new group
+[root@localhost ~]# groupadd amerpetgrp
+grep amerpetgrp /etc/group
+
+2. adding a new group with gid 5000
+groupadd -g 5000 banjaragrp
+grep banjaragrp /etc/group
+
+3. modifying group with gid
+groupmod -g 6000 banjaragrp
+grep banjaragrp /etc/group
+
+4. Changing the name of a existing group
+groupmod -n banjarahills banjaragrp
+grep banjarahills /etc/group
+
+groupdel banjarahills
+grep banjarahils /etc/group
+
+5. To add users as a Secondary users in a Group
+useradd jack
+useradd shyam
+useradd wiliam
+gpasswd -M jack,shyam,wiliam salesgrp
+grep salesgrp /etc/group
+
+6. Removing user wiliam from group salesgrp
+gpasswd -d wiliam salesgrp
+grep salesgrp /etc/group
+
+7. Adding user wiliam to group salesgrp
+gpasswd -a wiliam salesgrp
+grep salesgrp /etc/group
+
+
+
+PERMISSIONS
+===========
+Pre-requisites:
+Before working on this lab, you must have 
+6. A computer with LINUX Operating System.
+
+Lab - 5.1 : PERMISSIONS
+-----------------------
+1. To Apply Permissions on dir and on file
+mkdir /myfolder
+cd /myfolder/
+ls
+whoami
+
+touch test_file
+ls ld test_file
+
+2. Set write permissions to the group only.
+chmod g+w test_file
+ls -ld test_file
+
+3. Remove read permissions for others only.
+chmod o-r test_file
+ls -ld test_file
+
+4. Assign read, write, execute permissions to others only.
+chmod o=rwx test_file
+ls -ld test_file
+
+5. Assign execute permissions to owner, group and others also.
+chmod +x test_file
+ls -ld test_file
+
+Remove execute permissions from owner, group and others also.
+chmod -x test_file
+
+6. To check new permissions
+ls -ld test_file
+chmod 644 test_file
+ls -ld test_file
+pwd
+whoami
+mkdir dir1
+ls -ld dir1
+chmod 777 /myfolder
+
+7. To check result login as a normal user
+su - tom
+whoami
+  tom
+[tom@localhost ~]$
+pwd
+/home/tom
+ls -l
+touch myfile
+ls -l
+mkdir dir1
+ls -ld dir1
+
+
+
+Chown, Chgrp, ACL's PARTITION and SWAP
+======================================
+Pre-requisites:
+Before working on this lab, you must have
+1. A Computer with LINUX Operating System.
+
+Lab - 6.1 : ACCESS CONTROL LIST (ACL)
+=====================================
+1. Create required users & Group
+useradd tom, s, R, t, B
+groupadd salesgrp
+groupadd fingrp
+mkdir /salesdept, mkdir <findept>
+useradd -g salesgrp sai
+useradd -g salesgrp ram
+useradd -G fingrp tata
+useradd -G fingrp birla
+
+Note: ACL's are applied on both primary & secondary members
+
+2. Add a file by using 'cat' command
+cat > fabc.txt
+
+3. To apply acl's on users & groups
+setfacl -m
+
+4. To check acl list
+getfacl fabc.txt
+
+5. To modify permission for user tom
+setfacl m u:tom:4 fabc.txt
+getfacl fabc.txt
+
+6. To exclude user tom, group fingrp from ACL list
+setfacl -X u:tom,g:fingrp fabc.txt
+
+getfacl fabc.txt
+
+Note: ACL's are applied on both primary & secondary users.
+
+
+To change owner of a file
+-------------------------
+chown <username> <file/dir name>
+
+To change Group owner of a file
+-------------------------------
+chgrp <group> <file/dir_name>
+
+
+PARTITIONS
+==========
+page 10
