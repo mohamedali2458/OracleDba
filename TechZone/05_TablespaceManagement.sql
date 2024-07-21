@@ -4,7 +4,7 @@ By default each database will have five tablespacesfrom oracle 11g.
     1. System	: contains data dictionary of database
     2. Sysaux	: contains database statistics
     3. Undo	: contains pre-image data
-    4. Temporary	: temporary operations are performed in this tablespace if PGA is not enough
+    4. Temporary: temporary operations are performed in this tablespace if PGA is not enough
     5. Users	: default tablespace for all DB users/application schemas
 
 select name from v$tablespace;
@@ -14,7 +14,7 @@ select tablespace_name, contents, status from dba_tablespaces order by 2;
 
 To check tablespace information
 
-Select tablespace_name from dba_tablespaces;
+select tablespace_name from dba_tablespaces;
 
 select tablespace_name, contents, status 
 from dba_tablespaces order by 2;
@@ -41,30 +41,32 @@ autoextend on;
 
 Deleting a datafile from a tablespace
 
-Alter tablespace tbs1
+alter tablespace tbs1
 drop datafile '/u01/prod/tbs02.dbf';
 
 column tablespace_name format a20
 column file_name format a30
 select tablespace_name, file_id, file_name from dba_data_files order by 2;
 
-Alter tablespace tbs1
+alter tablespace tbs1
 drop datafile 7;
 
 Droping a tablespace
 
-droptablespace tbs1;
+drop tablespace tbs1;
 (it will drop tablespace logically at database level)
 
 drop tablespace tbs1 including contents and datafiles;
 (it will drop tablespace logically(database level) and physically(o/s level))
 
 Reusing orphan datafile
-Create tablespace tbs2
+	
+create tablespace tbs2
 datafile '/u01/prod/tbs02.dbf'
 reuse;
 
 Resize a datafile
+
 select file_id, file_name, bytes/1024/1024 mb 
 from dba_data_files order by 1;
 
@@ -74,6 +76,7 @@ alter database datafile 5 resize 50m;
 
 
 Making a tablespace as read only
+
 Alter tablespace tbs1 read only;
 Select tablespace_name, status from dba_tablespaces;
 Alter tablespace tbs1 read write;
