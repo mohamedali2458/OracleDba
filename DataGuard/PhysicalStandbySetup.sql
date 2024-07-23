@@ -1,8 +1,5 @@
 Oracle Data Guard Physical Standby Configuration
 ================================================
-  
-Physical Standby Configuration Overview
-
 Primary details
 SID: ip7
 ORACLE_HOME: /u01/app/oracle/product/12.2.0.1
@@ -93,7 +90,8 @@ SQL> alter system set db_recovery_file_dest='/u01/app/oracle/fast_recovery_area'
 SQL> alter system set db_recovery_file_dest_size=45g;
 SQL> alter database flashback on;
 
-Check DB Unique name parameter on primary: Make sure your primary database has DB_UNIQUE_NAME parameter set for consistency. If it’s not set properly, use ALTER SYSTEM SET command
+Check DB Unique name parameter on primary: Make sure your primary database has DB_UNIQUE_NAME 
+parameter set for consistency. If it’s not set properly, use ALTER SYSTEM SET command
 
 SQL> show parameter db_name
 
@@ -110,9 +108,12 @@ db_unique_name                       string      ip7
 
 Configure network
 
-Use below tns entries and put them under ORACLE user HOME/network/admin/tnsnames.ora. Change host as per your environment and execute on both primary and standby.
+Use below tns entries and put them under ORACLE user HOME/network/admin/tnsnames.ora. 
+Change host as per your environment and execute on both primary and standby.
 
-Notice the use of the SID, rather than the SERVICE_NAME in the entries. This is important as the broker will need to connect to the databases when they are down, so the services will not be present.
+Notice the use of the SID, rather than the SERVICE_NAME in the entries. This is important 
+as the broker will need to connect to the databases when they are down, so the services 
+will not be present.
 
 vi $ORACLE_HOME/network/admin/tnsnames.ora
 
@@ -137,7 +138,9 @@ ip7_stb =
   )
 
 
-Configure listener on primary database. Since the broker will need to connect to the database when it’s down, we can’t rely on auto-registration with the listener, hence the explicit entry for the database.
+Configure listener on primary database. Since the broker will need to connect to the database 
+when it’s down, we can’t rely on auto-registration with the listener, hence the explicit entry 
+for the database.
 
 vi $ORACLE_HOME/network/admin/listener.ora
 
@@ -159,7 +162,8 @@ SID_LIST_LISTENER =
 
 ADR_BASE_LISTENER = /u01/app/oracle
 
-Configure listener on standby. Since the broker will need to connect to the database when it’s down, we can’t rely on auto-registration with the listener, hence the explicit entry for the database.
+Configure listener on standby. Since the broker will need to connect to the database when it’s down, 
+we can’t rely on auto-registration with the listener, hence the explicit entry for the database.
 
 vi $ORACLE_HOME/network/admin/listener.ora
 
@@ -189,10 +193,12 @@ lsnrctl start
 
 Configure redo transport
 
-Note: if you plan to use Oracle Data Guard broker, then you can skip this section “configure redo transport” and jump to “Build Standby” section.
+Note: if you plan to use Oracle Data Guard broker, then you can skip this section “configure redo transport” 
+and jump to “Build Standby” section.
 
-Configure redo transport from primary to standby:  The below statement says that if the current database is in primary role, then transport logs 
-to standby. We need to change service and db_unique_name for same parameter on standby server
+Configure redo transport from primary to standby:  The below statement says that if the current database 
+is in primary role, then transport logs to standby. We need to change service and db_unique_name for 
+same parameter on standby server.
 
 On Primary Server
 =================
@@ -276,13 +282,15 @@ Once cloning is done, you should see below at RMAN prompt
 Finished Duplicate Db at 07-DEC-2015
 
   
-Enable flashback on standby: As we know the importance of flashback in data guard, we must enable it on standby as well
+Enable flashback on standby: As we know the importance of flashback in data guard, we must 
+enable it on standby as well
 
 On Standby Server
 =================
 SQL> alter database flashback on;
 
-Bounce database & start MRP (Apply Service): It's good to bounce standby, put it in mount mode and start MRP process
+Bounce database & start MRP (Apply Service): It's good to bounce standby, put it in mount mode 
+and start MRP process
 
 On Standby Server
 =================
