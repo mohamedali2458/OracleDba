@@ -1,0 +1,191 @@
+How to Encrypt Columns in Tables
+================================
+To use TDE to encrypt the data in the database you must have keystore configured and wallet is open.
+
+Encrypting Columns in Tables
+============================
+Important Notes:
+Do not use TDE column encryption with the following database features:
+ Index types other than B-tree
+ Range scan search through an index
+ Synchronous change data capture
+ Transportable tablespaces
+ Columns that have been created as identity columns
+ Columns used in foreign key constraints.
+
+NOTE: Transparent Data Encryption protects data stored on a disk or other media. It does not protect data in transit.
+
+Creating a Table with an Encrypted Column Using the Default Algorithm:AES192
+============================================================================
+Login as schema owner and created the table as shown
+EXAMPLE1
+SQL> show user;
+USER is "TEST"
+SQL> CREATE TABLE ENC_TEST1 (
+first_name VARCHAR2(128),
+last_name VARCHAR2(128),
+empID NUMBER,
+salary NUMBER(6) ENCRYPT);
+Table created.
+
+Note: When you encrypt a table column Salt and MAC are added by default.
+
+
+Creating a Table with an Encrypted Column Using No Algorithm or a Non-Default Algorithm
+=======================================================================================
+EXAMPLE2
+SQL> CREATE TABLE ENC_TEST2 (
+first_name VARCHAR2(128),
+last_name VARCHAR2(128),
+empID NUMBER ENCRYPT NO SALT,
+salary NUMBER(6) ENCRYPT USING '3DES168');
+Table created.
+
+  The ENCRYPT NO SALT clause allows you to encrypt a cloumn without specifying any algorithm. 
+  You must use the NO SALT clause  to encrypt a column which you are planning to index
+
+NOTE: All encrypted columns in a table use the same encryption algorithm, therefore 
+in the example2 both empID and salary columns will use the 3DES168 encryption 
+algorithm but empID column is encrypted without salt.
+
+
+Encrypting Table Column Using NOMAC Parameter
+=============================================
+TDE adds a Message Authentication Code (MAC) to the data for integrity checking. 
+The SHA-1 integrity algorithm is used by default. If you want to bypass the MAC 
+to save space and improve performance you can do so as shown below.
+
+EXAMPLE3
+SQL> CREATE TABLE ENC_TEST3 (
+first_name VARCHAR2(128),
+last_name VARCHAR2(128),
+empID NUMBER ENCRYPT 'NOMAC' ,
+salary NUMBER(6));
+Table created
+
+
+Changing the Integrity Algorithm for a Table
+============================================
+EXAMPLE4
+SQL> select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG 
+from dba_encrypted_columns 
+where OWNER='TEST' and TABLE_NAME='ENC_TEST3';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST3            EMPID           YES NOMAC        AES 192 bits key
+
+SQL> ALTER TABLE ENC_TEST3 REKEY USING '3DES168' 'SHA-1';
+Table altered.
+
+SQL> select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG 
+from dba_encrypted_columns 
+where OWNER='TEST' and TABLE_NAME='ENC_TEST3';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST3            EMPID           YES SHA-1        3 Key Triple DES 168 bits key
+
+SQL> ALTER TABLE ENC_TEST3 REKEY USING '3DES168' 'NOMAC';
+Table altered.
+
+SQL> select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG 
+from dba_encrypted_columns 
+where OWNER='TEST' and TABLE_NAME='ENC_TEST3';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST3            EMPID           YES NOMAC        3 Key Triple DES 168 bits key
+
+
+Encrypting Table Column with a Password-Generated TDE Table Key
+===============================================================
+When you encrypt the column TDE generates random keys to encrypt them. If you are 
+using a randomly generated key to encrypt the columns you can not
+    Move an external table to a new location
+    Table partition exchange
+
+For such scenarios, you should specify a password while you encrypt the columns so that 
+you can use the same password to regenerate the key at the new location
+
+EXAMPLE5
+SQL> CREATE TABLE ENC_TEST4 (
+first_name VARCHAR2(128),
+last_name VARCHAR2(128),
+empID NUMBER ,
+salary NUMBER(6) ENCRYPT IDENTIFIED BY password);
+Table created.
+
+
+How to Encrypt Column in Existing Table
+=======================================
+EXAMPLE6
+SQL> ALTER TABLE ENC_TEST4 MODIFY (first_name ENCRYPT);
+Table altered.
+
+SQL> ALTER TABLE ENC_TEST4 MODIFY (first_name ENCRYPT NO SALT);
+Table altered.
+
+How to Add Encrypted Column to an Existing Table
+
+EXAMPLE7
+SQL> ALTER TABLE ENC_TEST3 ADD (ssn VARCHAR2(11) ENCRYPT);
+Table altered.
+Disabling Encryption for a Table Column
+
+EXAMPLE8
+SQL> select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG from dba_encrypted_columns where OWNER='TEST' and TABLE_NAME='ENC_TEST4';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST4            FIRST_NAME      NO  SHA-1        AES 192 bits key
+TEST       ENC_TEST4            SALARY          YES SHA-1        AES 192 bits key
+2 rows selected.
+SQL> ALTER TABLE ENC_TEST4 MODIFY (first_name DECRYPT);
+Table altered.
+SQL> select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG from dba_encrypted_columns where OWNER='TEST' and TABLE_NAME='ENC_TEST4';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST4            SALARY          YES SHA-1        AES 192 bits key
+
+
+Adding Salt to an Encrypted Column
+Salt is a random string added to data before encryption, is a way to strengthen the security of encrypted data. Adding salt requires an additional 16 bytes of storage per encrypted data value.
+EXAMPLE9
+SQL> select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG from dba_encrypted_columns where OWNER='TEST' and TABLE_NAME='ENC_TEST2';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST2            EMPID           NO  SHA-1        3 Key Triple DES 168 bits key
+TEST       ENC_TEST2            SALARY          YES SHA-1        3 Key Triple DES 168 bits key
+
+
+SQL> ALTER TABLE ENC_TEST2 MODIFY (EMPID ENCRYPT SALT);
+Table altered.
+SQL>  select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG from dba_encrypted_columns where OWNER='TEST' and TABLE_NAME='ENC_TEST2';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST2            EMPID           YES SHA-1        3 Key Triple DES 168 bits key
+TEST       ENC_TEST2            SALARY          YES SHA-1        3 Key Triple DES 168 bits key
+Removing Salt from an Encrypted Column
+EXAMPLE10
+SQL> ALTER TABLE ENC_TEST2 MODIFY (EMPID ENCRYPT NO SALT);
+Table altered.
+
+
+Creating Index on an Encrypted Column
+NOTE:You can create an index on an encrypted column only if it is not salted.
+EXAMPLE11
+SQL> CREATE INDEX employee_idx on ENC_TEST2 (empID);
+Index created.
+Changing the Encryption Key or Algorithm for Tables with Encrypted Columns
+EXAMPLE12
+SQL> ALTER TABLE ENC_TEST2 REKEY;
+Table altered.
+SQL> select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG from dba_encrypted_columns where OWNER='TEST' and TABLE_NAME='ENC_TEST2';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST2            EMPID           NO  SHA-1        3 Key Triple DES 168 bits key
+TEST       ENC_TEST2            SALARY          YES SHA-1        3 Key Triple DES 168 bits key
+SQL> ALTER TABLE ENC_TEST2 REKEY USING 'AES192';
+Table altered.
+SQL>  select OWNER,TABLE_NAME,COLUMN_NAME,SALT,INTEGRITY_ALG,ENCRYPTION_ALG from dba_encrypted_columns where OWNER='TEST' and TABLE_NAME='ENC_TEST2';
+OWNER      TABLE_NAME           COLUMN_NAME     SAL INTEGRITY_AL ENCRYPTION_ALG
+---------- -------------------- --------------- --- ------------ -----------------------------
+TEST       ENC_TEST2            EMPID           NO  SHA-1        AES 192 bits key
+TEST       ENC_TEST2            SALARY          YES SHA-1        AES 192 bits key
