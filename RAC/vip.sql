@@ -1,4 +1,5 @@
 How to Find Out VIP of an Oracle RAC Cluster
+============================================
 Login clusterware owner (oracle) and execute the below command to find out the VIP hostname used in Oracle RAC
 $ olsnodes -i
 
