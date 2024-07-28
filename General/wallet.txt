@@ -1,0 +1,150 @@
+Step by Step How to Configure Software Keystore/ Oracle Wallet
+==============================================================
+How to Configure a Software Keystore
+
+A software keystore is a container that stores the Transparent Data Encryption master encryption key.
+To configure a software Keystore follow the steps below.
+
+Step 1: Set the Keystore Location in the sqlnet.ora File
+You can store the software keystore (also known as wallet) in file system or in ASM Diskgroup. 
+Does not matter where you want to store the keystore you have modify the sqlnet.ora and make an entry accordingly.
+Make an entry as shown below in $ORACLE_HOME/network/admin/sqlnet.ora file
+
+Example1: If Storing the Wallet in ASM
+ENCRYPTION_WALLET_LOCATION=
+ (SOURCE=(METHOD=FILE)
+   (METHOD_DATA=
+    (DIRECTORY=+DG_TST_DATA/$ORACLE_SID/wallet)
+   )
+ )
+
+Example2: If Storing the Wallet in File System
+ENCRYPTION_WALLET_LOCATION=
+ (SOURCE=(METHOD=FILE)
+   (METHOD_DATA=
+    (DIRECTORY=/u01/dbatst1/admin/wallet/$ORACLE_SID)
+   )
+ )
+
+NOTE: Ensure that the path you entered in DIRECTORY exists. If not create it.
+
+Step2: Create the Software KeyStore
+There are three different types of software keystores. password-based,auto-login and local auto-login
+You can read HERE about them in detail.
+
+
+Creating the Password Based Software KeyStore
+=============================================
+A> login as sysdba or as syskm
+$ sqlplus "/as sysdba"
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+SQL>
+
+B> The output below shows that there is no wallet present
+SQL>set linesize 200
+SQL>col WALLET_DIR for a32
+SQL>col status for a21
+SQL>select STATUS,WRL_PARAMETER WALLET_DIR,WALLET_TYPE from V$ENCRYPTION_WALLET;
+STATUS                WALLET_DIR                       WALLET_TYPE
+--------------------- -------------------------------- --------------------
+NOT_AVAILABLE         /u01/dbatst1/admin/wallet/TST1T/ UNKNOWN
+
+C> Create the Wallet
+SQL>  ADMINISTER KEY MANAGEMENT CREATE KEYSTORE '/u01/dbatst1/admin/wallet/TST1T/' IDENTIFIED BY xxxx;
+keystore altered.
+
+D> Check the Wallet Status
+SQL>select STATUS,WRL_PARAMETER WALLET_DIR,WALLET_TYPE from V$ENCRYPTION_WALLET;
+STATUS                WALLET_DIR                       WALLET_TYPE
+--------------------- -------------------------------- --------------------
+CLOSED                /u01/dbatst1/admin/wallet/TST1T/ UNKNOWN
+
+$ ls -lrt /u01/dbatst1/admin/wallet/TST1T/
+-rw------- 1 dbatst1 asmadmin 2408 Nov 20 16:03 ewallet.p12
+
+
+Creating the Auto Login Software KeyStore
+=========================================
+Follow all the steps (from A to D) from Step2 and then step E as shown below
+E> Create Auto Login Wallet from Password Based Wallet
+
+SQL> ADMINISTER KEY MANAGEMENT CREATE AUTO_LOGIN KEYSTORE FROM KEYSTORE '/u01/dbatst1/admin/wallet/TST1T/' IDENTIFIED BY xxxx;
+keystore altered.
+
+F> Check The Wallet Status
+SQL> select STATUS,WRL_PARAMETER WALLET_DIR,WALLET_TYPE from V$ENCRYPTION_WALLET;
+STATUS                WALLET_DIR                       WALLET_TYPE
+--------------------- -------------------------------- --------------------
+OPEN_NO_MASTER_KEY    /u01/dbatst1/admin/wallet/TST1T/ AUTOLOGIN
+$ ls -lrt /u01/dbatst1/admin/wallet/TST1T/-rw------- 1 dbatst1 asmadmin 2408 Nov 20 16:03 ewallet.p12
+-rw------- 1 dbatst1 asmadmin 2451 Nov 20 16:17 cwallet.sso
+
+
+Creating the Local Auto Login Software KeyStore
+===============================================
+Follow all the steps (from A to D) from Step2 and then step G as shown below
+
+G> Create Local Auto Login Wallet from Password Based Wallet
+
+SQL> ADMINISTER KEY MANAGEMENT CREATE LOCAL AUTO_LOGIN KEYSTORE FROM KEYSTORE '/u01/dbatst1/admin/wallet/TST1T/' IDENTIFIED BY xxxx;
+keystore altered.
+
+H> Check The Wallet Status
+SQL> select STATUS,WRL_PARAMETER WALLET_DIR,WALLET_TYPE from V$ENCRYPTION_WALLET;
+STATUS                WALLET_DIR                       WALLET_TYPE
+--------------------- -------------------------------- --------------------
+OPEN_NO_MASTER_KEY    /u01/dbatst1/admin/wallet/TST1T/ LOCAL_AUTOLOGIN
+
+Step3: Open the Software KeyStore
+A password-based software keystore must be manually opened before any TDE master encryption 
+keys can be created or accessed in the keystore. You do not need to manually open auto-login 
+or local auto-login software keystores. These keystore are automatically opened when it is required.
+
+Note: The auto-login or local auto-login software keystores are opened even as soon as you 
+select from V$ENCRYPTION_WALLET view.
+
+A> Opening a Password Based Software Keystore
+SQL> administer key management  set keystore open identified by xxxx;
+keystore altered.
+
+SQL> select STATUS,WRL_PARAMETER WALLET_DIR,WALLET_TYPE from V$ENCRYPTION_WALLET;
+STATUS                WALLET_DIR                       WALLET_TYPE
+--------------------- -------------------------------- --------------------
+OPEN_NO_MASTER_KEY    /u01/dbatst1/admin/wallet/TST1T/ PASSWORD
+
+Step4: Set the Software TDE Master Encryption Key
+For All PDBs in the CDB
+SQL> ADMINISTER KEY MANAGEMENT SET KEY FORCE KEYSTORE IDENTIFIED BY xxxx WITH BACKUP CONTAINER = ALL;
+keystore altered.
+
+For a Specific PDB 
+SQL> ALTER SESSION SET CONTAINER=PDB01;
+SQL> ADMINISTER KEY MANAGEMENT SET KEY FORCE KEYSTORE IDENTIFIED BY xxx WITH BACKUP USING 'tde_key_backup' CONTAINER = CURRENT;
+keystore altered.
+
+FORCE KEYSTORE option enables the keystore operation if the auto-login keystore is in use, 
+or the keystore is closed the option is available from version 12.2 if you are still at 12.1 
+and want to use this option apply the patch for BUG 22826718 (Doc ID 1944507.1).
+
+Once you have the KeyStore (wallet) you can store the master key for encrypting or 
+decrypting the TDE table keys and tablespace encryption keys in this keystore.
+ 
+You can find if a keystore has no master key set or an unknown master key by 
+querying the STATUS column of the V$ENCRYPTION_WALLET view.
+
+In a multitenant environment, you can create and manage the TDE master encryption key 
+from either the root or the PDB.
+
+You also can create TDE master encryption keys for use later on, and then manually activate them.
+
+To set the master encryption key password based wallet must be open. If the auto-login software 
+keystore is open, then you must close it and open the password-based software keystore.
+
+If both the password-based keystore and auto-login keystores are present in the configured 
+location and the password-based keystore is open, then the TDE master encryption key is 
+automatically written to the auto-login keystore as well.
+
+Step5: Encrypt your Data
+Once you are done with Wallet (KeyStore) and key setup starting encrypting the confidential 
+tables and columns to keep your data protected.
