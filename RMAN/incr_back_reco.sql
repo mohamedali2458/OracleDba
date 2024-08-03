@@ -26,3 +26,24 @@ RMAN> backup incremental level 1 database plus archivelog;
 
 Once backup is completed, check backup tag via below command
 RMAN> list backup of database summary;
+
+Simulate Failure
+----------------
+Delete all the datafiles from server
+
+SQL> select name from v$datafile;
+rm -rf <DF locations>
+
+Start Database Recovery
+-----------------------
+Kill the DB instance, if running. You can do shut abort or kill pmon at OS level
+
+Start the DB instance and take it to Mount stage. Connect to RMAN and issue below command
+
+run
+{
+RESTORE DATABASE from tag TAG20170115T113749;
+RECOVER DATABASE from tag TAG20170115T114127;
+RECOVER DATABASE;
+sql 'ALTER DATABASE OPEN';
+}
