@@ -1,0 +1,5 @@
+Automate RMAN Backup using Shell Script
+
+Create directory structure
+mkdir -p /u01/rman
+
