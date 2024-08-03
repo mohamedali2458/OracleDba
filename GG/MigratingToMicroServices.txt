@@ -1,0 +1,82 @@
+Migrating Oracle GoldenGate from the Classic Architecture to the Microservices Architecture within the same version (19c)
+
+This involves several steps and considerations. Below is a step-by-step guide on how to perform this migration:
+
+### Pre-Migration Checklist
+
+1. **Backup Data**: Before beginning the migration, ensure all your configurations, trail files, and databases are fully backed up.
+2. **Check Compatibility**: Ensure your current environment and all components are compatible with the Microservices Architecture.
+3. **Documentation and Planning**: Review Oracle's official documentation for any specific prerequisites and considerations for migration.
+
+### Migration Steps
+
+#### Step 1: Prepare the Environment
+- Install the Oracle GoldenGate Microservices Architecture (OGG MA) on the desired system. This can be the same system where Classic is installed or a different one.
+
+```bash
+# Example command to install OGG MA
+unzip <OGG_ZIP_FILE>.zip
+cd <OGG_DIRECTORY>
+./oggca.sh
+```
+
+#### Step 2: Configure the Service Manager
+- Start the Service Manager, which is the core component of the Microservices Architecture.
+
+```bash
+# Navigate to the OGG MA home directory
+cd /path/to/ogg_microservices
+
+# Start the Service Manager
+./bin/ServiceManager
+```
+
+#### Step 3: Set Up the Microservices Deployment
+- Access the Service Manager web interface (default URL is `http://hostname:port` where `port` is usually 9000).
+
+- Configure the Deployment and create the necessary Distribution Paths and Receivers.
+
+
+#### Step 4: Export and Import Configuration
+- Use the Oracle GoldenGate Admin Client to export the configuration from the Classic architecture.
+
+```bash
+# Connect to the Classic deployment
+./ggsci
+
+# Export configuration
+DBLOGIN USERIDALIAS <alias>
+EXPORT CONFIG TOGGSCHEMA.xml
+```
+- Import the configuration into the Microservices deployment.
+
+```bash
+# Use the Admin Client for Microservices
+./adminclient
+
+# Connect to the Microservices deployment
+CONNECT TO http://hostname:port
+
+
+# Import configuration
+IMPORT CONFIG FROMGGSCHEMA.xml
+```
+
+
+#### Step 5: Validate and Start Processes
+- Ensure all paths are correctly set up and validate the configuration.
+- Start the processes and begin the data replication.
+
+```bash
+# Start Extract and Replicat processes
+START EXTRACT <extract_name>
+START REPLICAT <replicat_name>
+```
+
+
+#### Step 6: Monitoring
+- Use the Oracle GoldenGate Performance Metrics and the web interface to monitor the replication and handle any errors.
+
+### Post-Migration
+- Validate the data synchronization status.
+- Decommission the old Classic architecture components after ensuring the Microservices deployment is stable.
