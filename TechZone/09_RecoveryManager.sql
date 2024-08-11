@@ -85,6 +85,24 @@ from v$rman_backup_job_details
 order by session_key;
 
 
+rman> list backup summary;
+
+LV column lists the following:
+0 = incremental level 0 backup
+1 = incremental level 1 backup
+A = archivelogs
+f = full - backup database command
+
+S is the status:
+A = available
+U = unavailable
+
+As mentioned above F can represent either “FULL” backup or “Control File” Backup. 
+If your RMAN configuration for controlfile auto-backup is set to “ON” , the 
+control file backup will be taken automatically each time RMAN backup runs as 
+shown in the above picture.
+
+
 
 
 To delete backup
@@ -162,7 +180,7 @@ CONFIGURE commands
 ==================
 RMAN> configure controlfile autobackup on;
 (on backup of database/datafile controlfile & spfile will be auto backed up)
-RMAN> configure retention policy to redundancy 2;
+RMAN> configure retention policy to redundancy 1;
 	OR
 RMAN> configure retention policy to recovery window of 30 days;
 RMAN> configure backup optimization on;
@@ -177,9 +195,11 @@ backup current controlfile;
 backup datafile 4;}
 
 Configure FRA (flash recovery area)
-configure parameters
-	db_recovery_file_dest_size
-	db_recovery_file_dest
+===================================
+configure below parameters:
+db_recovery_file_dest_size
+db_recovery_file_dest
+
 SQL> alter system set db_recovery_file_dest_size=4g scope=both;
 SQL> alter system set db_recovery_file_dest='/u01/fra' scope=both;
 
@@ -192,7 +212,7 @@ RMAN Scripts
 	backup current controlfile;
 	backup archivelog all;}
 2. Executing rman script:
-	RMAN>run{execute script bkp;}
+	RMAN> run{execute script bkp;}
 3. To see the code of script:
 	RMAN> print script bkp;
 	RMAN> delete script bkp;
