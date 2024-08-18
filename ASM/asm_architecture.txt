@@ -1,0 +1,205 @@
+Oracle ASM Administration
+=========================
+Oracle Automatic Storage Management (ASM) is a storage management solution for Oracle database and RAC. 
+It allows you to create ASM disks from physical disks or partitions and multiple ASM disks form an ASM Diskgroup.
+
+    Oracle ASM Architecture
+    Oracle ASM Installation
+    Oracle ASM Diskgroup Management
+
+You can store all the database files inside ASM Diskgroups except text files like pfile.
+
+Oracle ASM Architecture
+
+Oracle ASM instance is built on same architecture as Oracle Instance. There are special 
+ASM background processes that are introduce inside Oracle database to communicate with 
+ASM instance and diskgroups. The only difference is an Oracle database hosts your database 
+and Oracle ASM hosts database files. Oracle ASM binaries come with Oracle Grid Infrastructure 
+Software.
+
+Physical Disks / Partitions: This is your hardware storage which provides raw storage capacity. 
+Each physical disk / partition is mapped to a single ASM disk.
+
+ASM Disks: These are disks that ASM can easily identify and you can attach ASM disks to ASM 
+Diskgroups. One ASM Disk can be attached to one and only one ASM DIskgroup.
+
+ASM Diskgroups: These are collection of one or more ASM disks that acts as storage location 
+for your database files. All diskgroup name start with '+' sign: +CRS, +DATA, +FRA etc.
+
+ASM Instance: It's the gateway through which Oracle databases can read/write to database 
+files stored on ASM Diskgroups.
+
+ASM Instance must be up and running for your Oracle databases to open!
+
+
+Oracle ASM Diskgroup Management
+
+Managing data under ASM disks and diskgroups is very important task for a DBA. Let's look at 
+different ways to administer ASM Diskgroups:
+
+    Find ASM physical disk mapping  
+    Create ASM Diskgroup
+    Create Tablespace in ASM
+    Drop Diskgroup
+    Create Directory Under ASM Diskgroup 
+
+
+Find ASM physical disk mapping
+
+When you work in a RAC environment with a list of ASM disks, sometimes you might want to 
+figure out which ASM disk is mapped to which physical device. Below is a simple script 
+that will help you find out ASM disks that are mapped to Linux partitions
+
+#!/bin/bash
+echo "------------------"
+echo "ASM Disk Mappings"
+echo "------------------"
+for f in $(oracleasm listdisks); do
+    dp=$(lsblk | grep $(oracleasm querydisk -d $f | awk -F'[][]' '{gsub(/,/ , ":"); print $2}') | awk '{print $1, "size", $4}' | tr -d '`' | sed 's/[-|]//g')
+    echo -e "$f\tmapped to /dev/$dp"
+done
+
+
+And below is the sample output
+------------------
+ASM Disk Mappings
+------------------
+CRS01	mapped to /dev/sdb1 size 5G
+DATA01	mapped to /dev/sdb2 size 50G
+FRA01	mapped to /dev/sdb3 size 80G
+
+
+Create ASM Diskgroup
+
+There are two ways to create new diskgroups in ASM: ASMCA (GUI) and SQLPLUS (SQL Syntax). As root 
+user, mark the disk headers which you will be attaching to the diskgroup
+
+  oracleasm createdisk RMAN01 /dev/sdc1
+
+As grid user, connect to sqlplus and check if above created disk is available
+
+sqlplus / as sysasm
+
+SELECT NAME, PATH, HEADER_STATUS FROM V$ASM_DISK;
+
+The HEADER_STATUS must show as PROVISIONED.
+ 
+Create diskgroup with EXTERNAL REDUNDANCY
+
+CREATE DISKGROUP RMAN EXTERNAL REDUNDANCY
+DISK '/dev/oracleasm/disks/rman01';
+
+
+Create Normal Redundancy Diskgroup
+
+Redundancy is defined by failgroups inside a diskgroup. You need to add at least two 
+failgroups when creating normal redundancy disk group. All the disks that you would 
+like to attach shall belong to respective failgroups.
+
+Everytime ASM is writing to one failgroup, it create a copy of the same data into another 
+failgroup. If any failgroup is not available, ASM retrieves the data from the available failgroup.
+
+As root user, mark the disk headers which you want to attach
+
+oracleasm createdisk OLTP01 /dev/sdd1
+oracleasm createdisk OLTP02 /dev/sdd2
+
+As grid user, connect to sqlplus and check if above created disk is available
+
+sqlplus / as sysasm
+
+SELECT NAME, PATH, HEADER_STATUS FROM V$ASM_DISK;
+
+The HEADER_STATUS must show as PROVISIONED. 
+
+Create diskgroup with NORMAL REDUNDANCY
+
+CREATE DISKGROUP OLTP NORMAL REDUNDANCY
+FAILGROUP OLTP_FG1 DISK '/dev/oracleasm/disks/oltp01'
+FAILGROUP OLTP_FG2 DISK '/dev/oracleasm/disks/oltp02';
+
+Create High Redundancy Diskgroup
+
+For high redundancy, you need at least 3 failgroups. As root user, mark the disk 
+headers which you want to attach
+
+oracleasm createdisk BACKUP01 /dev/sde1
+oracleasm createdisk BACKUP02 /dev/sde2
+oracleasm createdisk BACKUP03 /dev/sde3
+
+Create diskgroup with EXTERNAL REDUNDANCY
+
+CREATE DISKGROUP BACKUP EXTERNAL REDUNDANCY
+FAILGROUP BACKUP_FG1 DISK '/dev/oracleasm/disks/backup01'
+FAILGROUP BACKUP_FG2 DISK '/dev/oracleasm/disks/backup02'
+FAILGROUP BACKUP_FG3 DISK '/dev/oracleasm/disks/backup03';
+
+
+Change Diskgroup Redundancy
+
+You cannot directly change the redundancy of diskgroup. Instead create a new diskgroup 
+with desired redundancy and move datafiles. You can simply use below command to move 
+datafile from 12c version and above
+
+alter database move datafile '+DATA/ORCL/DATAFILE/user01.dbf' to '+NEWDG';
+
+Create Tablespace in ASM
+
+ASM uses OMF (Oracle Managed Files) feature of Oracle database to auto create 
+datafiles in respective ASM diskgroups. The DB_CREATE_FILE_DEST defines the 
+default location where Oracle creates datafiles
+
+Show parameter db_create_file_dest;
+
+Make sure db_create_file_dest is set to +DATA
+
+DB_RECOVERY_FILE_DEST defines the default location for FRA
+
+show parameter db_reocovery_file_dest
+show parameter db_recovery_file_dest_size
+
+Make sure db_reocovery_file_dest is set to +FRA
+
+Create new tablespace with 10 gb size
+SQL> CREATE TABLESPACE test_tbs DATAFILE SIZE 10G;
+
+You can manually give datafile name too
+SQL> CREATE TABLESPACE test_tbs datafile '+ASM/DATAFILES/ORCL/test_tbs.dbf' size 10G;
+
+Drop Diskgroup
+
+To drop a diskgroup including all the files on the ASM disks
+
+DROP DISKGROUP RMAN INCLUDING CONTENTS;
+
+
+Create Directory Under ASM Diskgroup
+
+Creating directories under ASM filesystem is same as running Linux commands. Start asmcmd
+
+asmcmd
+You can use many OS level commands like
+
+    ls – to list contents
+    pwd – check present working directory
+    mkdir – create new directory
+    rm – remove directory or file
+    cp – copy file or directory
+
+ASMCMD> ls
+CRSVOL1/
+DATAVOL1/
+FRAVOL1/
+RMANVOL/
+
+Let us create directory under RMANVOL diskgroup
+
+ASMCMD> cd RMANVOL/
+ASMCMD> mkdir RMAN_BACKUP
+ASMCMD> mkdir RMAN_SCRIPT
+ASMCMD> mkdir RMAN_LOG
+
+You can create multiple directories in one single command too
+
+ASMCMD> mkdir RMAN_BACKUP RMAN_SCRIPT RMAN_LOG
+
