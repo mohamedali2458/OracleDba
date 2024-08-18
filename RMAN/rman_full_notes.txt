@@ -1,0 +1,440 @@
+DBA GENESIS
+===========
+Quick Summary
+
+Here’s a quick summary of this process for you to use it as a checklist and get an overview of how it looks.
+1) Oracle RMAN Basic Commands
+    Basic RMAN configuration and Recovery Catalog commands reference
+2) Oracle RMAN Backup Commands
+    Different types of RMAN database backups commands reference
+3) Oracle RMAN Scripting
+    Simple Unix script to take automated RMAN backups reference
+4) Oracle RMAN Recovery Commands
+    Different types of RMAN database recovery commands reference
+
+
+1) Oracle RMAN Basic Commands
+=============================
+10 years ago, my lack of understanding about How to backup Oracle database caused me to be unable 
+to recover one development database for a client!
+
+This early mistake made me learn everything about RMAN...
+
+Specially, Oracle database backup types and how backup strategy can impact database recovery
+
+Why?
+Because you want to recover your database in case of crash.
+It’ not possible to cover everything in the available space and
+That's why we have so many books published on RMAN
+But I can at least provide you the highly used RMAN commands here.
+Are you ready !!!
+
+
+Connecting RMAN
+===============
+rman TARGET SYS/target_pwd@target_str → connects in NOCATALOG mode
+rman TARGET / CATALOG rman/rman@rcat
+rman TARGET / CATALOG rman/rman@rcat AUXILIARY sys/aux_pwd@aux_str
+
+Configure RMAN
+==============
+CONFIGURE CHANNEL DEVICE TYPE sbt CLEAR;
+CONFIGURE RETENTION POLICY CLEAR;
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK CLEAR;
+CONFIGURE DEFAULT DEVICE TYPE TO DISK/SBT;
+CONFIGURE RETENTION POLICY TO REDUNDANCY 3;
+CONFIGURE DEVICE TYPE DISK PARALLELISM 2;
+CONFIGURE DEVICE TYPE sbt PARALLELISM 2;
+CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT ‘/u01/orclbackup/ora_df%t_s%s_s%p’;
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO ‘/u01/orclbackup/ora_cf%F’;
+CONFIGURE BACKUP OPTIMIZATION ON;
+CONFIGURE CHANNEL DEVICE TYPE DISK MAXPIECESIZE 2G;
+CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT /tmp/%U;
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO ‘+dgroup1/%F’;
+CONFIGURE DEVICE TYPE <DISK | SBT> BACKUP TYPE TO COMPRESSED BACKUPSET;
+CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT ‘/disk1/%U’, ‘/disk2/%U’;
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE sbt TO 2;
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE sbt TO 2;
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 2;
+CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 4 DAYS;
+
+
+Create Catalog
+==============
+CREATE USER rman_dba IDENTIFIED BY rman_dba 
+TEMPORARY TABLESPACE temp
+DEFAULT TABLESPACE rman_dba 
+QUOTA UNLIMITED ON rman_dba;
+
+GRANT RECOVERY_CATALOG_OWNER TO rman_dba;
+CREATE CATALOG;
+
+
+Register Database in Catalog
+============================
+Rman target / catalog rman_dba/rman_dba@<catalog>
+register database;
+select * from rc_database;
+
+Register (catalog) Files in RMAN
+================================
+CATALOG BACKUPPIECE ‘/disk2/09dtq55d_1_2’, ‘/disk2/0bdtqdou_1_1’;
+CATALOG DATAFILECOPY ‘/tmp/users01.dbf’;
+CATALOG RECOVERY AREA;
+CHANGE CONTROLFILECOPY ‘/tmp/control01.ctl’ UNCATALOG;
+CHANGE DATAFILECOPY ‘/tmp/system01.dbf’ UNCATALOG;
+CHANGE DATAFILECOPY ‘/tmp/control01.ctl’ UNAVAILABLE;
+CHANGE COPY OF ARCHIVELOG SEQUENCE BETWEEN 1000 AND 1012 UNAVAILABLE;
+CHANGE BACKUPSET 12 UNAVAILABLE;
+CHANGE BACKUP OF SPFILE TAG “TAG20020208T154556” UNAVAILABLE;
+CHANGE DATAFILECOPY ‘/tmp/system01.dbf’ AVAILABLE;
+CHANGE BACKUPSET 12 AVAILABLE;
+CHANGE BACKUP OF SPFILE TAG “TAG20020208T154556” AVAILABLE;
+CATALOG START WITH ‘/backup/MYSID/arch’;
+
+
+Enable / Disable Block change tracking
+======================================
+ALTER SYSTEM SET
+DB_CREATE_FILE_DEST = ‘/disk1/bct/’ SCOPE=BOTH SID=’*’;
+ALTER DATABASE ENABLE BLOCK CHANGE TRACKING;
+ALTER DATABASE ENABLE BLOCK CHANGE TRACKING USING FILE ‘/mydir/rman_change_track.f’ REUSE;
+
+COL STATUS FORMAT A8
+COL FILENAME FORMAT A60
+SELECT STATUS, FILENAME FROM V$BLOCK_CHANGE_TRACKING;
+SQL> ALTER DATABASE DISABLE BLOCK CHANGE TRACKING;
+SQL> ALTER DATABASE ENABLE BLOCK CHANGE TRACKING USING FILE ‘new_location’;
+
+
+
+
+
+2) Oracle RMAN Backup Commands
+==============================
+RMAN backup reporting queries
+
+SELECT SID,
+SERIAL#,
+CONTEXT,
+SOFAR,
+TOTALWORK,
+ROUND(SOFAR / TOTALWORK * 100, 2) “% COMPLETE”
+FROM V$SESSION_LONGOPS
+WHERE OPNAME LIKE ‘RMAN%’ AND OPNAME NOT LIKE ‘%aggregate%’ AND
+TOTALWORK != 0 AND SOFAR <> TOTALWORK ;
+
+COL in_sec FORMAT a10
+COL out_sec FORMAT a10
+COL TIME_TAKEN_DISPLAY FORMAT a10
+SELECT SESSION_KEY,
+OPTIMIZED,
+COMPRESSION_RATIO,
+INPUT_BYTES_PER_SEC_DISPLAY in_sec,
+OUTPUT_BYTES_PER_SEC_DISPLAY out_sec,
+TIME_TAKEN_DISPLAY
+FROM V$RMAN_BACKUP_JOB_DETAILS
+ORDER BY SESSION_KEY;
+
+SELECT FILE#, STATUS, ERROR, RECOVER, TABLESPACE_NAME, NAME
+FROM V$DATAFILE_HEADER
+WHERE RECOVER = ‘YES’
+OR (RECOVER IS NULL AND ERROR IS NOT NULL);
+
+SELECT FILE#, INCREMENTAL_LEVEL, COMPLETION_TIME,
+BLOCKS, DATAFILE_BLOCKS
+FROM V$BACKUP_DATAFILE
+WHERE INCREMENTAL_LEVEL > 0
+AND BLOCKS / DATAFILE_BLOCKS > .2
+ORDER BY COMPLETION_TIME;
+
+SELECT * FROM V$RECOVERY_FILE_DEST;
+SELECT * FROM V$RECOVERY_AREA_USAGE;
+SELECT * FROM V$DATABASE_BLOCK_CORRUPTION;
+
+RMAN Backup Reporting / Listing
+===============================
+LIST BACKUP OF DATABASE;
+LIST COPY OF DATAFILE 1, 2;
+LIST BACKUP OF ARCHIVELOG FROM SEQUENCE 10;
+LIST BACKUPSET OF DATAFILE 1;
+LIST BACKUP;
+LIST COPY;
+LIST ARCHIVELOG;
+LIST RESTORE POINT;
+LIST EXPIRED;
+LIST BACKUP SUMMARY;
+LIST FAILURE;
+LIST BACKUPSET TAG ‘weekly_full_db_backup’;
+LIST BACKUPSET 213;
+LIST COPY OF DATAFILE 2 COMPLETED BETWEEN ’10-DEC-2002′ AND ’17-DEC-2002′;
+LIST BACKUP OF DATAFILE 1;
+
+REPORT OBSOLETE;
+REPORT SCHEMA;
+REPORT NEED BACKUP;
+REPORT NEED BACKUP RECOVERY WINDOW OF 2 DAYS DATABASE DEVICE TYPE sbt_tape;
+REPORT NEED BACKUP DEVICE TYPE DISK;
+REPORT NEED BACKUP TABLESPACE TBS_3 DEVICE TYPE sbt_tape;
+REPORT OBSOLETE RECOVERY WINDOW OF 3 DAYS;
+REPORT OBSOLETE REDUNDANCY 1;
+
+Crosscheck backup
+=================
+CROSSCHECK BACKUP DEVICE TYPE DISK;
+CROSSCHECK BACKUP DEVICE TYPE sbt_tape;
+CROSSCHECK BACKUP; # checks backup sets, proxy copies, and image copies
+CROSSCHECK COPY OF DATABASE;
+CROSSCHECK BACKUPSET 1338, 1339, 1340;
+CROSSCHECK BACKUPPIECE TAG ‘nightly_backup’;
+CROSSCHECK BACKUP OF ARCHIVELOG ALL SPFILE;
+CROSSCHECK BACKUP OF DATAFILE “?/oradata/trgt/system01.dbf” COMPLETED AFTER ‘SYSDATE-14’;
+CROSSCHECK CONTROLFILECOPY ‘/tmp/control01.ctl’;
+CROSSCHECK DATAFILECOPY 113, 114, 115;
+CROSSCHECK PROXY 789;
+
+Delete backup
+=============
+DELETE BACKUPPIECE 101;
+DELETE CONTROLFILECOPY ‘/tmp/control01.ctl’;
+DELETE NOPROMPT ARCHIVELOG UNTIL SEQUENCE 300;
+DELETE BACKUP TAG ‘before_upgrade’;
+DELETE ARCHIVELOG ALL BACKED UP 3 TIMES TO sbt_tape;
+DELETE EXPIRED BACKUP;
+DELETE OBSOLETE;
+
+Backup Database command
+=======================
+BACKUP DEVICE TYPE sbt_tape BACKUPSET COMPLETED BEFORE ‘SYSDATE-7’ DELETE INPUT;
+BACKUP DEVICE TYPE DISK COPIES 3 DATAFILE 7 FORMAT ‘/disk1/%U’,’?/oradata/%U’,’?/%U’;
+BACKUP DEVICE TYPE sbt_tape BACKUPSET COMPLETED BEFORE ‘SYSDATE-7’ DELETE INPUT;
+BACKUP AS BACKUPSET DATABASE;
+BACKUP AS BACKUPSET DEVICE TYPE DISK DATABASE;
+BACKUP AS BACKUPSET DEVICE TYPE SBT_TAPE DATABASE;
+BACKUP AS COPY DEVICE TYPE DISK DATABASE;
+BACKUP AS BACKUPSET COPIES 1 DATAFILE 7 TAG mondaybkp;
+BACKUP AS COMPRESSED BACKUPSET DATABASE PLUS ARCHIVELOG;
+BACKUP DEVICE TYPE sbt_tape DATAFILE 1,2,3,4 DATAFILECOPY ‘/tmp/system01.dbf’;
+BACKUP AS COPY DB_FILE_NAME_CONVERT (‘/maindisk/oradata/users’,’/backups/users_ts’) TABLESPACE users;
+BACKUP INCREMENTAL LEVEL 0 DATABASE;
+BACKUP AS BACKUPSET DATABASE FORMAT ‘/disk1/%U’,’/disk2/%U’;
+BACKUP AS BACKUPSET DEVICE TYPE DISK COPIES 3 INCREMENTAL LEVEL 0 DATABASE;
+BACKUP VALIDATE DATABASE ARCHIVELOG ALL;
+BACKUP VALIDATE CHECK LOGICAL DATABASE ARCHIVELOG ALL;
+backup as compressed backupset incremental level 0 database plus archivelog;
+BACKUP DEVICE TYPE sbt ARCHIVELOG ALL DELETE ALL INPUT;
+BACKUP INCREMENTAL LEVEL 1 TABLESPACE SYSTEM, tools;
+BACKUP INCREMENTAL LEVEL 1 CUMULATIVE TABLESPACE users;
+BACKUP VALIDATE CHECK LOGICAL DATABASE ARCHIVELOG ALL;
+BACKUP ARCHIVELOG FROM TIME ‘SYSDATE-1’;
+BACKUP ARCHIVELOG FROM TIME ‘SYSDATE-5’ UNTIL TIME ‘SYSDATE-1’
+
+RUN
+{
+ALLOCATE CHANNEL disk1 DEVICE TYPE DISK FORMAT ‘/disk1/%d_backups/%U’;
+ALLOCATE CHANNEL disk2 DEVICE TYPE DISK FORMAT ‘/disk2/%d_backups/%U’;
+BACKUP DATABASE PLUS ARCHIVELOG;
+}
+
+Incremental backup
+==================
+backup incremental level 0 database;
+backup incremental level 1 database ;
+
+Backup of CDB and PDB in 12c
+============================
+CDB backup
+export ORACLE_SID=ORCL1
+[oracle@rac1 ~]$ rman target /
+RMAN> backup database plus archivelog;
+
+CDB root backup
+RMAN> backup pluggable database “CDB$ROOT”;
+
+Backup pluggable database
+backup pluggable database test;
+backup pluggable database test plus archivelog;
+
+By the way, what you are seeing here is not just the frequently used
+RMAN commands. These are the same commands used by DBAs like
+you to perform some serious database recoveries.
+
+The main reason why these scripts are not for beginner DBA is
+because one single RMAN mistake can lead to loss of entire database.
+
+These scripts are for advanced DBA who have already worked on Oracle database.
+
+For beginners, I would recommend to get yourself formal training in Oracle and then use these scripts.
+
+
+3) Oracle RMAN Scripting
+========================
+RMAN Run Block File
+Script file which will be called in backup script: /u02/rman/script/rman_run_cmd.rman
+
+run
+{
+allocate channel ch1 device type disk format '/u02/rman/backup/PRODDB_DBFULL_BKP_%u';
+allocate channel ch2 device type disk format '/u02/rman/backup/PRODDB_DBFULL_BKP_%u';
+allocate channel ch3 device type disk format '/u02/rman/backup/PRODDB_DBFULL_BKP_%u';
+crosscheck backup;
+delete nopromtp obsolete;
+backup database;
+backup archivelog all delete input;
+release channel ch1;
+release channel ch2;
+release channel ch3;
+}
+
+
+Shell Script file that will call above file
+===========================================
+/u02/rman/scripts/PRODDB_rman_bkp.sh
+
+#!/bin/bash
+. /home/oracle/.bash_profile
+export DATE=$(date +%m%d%y_%H%M%S)
+export ORACLE_HOME=/u02/app/oracle/product/11.2.0/dbhome_1
+export ORACLE_SID=proddb
+$ORACLE_HOME/bin/rman target / catalog rman_rc/rman_rc@rcat 
+cmdfile=/u02/rman/script/rman_run_cmd.rman
+log=/u02/rman/logs/${DATE}_proddb_BACKUP.log
+
+
+4) Oracle RMAN Recovery Commands
+================================
+Preview Database Restore
+RESTORE DATABASE VALIDATE;
+RESTORE ARCHIVELOG ALL VALIDATE;
+RESTORE ARCHIVELOG FROM TIME ‘SYSDATE-7’ PREVIEW;
+RESTORE DATABASE PREVIEW SUMMARY;
+VALIDATE DATABASE;
+
+RUN{
+ALLOCATE CHANNEL c1 DEVICE TYPE DISK;
+ALLOCATE CHANNEL c2 DEVICE TYPE DISK;
+VALIDATE DATAFILE 1 SECTION SIZE 1200M;
+}
+
+VALIDATE DATAFILE 4 BLOCK 10 TO 13;
+VALIDATE BACKUPSET 3;
+RECOVER CORRUPTION LIST;
+
+Recover database flashback technology
+=====================================
+SELECT OLDEST_FLASHBACK_SCN, OLDEST_FLASHBACK_TIME FROM V$FLASHBACK_DATABASE_LOG;
+SELECT CURRENT_SCN FROM V$DATABASE;
+SELECT NAME, SCN, TIME, DATABASE_INCARNATION#, GUARANTEE_FLASHBACK_DATABASE 
+FROM V$RESTORE_POINT WHERE GUARANTEE_FLASHBACK_DATABASE=’YES’;
+
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+FLASHBACK DATABASE TO SCN 46963;
+FLASHBACK DATABASE TO RESTORE POINT BEFORE_CHANGES;
+FLASHBACK DATABASE TO TIME “TO_DATE(’09/20/05′,’MM/DD/YY’)”;
+ALTER DATABASE OPEN READ ONLY;
+
+SHUTDOWN IMMEDIATE
+STARTUP MOUNT
+ALTER DATABASE OPEN RESETLOGS;
+SET UNTIL TIME ‘Nov 15 2004 09:00:00’;
+SET UNTIL SEQUENCE 9923;
+SET UNTIL RESTORE POINT before_update;
+RESTORE DATABASE;
+RECOVER DATABASE;
+ALTER DATABASE OPEN RESETLOGS;
+
+Recover individual tablespace and datafile
+==========================================
+sql “alter tablespace working_data offline”;
+sql “alter database datafile 13 offline”;
+restore tablespace working_data;
+restore datafile 13;
+recover tablespace working_data;
+recover datafile 13;
+sql “alter tablespace working_data online”;
+sql “alter database datafile 13 online”;
+SWITCH DATAFILE 4 TO COPY;
+RECOVER DATAFILE 4;
+backup as copy datafile 4;
+
+
+run{
+SET NEWNAME FOR DATAFILE 4 TO ‘/oracle/oradata/tcstest/users01.dbf’;
+restore datafile 4;
+switch datafile 4;
+recover datafile 4;
+}
+
+SET NEWNAME FOR DATAFILE ‘/disk1/oradata/prod/users01.dbf’ TO ‘/disk2/users01.dbf’;
+RESTORE TABLESPACE users;
+SWITCH DATAFILE ALL; # update control file with new filenames
+RECOVER TABLESPACE users;
+
+Recover individual block
+========================
+RECOVER DATAFILE 8 BLOCK 13 DATAFILE 2 BLOCK 199 FROM TAG mondayam;
+RECOVER CORRUPTION LIST;
+
+Recovery of database if inactive redo log is deleted
+====================================================
+sql> startup mount;
+sql> alter database clear logfile group 2;
+sql> alter database open;
+
+Recovery after loss of controlfile
+==================================
+rman target /
+startup nomount;
+restore controlfile from autobackup;
+alter database mount;
+recover database;
+alter database open (resetlogs);
+
+Tablespace point in time recovery
+=================================
+Database should be in opened state
+
+recover tablespace “APP_DATA” until time “to_date(‘2009-08-04 12:15:00’,’YYYY-MM-DD HH24:MI:SS’)”
+auxiliary destination ’/opt/oracle/temp’;
+
+Recovery after loss of current redolog file
+
+RUN
+{
+# SET UNTIL TIME ‘Nov 15 2002 09:00:00’;
+# SET UNTIL SCN 1000; # alternatively, specify SCN
+SET UNTIL SEQUENCE 1; # alternatively, specify log sequence number
+RESTORE DATABASE;
+RECOVER DATABASE;
+}
+
+Alright, if you are wondering how to become RMAN expert and play
+with above advanced scripts, here is the link to official Oracle RMAN
+documentation .
+
+Now it’s time for you to execute these commands in your test
+environment and customize according to your database SIDs.
+
+I know that was a lot of commands. But this was honestly
+just the beginning ...
+
+I didn’t even get to provide you with:
+    ● Different database recovery scenarios (Full and Incremental)
+    ● How to recover entire production database after server crash
+    ● How to clone production to test database using RMAN
+    ● Trigger Cumulative and Differential incremental backups
+
+And without these steps, you won’t be able to become and RMAN
+expert and perform RMAN activities like a pro.
+
+So in the next 1-2 days I’ll be sending you some “insider”
+information about them so you get to learn more.
+
+And who knows… You may crack your next Oracle DBA interview ;)
+
+These emails are going to surprise you A LOT, keep an eye on your Inbox.
+
+Hope this helped!
+Page 16
