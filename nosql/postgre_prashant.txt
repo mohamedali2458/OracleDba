@@ -4,11 +4,61 @@ sql shell (psql) is CLI
 pwd 2458
 \list
 \! cls
+ctrl + l (to clear in mac)
 
 create database test;
 
 \list
 
 using postgresql on CMD
+psql enter
 
-14.44
+we need to add postgresql bin folder in environment variables.
+double click on upper box path, click new and save the path there
+
+c:\> psql -U postgres
+pwd
+
+to connect to a db:
+\c test;
+
+to create pwd for postgres in linux:
+\password postgres
+enter new password
+
+\q
+quit
+
+database --> schema --> tables
+Database - creating, connect, listing, droping
+CRUD - create - new table
+       - inserting data
+      Read - how to read data
+      Update data
+      Delete data
+
+Databases
+=========
+List down existing databases
+SELECT datname FROM pg_database;
+\l
+
+Creating a new Database
+CREATE DATABASE <db_name>;
+create database test;
+create database
+test;
+\l
+SELECT datname FROM pg_database;
+
+Change a Database
+\c <db_name>;
+
+in pgadmin click on db name in left pane and click above query tool button
+to open related query tool
+
+Deleting a Database
+DROP DATABASE <db_name>;
+
+if anybody using this db, delete(force) or disconnect from database
+34.11
