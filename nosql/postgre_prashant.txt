@@ -1,0 +1,14 @@
+https://www.youtube.com/watch?v=cnzka7kF5Zk&t=3687s
+pgadmin(gui)
+sql shell (psql) is CLI
+pwd 2458
+\list
+\! cls
+
+create database test;
+
+\list
+
+using postgresql on CMD
+
+14.44
