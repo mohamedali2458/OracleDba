@@ -1,0 +1,46 @@
+
+Short summary of the startup sequence: INIT spawns init.ohasd (with respawn) 
+which in turn starts the OHASD process (Oracle High Availability Services Daemon).  
+This daemon spawns 4 processes.
+
+Level 1: OHASD Spawns:
+    •	cssdagent - Agent responsible for spawning CSSD.
+    •	orarootagent - Agent responsible for managing all root owned ohasd resources.
+    •	oraagent - Agent responsible for managing all oracle owned ohasd resources.
+    •	cssdmonitor - Monitors CSSD and node health (along with the cssdagent).
+
+Level 2: OHASD rootagent spawns:
+    •	CRSD - Primary daemon responsible for managing cluster resources.
+    •	CTSSD - Cluster Time Synchronization Services Daemon
+    •	Diskmon
+    •	ACFS (ASM Cluster File System) Drivers 
+
+Level 2: OHASD oraagent spawns:
+    •	MDNSD - Used for DNS lookup
+    •	GIPCD - Used for inter-process and inter-node communication
+    •	GPNPD - Grid Plug & Play Profile Daemon
+    •	EVMD - Event Monitor Daemon
+    •	ASM - Resource for monitoring ASM instances
+
+Level 3: CRSD spawns:
+    •	orarootagent - Agent responsible for managing all root owned crsd resources.
+    •	oraagent - Agent responsible for managing all oracle owned crsd resources.
+
+Level 4: CRSD rootagent spawns:
+    •	Network resource - To monitor the public network
+    •	SCAN VIP(s) - Single Client Access Name Virtual IPs
+    •	Node VIPs - One per node
+    •	ACFS Registery - For mounting ASM Cluster File System
+    •	GNS VIP (optional) - VIP for GNS
+
+Level 4: CRSD oraagent spawns:
+    •	ASM Resouce - ASM Instance(s) resource
+    •	Diskgroup - Used for managing/monitoring ASM diskgroups.  
+    •	DB Resource - Used for monitoring and managing the DB and instances
+    •	SCAN Listener - Listener for single client access name, listening on SCAN VIP
+    •	Listener - Node listener listening on the Node VIP
+    •	Services - Used for monitoring and managing services
+    •	ONS - Oracle Notification Service
+    •	eONS - Enhanced Oracle Notification Service
+    •	GSD - For 9i backward compatibility
+    •	GNS (optional) - Grid Naming Service - Performs name resolution
