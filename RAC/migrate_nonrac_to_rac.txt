@@ -1,0 +1,134 @@
+46. MIGRATING FROM NON-RAC TO RAC USE RCONFIG
+
+DB NODE ONE: 191
+DB NODE TWO: 192
+
+DB NODE ONE: 191
+----------------
+[oracle@db191 ~]$. rdbms.env
+[oracle@db191 ~]$. grid.env
+[oracle@db191 ~]$ dbca
+# select oracle single instance database
+# next
+# create database
+# next
+# next
+# global database name: ARM
+# sid: ARM
+# next	
+# select configure enterprise manager
+# next
+# next
+# next
+# finish
+# ok
+# after single instance database create:
+[oracle@db191 ~]$ cd /u02
+[oracle@db191 ~]$ ls
+[oracle@db191 ~]$ cd app
+[oracle@db191 ~]$ ls
+[oracle@db191 ~]$ cd oracle
+[oracle@db191 ~]$ ls
+[oracle@db191 ~]$ cd product
+[oracle@db191 ~]$ ls
+[oracle@db191 ~]$ cd 11.2.0
+[oracle@db191 ~]$ ls
+[oracle@db191 ~]$ cd dbhome_1
+[oracle@db191 ~]$ cd assistants
+[oracle@db191 ~]$ ls
+[oracle@db191 ~]$ cd rconfig
+[oracle@db191 ~]$ ls
+[oracle@db191 ~]$ cd samplexmls
+[oracle@db191 ~]$ covertToRAC_AdminManaged.xml
+# changes to covertToRAC_AdminManaged.xml
+[oracle@db191 ~]$ vi rconfig c.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<n:RConfig xmlns:n="http://www.oracle.com/rconfig"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.oracle.com/rconfig">
+    <n:ConvertToRAC>
+<!-- Verify does a precheck to ensure all pre-requisites are met, before the conversion is attempted. Allowable values are: YES|NO|ONLY -->
+        <n:Convert verify="ONLY">
+<!--Specify current OracleHome of non-rac database for SourceDBHome -->
+              <n:SourceDBHome>/u02/app/oracle/product/11.2.0/dbhome_1</n:SourceDBHome>
+<!--Specify OracleHome where the rac database should be configured. It can be same as SourceDBHome -->
+              <n:TargetDBHome>/u02/app/oracle/product/11.2.0/dbhome_1</n:TargetDBHome>
+<!--Specify SID of non-rac database and credential. User with sysdba role is required to perform conversion -->
+              <n:SourceDBInfo SID="bank">
+                <n:Credentials>
+                  <n:User>sys</n:User>
+                  <n:Password>manager</n:Password>
+                  <n:Role>sysdba</n:Role>
+                </n:Credentials>
+              </n:SourceDBInfo>
+<!--Specify the list of nodes that should have rac instances running for the Admin Managed Cluster Database. LocalNode should be the first node in this nodelist. -->
+              <n:NodeList>
+                <n:Node name="db191"/>
+                <n:Node name="db192"/>
+              </n:NodeList>
+<!--Instance Prefix tag is optional starting with 11.2. If left empty, it is derived from db_unique_name.-->
+              <n:InstancePrefix>bank</n:InstancePrefix>
+<!-- Listener details are no longer needed starting 11.2. Database is registered with default listener and SCAN listener running from Oracle Grid Infrastructure home. -->
+<!--Specify the type of storage to be used by rac database. Allowable values are CFS|ASM. The non-rac database should have same storage type. ASM credentials are no needed for conversion. -->
+              <n:SharedStorage type="ASM">
+<!--Specify Database Area Location to be configured for rac database.If this field is left empty, current storage will be used for rac database. For CFS, this field will have directory path. -->
+                <n:TargetDatabaseArea>+DATA</n:TargetDatabaseArea>
+<!--Specify Flash Recovery Area to be configured for rac database. If this field is left empty, current recovery area of non-rac database will be configured for rac database. If current database is not using recovery Area, the resulting rac database will not have a recovery area. -->
+                <n:TargetFlashRecoveryArea>+FRA</n:TargetFlashRecoveryArea>
+              </n:SharedStorage>
+        </n:Convert>
+    </n:ConvertToRAC>
+
+# then
+
+# copy to covertToRAC_AdminManaged.xml / u01/c.xml
+
+# then
+
+# run 
+
+[oracle@db191 ~]$ cd /u01
+
+[oracle@db191 ~]$ ls
+
+[oracle@db191 ~]$ rconfig c.xml
+
+Converting Database "ARM" to Cluster Database. Target Oracle Home: /u02/app/oracle/product/11.2.0/dbhome_1. Database Role: PRIMARY.
+Setting Data Files and Control Files
+Adding Database Instances
+Adding Redo Logs
+Enabling threads for all Database Instances
+Setting TEMP tablespace
+Adding UNDO tablespaces
+Adding Trace files
+Setting Flash Recovery Area
+Updating Oratab
+Creating Password file(s)
+Configuring Listeners
+Configuring related CRS resources
+Starting Cluster Database
+<?xml version="1.0" ?>
+<RConfig version="1.1" >
+<ConvertToRAC>
+    <Convert>
+      <Response>
+        <Result code="0" >
+          Operation Succeeded
+        </Result>
+      </Response>
+      <ReturnValue type="object">
+<Oracle_Home>
+         /u02/app/oracle/product/11.2.0/dbhome_1
+       </Oracle_Home>
+       <Database type="ADMIN_MANAGED"  >
+         <InstanceList>
+           <Instance SID="ARM1" Node="db191"  >
+           </Instance>
+           <Instance SID="ARM2" Node="db192"  >
+           </Instance>
+         </InstanceList>
+       </Database>     </ReturnValue>
+    </Convert>
+  </ConvertToRAC></RConfig>
+
+=================================================================================THE END===============================================================================
