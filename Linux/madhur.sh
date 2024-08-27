@@ -35,13 +35,13 @@ This is a random file.
 cat < random 
 < is optional, its default 
 
-to mearge
+to merge
 cat random test > sample
 cat sample 
 
 6
-touch forrest_gump
-mv forrest_gump the_green_mile
+touch forest_gump
+mv forest_gump the_green_mile
 
 rm the_green_mile
 
