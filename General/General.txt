@@ -1,0 +1,17 @@
+Oracle Database has 3 startup sequence
+======================================
+startup nomount; 
+- In this nomount stage it will read spfile if not pfile if not then it will throw an
+error message stating unable to find parameter file.
+
+startup mount; 
+alter database mount;
+- This mount stage will come after nomount, In this mount stage it will read 
+controlfile. In case if no controlfile found then it will throw an error message 
+stating unable to find the controlfiles.
+
+startup; or startup open; 
+alter database open;
+- This open stage will come after mount, In this open stage it will read datafile 
+and online redo log files. In case if no datafile/redo log files found then it will 
+throw an error message stating unable to find the datafiles/redo log files. 
