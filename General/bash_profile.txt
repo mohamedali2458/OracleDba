@@ -1,0 +1,37 @@
+Every time DBA a login to server as oracle user then each time he must set the environmental variables and connect to database. 
+
+su - oracle
+. oraenv >>> ORACLE_SID
+
+env |grep ORA
+sqlplus / as sysdba 
+
+To avoid setting environmental variables on each time we can export these environmental variables into .bash_profile files for oracle users as below. 
+
+export ORACLE_SID=DEVDB
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=$ORACLE_BASE/product/19.0.0.0/dbhome_1
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib
+export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+export PATH=$PATH:$ORACLE_HOME/bin
+
+[oracle@oraclelab1 ~]$ cat .bash_profile
+# .bash_profile
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+# User specific environment and startup programs
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+export PATH
+export ORACLE_SID=DEVDB
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=$ORACLE_BASE/product/19.0.0.0/dbhome_1
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib
+export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+export PATH=$PATH:$ORACLE_HOME/bin
+[oracle@oraclelab1 ~]$
+
+In Linux / Unix environment variables need to be set on .bash_profile
+In AIX/HP_UX environment variables need to be set on .profile
+In Windows its environment variables need to set these variables.
