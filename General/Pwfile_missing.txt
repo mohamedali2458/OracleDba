@@ -1,0 +1,302 @@
+SPFILE & PASSWORD file missing from ASM diskgroup in RAC Database
+=================================================================
+1. spfile missing from ASM DiskGroup for RAC database 
+2. passwordfile missing from ASM DiskGroup for RAC database 
+
+[oraprod@node2 ~]$ srvctl status database -d ORAPROD
+Instance ORAPROD1 is running on node node1
+Instance ORAPROD2 is not running on node node2
+
+[oraprod@node2 ~]$
+[oraprod@node2 ~]$ srvctl start instance -i ORAPROD2 -d ORAPROD
+PRCR-1013 : Failed to start resource ora.oraprod.db
+PRCR-1064 : Failed to start resource ora.oraprod.db on node node2
+CRS-5017: The resource action "ora.oraprod.db start" encountered the following error:
+ORA-01078: failure in processing system parameters
+LRM-00109: could not open parameter file '/u01/app/oraprod/product/12.2.0.1/dbhome_1/dbs/initORAPROD2.ora'
+. For details refer to "(:CLSN00107:)" in "/u01/app/oracle/diag/crs/node2/crs/trace/crsd_oraagent_oraprod.trc".
+
+CRS-2674: Start of 'ora.oraprod.db' on 'node2' failed
+[oraprod@node2 ~]$
+
+[oraprod@node2 ~]$ srvctl config database -d ORAPROD
+Database unique name: ORAPROD
+Database name:
+Oracle home: /u01/app/oraprod/product/12.2.0.1/dbhome_1
+Oracle user: oraprod
+Spfile:
+Password file:
+Domain:
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Server pools:
+Disk Groups: DATA,RECO
+Mount point paths:
+Services:
+Type: RAC
+Start concurrency:
+Stop concurrency:
+OSDBA group: oinstall
+OSOPER group: oinstall
+Database instances: ORAPROD1,ORAPROD2
+Configured nodes: node1,node2
+CSS critical: no
+CPU count: 0
+Memory target: 0
+Maximum memory: 0
+Default network number for database services:
+Database is administrator managed
+
+[oraprod@node2 ~]$
+
+[oraprod@node1 ~]$ . oraenv
+ORACLE_SID = [ORAPROD1] ?
+The Oracle base has been changed from /home/oracle to /u01/app/oraprod
+
+[oraprod@node1 ~]$ srvctl config database -d ORAPROD
+Database unique name: ORAPROD
+Database name:
+Oracle home: /u01/app/oraprod/product/12.2.0.1/dbhome_1
+Oracle user: oraprod
+Spfile:
+Password file:
+Domain:
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Server pools:
+Disk Groups: DATA,RECO
+Mount point paths:
+Services:
+Type: RAC
+Start concurrency:
+Stop concurrency:
+OSDBA group: oinstall
+OSOPER group: oinstall
+Database instances: ORAPROD1,ORAPROD2
+Configured nodes: node1,node2
+CSS critical: no
+CPU count: 0
+Memory target: 0
+Maximum memory: 0
+Default network number for database services:
+Database is administrator managed
+
+[oraprod@node1 ~]$ sqlplus / as sysdba
+SQL*Plus: Release 12.2.0.1.0 Production on Wed Mar 27 00:17:20 2024
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL> show parameter spfile
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string
+
+SQL>
+SQL> create spfile='+DATA/ORAPROD/PARAMETERFILE/spfileORAPROD.ora' from pfile;
+File created.
+
+SQL> exit
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+[oraprod@node1 ~]$ srvctl modify database -d ORAPROD -spfile +DATA/ORAPROD/PARAMETERFILE/spfileORAPROD.ora
+
+[oraprod@node1 ~]$ srvctl config database -d ORAPROD
+Database unique name: ORAPROD
+Database name:
+Oracle home: /u01/app/oraprod/product/12.2.0.1/dbhome_1
+Oracle user: oraprod
+Spfile: +DATA/ORAPROD/PARAMETERFILE/spfileORAPROD.ora
+Password file:
+Domain:
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Server pools:
+Disk Groups: DATA,RECO
+Mount point paths:
+Services:
+Type: RAC
+Start concurrency:
+Stop concurrency:
+OSDBA group: oinstall
+OSOPER group: oinstall
+Database instances: ORAPROD1,ORAPROD2
+Configured nodes: node1,node2
+CSS critical: no
+CPU count: 0
+Memory target: 0
+Maximum memory: 0
+Default network number for database services:
+Database is administrator managed
+[oraprod@node1 ~]$
+
+Option 1: use orapwd utility to create password file 
+[oraprod@node1 admin]$ orapwd file='+DATA/CDBDB/PASSWORD/pwdORAPROD' ENTRIES=5 DBUNIQUENAME='ORAPROD'
+Enter password for SYS:
+
+[oraprod@node1 admin]$ sqlplus sys/Mallik123#@ORAPROD as sysdba
+SQL*Plus: Release 12.2.0.1.0 Production on Wed Mar 27 00:24:55 2024
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL> Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+[oraprod@node1 admin]$ srvctl config database -d ORAPROD
+Database unique name: ORAPROD
+Database name:
+Oracle home: /u01/app/oraprod/product/12.2.0.1/dbhome_1
+Oracle user: oraprod
+Spfile: +DATA/ORAPROD/PARAMETERFILE/spfileORAPROD.ora
+Password file: +DATA/CDBDB/PASSWORD/pwdoraprod
+Domain:
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Server pools:
+Disk Groups: DATA,RECO
+Mount point paths:
+Services:
+Type: RAC
+Start concurrency:
+Stop concurrency:
+OSDBA group: oinstall
+OSOPER group: oinstall
+Database instances: ORAPROD1,ORAPROD2
+Configured nodes: node1,node2
+CSS critical: no
+CPU count: 0
+Memory target: 0
+Maximum memory: 0
+Default network number for database services:
+Database is administrator managed
+[oraprod@node1 admin]$
+
+[oraprod@node1 admin]$ srvctl stop database -d ORAPROD
+[oraprod@node1 admin]$ srvctl start database -d ORAPROD
+
+
+[oraprod@node1 admin]$ srvctl status database -d ORAPROD
+Instance ORAPROD1 is running on node node1
+Instance ORAPROD2 is running on node node2
+[oraprod@node1 admin]$
+[oraprod@node1 admin]$ sqlplus / as sysdba
+
+SQL*Plus: Release 12.2.0.1.0 Production on Wed Mar 27 00:37:03 2024
+
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL>
+SQL> show parameter spfile
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      +DATA/ORAPROD/PARAMETERFILE/sp
+                                                 fileoraprod.ora
+SQL>
+SQL> exit
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+[oraprod@node1 admin]$
+
+
+
+Option 2: use pwcreate utility to create password file 
+
+[oraprod@node1 admin]$ . oraenv
+ORACLE_SID = [ORAPROD1] ? +ASM1
+The Oracle base has been changed from /u01/app/oraprod to /u01/app/oracle
+[oraprod@node1 admin]$
+
+[oraprod@node1 admin]$ asmcmd -p
+ASMCMD [+] > pwcreate --dbuniquename ORAPROD +DATA/CDBDB/PASSWORD/pwdoraprod oraprod
+ASMCMD-9465: WARNING: passing password on command line is deprecated
+
+OPW-00010: Could not create the password file. A password file with this name is present.
+
+ASMCMD-9454: could not create new password file
+ASMCMD [+] > rm +DATA/CDBDB/PASSWORD/pwdoraprod
+ASMCMD [+] > pwcreate --dbuniquename ORAPROD +DATA/CDBDB/PASSWORD/pwdoraprod Mallik123#
+ASMCMD-9465: WARNING: passing password on command line is deprecated
+OPW-00010: Could not create the password file. This resource has a Password File.
+
+ASMCMD-9454: could not create new password file
+ASMCMD [+] >
+ASMCMD [+] > ls +DATA/CDBDB/PASSWORD/pwdoraprod
+ASMCMD-8002: entry 'pwdoraprod' does not exist in directory '+DATA/CDBDB/PASSWORD/'
+ASMCMD [+] > cd +DATA/CDBDB/PASSWORD
+ASMCMD [+DATA/CDBDB/PASSWORD] > ls -l
+Type      Redund  Striped  Time         Sys  Name
+PASSWORD  UNPROT  COARSE   MAR 19 2021  Y    pwdcdbdb.289.1067560793
+ASMCMD [+DATA/CDBDB/PASSWORD] > exit
+[oraprod@node1 admin]$
+
+The reason why pwcreate utility is unable to create was in srvctl configuration 
+already passwordfile is configured, We have to remove that and retry pwcreate 
+command as shown below
+
+[oraprod@node2 admin]$ srvctl config database -d ORAPROD |grep Password
+Password file: +DATA/CDBDB/PASSWORD/pwdoraprod
+
+[oraprod@node2 admin]$ srvctl modify database -d ORAPROD -pwfile
+[oraprod@node2 admin]$
+[oraprod@node2 admin]$ srvctl config database -d ORAPROD |grep Password
+Password file:
+[oraprod@node2 admin]$
+
+[oraprod@node1 admin]$ asmcmd -p
+ASMCMD [+] > pwcreate --dbuniquename ORAPROD +DATA/ORAPROD/PASSWORD/pwdoraprod Mallik123#
+ASMCMD-9465: WARNING: passing password on command line is deprecated
+ASMCMD [+] > exit
+[oraprod@node1 admin]$
+
+[oraprod@node2 admin]$ srvctl config database -d ORAPROD
+Database unique name: ORAPROD
+Database name:
+Oracle home: /u01/app/oraprod/product/12.2.0.1/dbhome_1
+Oracle user: oraprod
+Spfile: +DATA/ORAPROD/PARAMETERFILE/spfileORAPROD.ora
+Password file: +DATA/ORAPROD/PASSWORD/pwdoraprod
+Domain:
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Server pools:
+Disk Groups: DATA,RECO
+Mount point paths:
+Services:
+Type: RAC
+Start concurrency:
+Stop concurrency:
+OSDBA group: oinstall
+OSOPER group: oinstall
+Database instances: ORAPROD1,ORAPROD2
+Configured nodes: node1,node2
+CSS critical: no
+CPU count: 0
+Memory target: 0
+Maximum memory: 0
+Default network number for database services:
+Database is administrator managed
+
+[oraprod@node2 admin]$
+[oraprod@node2 admin]$ sqlplus sys/Mallik123#@ORAPROD as sysdba
+SQL*Plus: Release 12.2.0.1.0 Production on Wed Mar 27 00:46:45 2024
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL> exit
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+[oraprod@node2 admin]$
+
+Upcoming Batch Schedule link:
+https://mallik034.blogspot.com/p/upcoming-batch-schedule.html
