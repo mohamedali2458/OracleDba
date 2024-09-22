@@ -1,0 +1,25 @@
+How to identify the RAC database?
+================================
+Once we connect to RAC cluster how DBA can identify whether the database is RAC or standalone?
+- There are many ways to identify
+
+1. ps -ef|grep smon
+  rac db ends with prefix 1,2,3 
+
+  or just set env to +ASM1
+  olsnodes
+  node1
+  node2
+
+2. using srvctl commands 
+srvctl config database -d DEVDB 
+srvctl status database -d DEVDB
+
+3. show parameter cluster_database 
+
+4. using gv$ views  
+SELECT inst_id, dbid, name FROM gv$database;
+select INST_ID,INSTANCE_NAME,HOST_NAME from gv$instance;
+
+5. using crsctl commands
+crsctl stat res -t
