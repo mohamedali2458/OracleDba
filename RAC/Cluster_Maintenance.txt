@@ -1,0 +1,61 @@
+RAC Cluster Maintenance?
+========================
+How to bounce RAC cluster?
+- using crsctl 
+
+CRSCTL = Cluster Ready Service Control Utility
+
+Why we need to bounce RAC cluster? 
+- We bound RAC cluster for many reasons like patching, any planned maintance, for any configuration changes, for any cluster administration. etc...
+
+What is the impact on bouncing the cluster? 
+- Bouncing the cluster will impact the running ASM instacne, Database Inatance, Services. 
+
+Which user is autherised to bounce the cluster? 
+- Oracle Databases owner does not have previlages to bounce clusters services 
+- GI/ASM owner does not have previlages to bounce clusters services 
+- Only root user can perform this activity 
+- IN realtime world all the DBA will be having sudo su access to root user so that DBA can login to root and perfrom this activity
+
+Cluster Status Check and Cluster resource/deamons:
+==================================================
+crsctl check cluster
+crsctl check cluster -all (From any nodes)
+crsctl check cluster -n hostnode1
+crsctl check cluster -n hostnode2
+
+crsctl check crs (From all the nodes)
+crsctl check css
+crsctl check evm
+crsctl check ctss
+crsctl check has 
+
+crsctl stat res -t  (here -t is for tabular format, we can give without it but format is not readable)
+crsctl stat res -t -init (cluster resource details from same node)
+ps -ef|grep d.bin
+
+Note: Start stop are by root user. or by sudo to root user. check and status can be from any user.
+
+How to Bounce the cluster services on a single node?
+=====================================================
+crsctl stop crs -f 
+crsclt stop crs 
+
+crsctl start crs 
+crsctl check crs
+
+crsctl stat res -t -init
+
+How to Bounce the cluster services on a all cluster nodes?
+==========================================================
+crsctl stop cluster -all (From any nodes)
+crsctl start cluster -all (From any nodes)
+
+crsctl stop crs -f (From all the nodes)
+crsclt stop crs (From all the nodes)
+
+If ctssd not starting, 
+locate ctssd.trc
+/u01/app/oracle/diag/crs/hostnode1/crs/trace/octssd.trc
+vi /u01/app/oracle/diag/crs/hostnode1/crs/trace/octssd.trc
+go to end
