@@ -13,14 +13,13 @@ select tablespace_name, contents, status from dba_tablespaces order by 2;
 
 
 To check tablespace information
-
+===============================
 select tablespace_name from dba_tablespaces;
 
-select tablespace_name, contents, status 
-from dba_tablespaces order by 2;
+select tablespace_name, contents, status from dba_tablespaces order by 2;
 
 Creating Tablespace
-
+===================
 Create tablespace tbs1 
 datafile '/u01/prod/tbs01.dbf'
 size 10m
@@ -29,7 +28,7 @@ maxsize 100m
 default storage (next 10m);
 
 Adding a datafile to a tablespace
-
+=================================
 column tablespace_name format a20
 column file_name format a30
 select tablespace_name, file_name from dba_data_files order by 1;
@@ -40,7 +39,7 @@ size 100m
 autoextend on;
 
 Deleting a datafile from a tablespace
-
+=====================================
 alter tablespace tbs1
 drop datafile '/u01/prod/tbs02.dbf';
 
@@ -52,7 +51,7 @@ alter tablespace tbs1
 drop datafile 7;
 
 Droping a tablespace
-
+====================
 drop tablespace tbs1;
 (it will drop tablespace logically at database level)
 
@@ -60,15 +59,16 @@ drop tablespace tbs1 including contents and datafiles;
 (it will drop tablespace logically(database level) and physically(o/s level))
 
 Reusing orphan datafile
-	
+=======================
 create tablespace tbs2
 datafile '/u01/prod/tbs02.dbf'
 reuse;
 
 Resize a datafile
-
-select file_id, file_name, bytes/1024/1024 mb 
-from dba_data_files order by 1;
+=================
+select file_id, file_name, bytes/1024/1024/1024 "Size_in_Gb" 
+from dba_data_files 
+order by 1;
 
 alter database datafile '/u01/prod/tbs02.dbf' resize 50m;
 
@@ -76,29 +76,32 @@ alter database datafile 5 resize 50m;
 
 
 Making a tablespace as read only
-
-Alter tablespace tbs1 read only;
-Select tablespace_name, status from dba_tablespaces;
-Alter tablespace tbs1 read write;
+================================
+alter tablespace tbs1 read only;
+select tablespace_name, status from dba_tablespaces;
+alter tablespace tbs1 read write;
 
 Making a tablespace offline
-Alter tablespace tbs1 offline;
+===========================
+alter tablespace tbs1 offline;
 (users cannot access this tablespace in this state)
-Alter tablespace tbs1 online;
+alter tablespace tbs1 online;
 
 Renaming a tablespace
-Alter tablespace tbs1 rename to tbs01;
+=====================
+alter tablespace tbs1 rename to tbs01;
 
 Renaming a datafile in tablespace
+=================================
 Steps:
 1. make tablespace offline
 	alter tablespace tbs1 offline;
-2. atos level rename the datafile
+2. at OS level rename the datafile
 	$cd /u01/prod
 	$mv tbs01.dbf tbs02.dbf
-3. Update the controlfile for this datafile
-alter database rename file '/u01/prod/tbs01.dbf' to'/u01/prod/tbs02.dbf';
-4. Online the tablespace
+3. Update the controlfile of this datafile
+	alter database rename file '/u01/prod/tbs01.dbf' to '/u01/prod/tbs02.dbf';
+4. Bring the tablespace online
 	alter tablespace tbs1 online;
 	select tablespace_name, file_name from dba_data_files;
 
@@ -110,49 +113,51 @@ alter database rename file '/u01/prod/tbs01.dbf' to'/u01/prod/tbs02.dbf';
 
 
 Relocating a datafile in tablespace
+===================================
 Steps:
 1. make tablespace offline
 	alter tablespace tbs1 offline;
-2. At os level rename or move the datafile
+2. At OS level rename or move the datafile
 	$mv /u01/prod/tbs01.dbf /u02/prod/tbs01.dbf
 3. update the controlfile for this datafile
-	alter database rename file '/u01/prod/tbs01.dbf' to
-	'/u02/prod/tbs01.dbf';
+	alter database rename file '/u01/prod/tbs01.dbf' to '/u02/prod/tbs01.dbf';
 4. online the tablespace
 	alter tablespace tbs1 online;
 	select tablespace_name, file_name from dba_data_files;
 
 Moving table from one tablespace to another tablespace
+======================================================
 alter table emp move tablespace tbs1;
 
 Moving index from one tablespace to another tablespace
+======================================================
 alter index emp_indx rebuild tablespace tbs1;
 
 To check database size
-select sum(bytes)/1024/1024 "Size in MB" from dba_data_files;
+======================
+select sum(bytes)/1024/1024/1024 "Size in GB" from dba_data_files;
 
 To check free space in a database
-select sum(bytes)/1024/1024 "free space" from dba_free_space;
+select sum(bytes)/1024/1024/1024 "free space GB" from dba_free_space;
 
 
 
 
 Important Views
+===============
 v$tablespace
+
 This view displays tablespace information from the control file.
-Column	Datatype	Description
-TS#	NUMBER	Tablespace number
-NAME	VARCHAR2(30)	Tablespace name
-INCLUDED_IN_DATABASE_BACKUP	VARCHAR2(3)	Indicates whether the tablespace is included in full database backups using the BACKUP DATABASE RMAN command (YES) or not (NO). NOonly if the CONFIGURE EXCLUDE RMAN command was used for this tablespace.
-BIGFILE	VARCHAR2(3)	Indicates whether the tablespace is a bigfile tablespace (YES) or not (NO)
-FLASHBACK_ON	VARCHAR2(3)	Indicates whether the tablespace participates in FLASHBACK DATABASE operations (YES) or not (NO)
-ENCRYPT_IN_BACKUP	VARCHAR2(3)	Possible values are:
-•	ON - encryption is turned ON at tablespace level
-•	OFF - encryption is turned OFF at tablespace level
-•	NULL - encryption is neither explicitly turned on or off at tablespace level (default or when CLEARED).
-
-
-
+Column				Datatype	Description
+TS#				NUMBER		Tablespace number
+NAME				VARCHAR2(30)	Tablespace name
+INCLUDED_IN_DATABASE_BACKUP	VARCHAR2(3)	Indicates whether the tablespace is included in full database backups using the BACKUP DATABASE RMAN command (YES) or not (NO). NO only if the CONFIGURE EXCLUDE RMAN command was used for this tablespace.
+BIGFILE				VARCHAR2(3)	Indicates whether the tablespace is a bigfile tablespace (YES) or not (NO)
+FLASHBACK_ON			VARCHAR2(3)	Indicates whether the tablespace participates in FLASHBACK DATABASE operations (YES) or not (NO)
+ENCRYPT_IN_BACKUP		VARCHAR2(3)	Possible values are:
+						• ON - encryption is turned ON at tablespace level
+						• OFF - encryption is turned OFF at tablespace level
+						• NULL - encryption is neither explicitly turned on or off at tablespace level (default or when CLEARED).
 
 
 
@@ -356,19 +361,21 @@ BUFFER_POOL	VARCHAR2(7)	 	Default buffer pool for the object
 
 
 
+	
 TABLESPACE MANAGEMENT - 2
-Select tablespace_name,segment_space_management,extent_management
+=========================
+select tablespace_name, segment_space_management, extent_management
 From dba_tablespaces
 order by segment_space_management;
 
 Creating the locally managed tablespace (LMT) with uniform extent size
-Create tablespace tbs1
+create tablespace tbs1
 datafile '/u01/prod/tbs01.dbf' 
 size 50m
 EXTENT MANAGEMENT LOCAL UNIFORM SIZE 100k;
 
 Tablespace with ASSM (Automatic Segment Space Management)
-Create tablespace tbs1
+create tablespace tbs1
 datafile '/u01/prod/tbs01.dbf' 
 size 50m
 EXTENT MANAGEMENT LOCAL UNIFORM SIZE 100k
@@ -379,21 +386,26 @@ from dba_tablespaces
 order by 2;
 
 Creating bigfile tablespace
-Create bigfile tablespace bigtbs
+===========================
+create bigfile tablespace bigtbs
 datafile '/u01/prod/bigtbs01.dbf'
 size 3g;
-Select tablespace_name, bigfile from dba_tablespaces;
+
+select tablespace_name, bigfile from dba_tablespaces;
 
 Creating a temporary tablespace
+===============================
 create temporary tablespace temp2
 tempfile '/u01/prod/temp02.dbf'
 size 50m
 autoextend on;
 
 Creating default temporary tablespace of database
+=================================================
 alter database default temporary tablespace temp2;
 
 Creating temporary tablespace group
+===================================
 create temporary tablespace temp1
 tempfile '/u01/prod/temp01.dbf'
 size 50m
@@ -402,13 +414,16 @@ TABLESPACE GROUP tempgrp;
 select * from dba_tablespace_groups;
 
 Adding/Removing tablespace from a group
-Alter tablespace temp2 tablespace group tmpgrp;
-Alter tablespace temp3 tablespace group '';
+=======================================
+alter tablespace temp2 tablespace group tmpgrp;
+alter tablespace temp3 tablespace group '';
 
 Changing member of a tablespace group
-Alter tablespace temp3 tablespace group tmpgrp2;
+=====================================
+alter tablespace temp3 tablespace group tmpgrp2;
 
 Assigning a tablespace group as the default temporary tablespace
+================================================================
 alter database default temporary tablespace tmpgrp;
 
 
@@ -469,6 +484,7 @@ TABLESPACE_NAME	VARCHAR2(30)	NOT NULL	Name of the temporary tablespace
 
 
 Creating UNDO Tablespaces
+=========================
 create undo tablespace undotbs_02 
 datafile '/u01/prod/undo0201.dbf'
 size 20m
@@ -480,7 +496,8 @@ size 10m
 autoextend on;
 
 Switching Undo Tablespaces
-alter system set undo_tablespace = undotbs_02 scope=both;
+==========================
+alter system set undo_tablespace = undotbs_02 scope = both;
 
 Views for UNDO tablespace
 v$undostat
@@ -620,13 +637,14 @@ STATUS	VARCHAR2(9)	 	Transaction Status of the undo in the extent:
 
 
 View for Sysaux tablespace
+==========================
 v$sysaux_occupants
 V$SYSAUX_OCCUPANTS displays SYSAUX tablespace occupant information.
-Column	Datatype	Description
-OCCUPANT_NAME	VARCHAR2(64)	Occupant name
-OCCUPANT_DESC	VARCHAR2(64)	Occupant description
-SCHEMA_NAME	VARCHAR2(64)	Schema name for the occupant
-MOVE_PROCEDURE	VARCHAR2(64)	Name of the move procedure; null if not applicable
+Column			Datatype	Description
+OCCUPANT_NAME		VARCHAR2(64)	Occupant name
+OCCUPANT_DESC		VARCHAR2(64)	Occupant description
+SCHEMA_NAME		VARCHAR2(64)	Schema name for the occupant
+MOVE_PROCEDURE		VARCHAR2(64)	Name of the move procedure; null if not applicable
 MOVE_PROCEDURE_DESC	VARCHAR2(64)	Description of the move procedure
 SPACE_USAGE_KBYTES	NUMBER	Current space usage of the occupant (in KB)
 
