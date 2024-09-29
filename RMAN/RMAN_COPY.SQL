@@ -15,22 +15,23 @@ the datafile copy.  Thus, a switch can be a fast operation.  Obviously, the DBA 
 where he creates such copies if he intends to SWITCH anytime later  (he wouldn't keep a datafile 
 copy on a non-protected [RAID or ASM] storage target).
 
-SQL> select file_id, file_name 
-  2  from dba_data_files
-  3  where tablespace_name = 'ADD_TBS';
+SQL> 
+select file_id, file_name 
+from dba_data_files
+where tablespace_name = 'ADD_TBS';
 
-SQL> alter tablespace add_tbs
-  2  add datafile '/oradata/orcl/add_tbs_02.dbf' size 100M;
+alter tablespace add_tbs
+add datafile '/oradata/orcl/add_tbs_02.dbf' size 100M;
 
-SQL> create table hemant.add_table tablespace add_tbs as select * from dba_source;
+create table scott.add_table tablespace add_tbs as select * from dba_source;
 
-SQL> select file_id, count(*)
-  2  from dba_Extents
-  3  where owner = 'HEMANT'
-  4  and segment_name = 'ADD_TABLE'
-  5  group by file_id
-  6  order by 1
-  7  /
+select file_id, count(*)
+from dba_Extents
+where owner = 'SCOTT'
+and segment_name = 'ADD_TABLE'
+group by file_id
+order by file_id
+/
 
 RMAN> backup as copy datafile 14 format '/tmp/ADDTBS01.DBF';
 
@@ -53,7 +54,7 @@ What happens when I lose the datafiles ?
 
 SQL> !rm /oradata/orcl/add_tbs_0[1-2].dbf
 
-SQL> select count(*) from hemant.add_table;
+SQL> select count(*) from  scott.add_table;
 
   COUNT(*)
 ----------
@@ -63,7 +64,7 @@ SQL> alter system checkpoint;
 
 System altered.
 
-SQL> select count(*) from hemant.add_table;
+SQL> select count(*) from scott.add_table;
 
   COUNT(*)
 ----------
@@ -73,7 +74,7 @@ SQL> alter system flush buffer_cache;
 
 System altered.
 
-SQL> select count(*) from hemant.add_table;
+SQL> select count(*) from scott.add_table;
 
   COUNT(*)
 ----------
@@ -97,12 +98,13 @@ RMAN> restore datafile 14;
 
 RMAN> switch datafile 15 to copy;
 
-I actually restored datafile 14 to the target location but only switched datafile 15 to the copy. This is clearly evidenced by :
+I actually restored datafile 14 to the target location but only switched datafile 15 to the copy. This is clearly 
+evidenced by :
 
-SQL> select file_id, file_name  
-  2  from dba_data_files
-  3  where tablespace_name = 'ADD_TBS';
-
+SQL> 
+select file_id, file_name  
+from dba_data_files
+where tablespace_name = 'ADD_TBS';
    FILE_ID FILE_NAME
 ---------- ----------------------------------------
         14 /oradata/orcl/add_tbs_01.dbf
@@ -112,7 +114,6 @@ SQL>
 I can now simply recover the tablespace.
 
 RMAN> recover tablespace add_tbs;
-
 Starting recover at 03-JUN-12
 using channel ORA_DISK_1
 
@@ -161,15 +162,10 @@ RMAN> recover tablespace add_tbs;
                                                                      
 RMAN> sql 'alter tablespace add_tbs online';
 
-SQL> select file_id, file_name
-  2  from dba_data_files
-  3  where tablespace_name = 'ADD_TBS';
-
+select file_id, file_name
+from dba_data_files
+where tablespace_name = 'ADD_TBS';
    FILE_ID FILE_NAME
 ---------- ----------------------------------------
         14 /oradata/orcl/add_tbs_01.dbf
         15 /oradata/orcl/add_tbs_02.dbf
-
-                                                                     
-                                                                     
-                                                                     
