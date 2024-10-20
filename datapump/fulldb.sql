@@ -39,3 +39,6 @@ order by 1,2;
 
 attach export job
 expdp \'/ as sysdba\' attach=SYS_EXPORT_SCHEMA_02
+Export>help
+Export>statuss
+
