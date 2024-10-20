@@ -1,6 +1,7 @@
 Oracle Data Guard Physical Standby Configuration With Broker
 
-We assume that primary server has a database (SID=ip7) up and running. The standby database has Oracle 12cR2 installation done in the same oracle home location as primary
+We assume that primary server has a database (SID=ip7) up and running. The standby 
+database has Oracle 12cR2 installation done in the same oracle home location as primary
 
 Physical Standby With Broker Overview
 
