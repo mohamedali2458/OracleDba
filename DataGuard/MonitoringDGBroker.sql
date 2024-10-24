@@ -31,10 +31,10 @@ DGMGRL> show database verbose stdby;
 select group#, member from v$logfile where type='STANDBY';
 
 10-Monitoring Redo Apply by Querying V$MANAGED_STANDBY
-select process, status, thread#, sequence#, block#, blocks from v$managed_standby;
+select process, status, thread#, sequence#, block#, blocks from v$managed_standby where process like 'MRP%';
 
 11-Identifying Destination Settings
-select dest_id, valid_type, valid_role, valid_now from v$archive_dest;
+select dest_id, valid_type, valid_role, valid_now from v$archive_dest order by dest_id;
 
 12) Evaluating Redo Data by Querying V$DATAGUARD_STATS
 select name, value, time_computed from v$dataguard_stats;
@@ -43,4 +43,3 @@ select name, value, time_computed from v$dataguard_stats;
 select timestamp, facility, dest_id, message_num, error_code, message
 from v$dataguard_status
 order by timestamp;
-
