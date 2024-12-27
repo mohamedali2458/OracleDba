@@ -1,0 +1,16 @@
+rman target /
+show all;
+report schema;
+
+--open a file in notepad
+show all;
+report schema;
+--save as rmancmd.txt
+type rmancmd.txt
+
+rman target /
+RMAN> @rmancmd.txt
+
+--RMAN Batch mode
+rman target / cmdfile rmancmd.txt
+
