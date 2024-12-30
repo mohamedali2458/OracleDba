@@ -1,4 +1,5 @@
 About Oracle Statistics
+=======================
 1. Introduction
 2. About *_TAB_MODIFICATIONS
 3. Identify STALE STATS
@@ -24,7 +25,8 @@ System
 Dictionary
 Memory structure (X$)
 
-Statistics on a table are considered stale when more than STALE_PERCENT (default 10%) of the rows are changed (total number of inserts, deletes, updates) in the table. 
+Statistics on a table are considered stale when more than STALE_PERCENT (default 10%) 
+of the rows are changed (total number of inserts, deletes, updates) in the table. 
 
 Oracle monitors the DML activity for all tables and records it in the SGA.
   
@@ -67,13 +69,14 @@ exec dbms_stats.gather_table_stats('owner', 'table_name');
 
 About *_TAB_MODIFICATIONS
 
-When querying *_TAB_MODIFICATIONS view you should ensure that you run DBMS_STATS.FLUSH_DATABASE_MONITORING_INFO before doing so in order to obtain accurate results.
+When querying *_TAB_MODIFICATIONS view you should ensure that you run DBMS_STATS.FLUSH_DATABASE_MONITORING_INFO 
+before doing so in order to obtain accurate results.
 
 Before
 
 --  exec DBMS_STATS.FLUSH_DATABASE_MONITORING_INFO; -- 
 
-SQL> select table_name, inserts, updates, deletes from dba_tab_modifications where table_name='BIG_TABLE';
+SQL> select table_name, inserts, updates, deletes from dba_tab_modifications where table_name='TEST';
 
 no rows selected
 
@@ -138,7 +141,7 @@ SCHEMA level
 Gathering statistics for all objects in a schema, cascade will include indexes. If not used Oracle will determine whether to collect it or not.
 
 exec DBMS_STATS.FLUSH_DATABASE_MONITORING_INFO;
-select OWNER,TABLE_NAME,LAST_ANALYZED,STALE_STATS from DBA_TAB_STATISTICS where STALE_STATS='YES' and OWNER='&owner;
+select OWNER,TABLE_NAME,LAST_ANALYZED,STALE_STATS from DBA_TAB_STATISTICS where STALE_STATS='YES' and OWNER='&owner';
 
 set timing on
 exec dbms_stats.gather_schema_stats(ownname=>'&schema_name', CASCADE=>TRUE,ESTIMATE_PERCENT=>dbms_stats.auto_sample_size,degree =>4);
@@ -184,7 +187,10 @@ There are two types of system statistics (NOWORKLOAD statistics & WORKLOAD stati
 
 NOWORKLOAD statistics:
 
-This will simulates a workload -not the real one but a simulation- and will not collect full statistics, it's less accurate than "WORKLOAD statistics" but if you can't capture the statistics during a typical workload you can use noworkload statistics.
+This will simulates a workload -not the real one but a simulation- and will not collect full statistics, 
+it's less accurate than "WORKLOAD statistics" but if you can't capture the statistics during a typical 
+workload you can use noworkload statistics.
+
 To gather noworkload statistics:
 SQL> execute dbms_stats.gather_system_stats(); 
 
@@ -217,7 +223,7 @@ mbrc:        The average multiblock read count in blocks.
 Notes:
 -When gathering NOWORKLOAD statistics it will gather (cpuspeedNW, ioseektim, iotfrspeed) system statistics only.
 -Above values can be modified manually using DBMS_STATS.SET_SYSTEM_STATS procedure.
--According to Oracle, collecting workload statistics doesn't impose an additional overhead on your system.
+-According to Oracle, collecting workload statistics doesnt impose an additional overhead on your system.
 
   
 Delete system statistics:
@@ -271,7 +277,7 @@ SQL> SELECT stattype_locked FROM dba_tab_statistics WHERE table_name='RAJ' and o
 
 STATT
 -----
-	<----it's unlocked, It will allow to gather stats on this table
+	<----its unlocked, It will allow to gather stats on this table
 
 SQL> exec dbms_stats.gather_table_stats('sh', 'raj');
 PL/SQL procedure successfully completed.
