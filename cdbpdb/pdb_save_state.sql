@@ -27,7 +27,10 @@ select a.name,b.state from v$pdbs a, dba_pdb_saved_states b
 where a.con_id = b.con_id;
 
 show pdbs;
-select con_name, instance_name, state from cdb_pdb_saved_states;
+set linesize 300
+col con_name for a30
+col instance_name for a30
+select con_id,con_name, instance_name, state from cdb_pdb_saved_states;
 
 alter pluggable database pdb1 save state;
 
