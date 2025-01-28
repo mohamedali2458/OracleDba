@@ -30,7 +30,7 @@ show pdbs;
 set linesize 300
 col con_name for a30
 col instance_name for a30
-select con_id,con_name, instance_name, state from cdb_pdb_saved_states;
+select con_id,con_name, instance_name, state from cdb_pdb_saved_states order by con_id;
 
 alter pluggable database pdb1 save state;
 
