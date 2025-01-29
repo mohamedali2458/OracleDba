@@ -34,3 +34,44 @@ select owner, JOB_NAME, JOB_ACTION, START_DATE, REPEAT_INTERVAL, STATE, LAST_RUN
 from dba_scheduler_jobs 
 where job_name='MVIEW_REFRESH';
 
+need to test
+============
+See if this helps!!
+WITH interval_to_minutes AS (
+    SELECT 
+        mvview_name,
+        refresh_type,
+        interval,
+        CASE 
+            WHEN interval LIKE '%DAYS%' 
+                THEN TO_NUMBER(REGEXP_SUBSTR(interval, '\d+')) * 24 * 60
+            WHEN interval LIKE '%HOURS%' 
+                THEN TO_NUMBER(REGEXP_SUBSTR(interval, '\d+')) * 60
+            WHEN interval LIKE '%MINUTES%' 
+                THEN TO_NUMBER(REGEXP_SUBSTR(interval, '\d+'))
+            WHEN interval LIKE '%SYSDATE%' 
+                THEN 24 * 60  -- Assuming daily refresh for SYSDATE
+            ELSE NULL
+        END AS refresh_freq_in_minutes
+    FROM cdb_snapshots
+)
+SELECT 
+    mv.mvview_name,
+    mv.refresh_type,
+    mv.interval AS original_interval,
+    mv.refresh_freq_in_minutes,
+    CASE 
+        WHEN refresh_freq_in_minutes IS NOT NULL THEN
+            CASE 
+                WHEN refresh_freq_in_minutes >= 24*60 
+                    THEN ROUND(refresh_freq_in_minutes/(24*60), 1) || ' days'
+                WHEN refresh_freq_in_minutes >= 60 
+                    THEN ROUND(refresh_freq_in_minutes/60, 1) || ' hours'
+                ELSE refresh_freq_in_minutes || ' minutes'
+            END
+        ELSE 'Unknown interval format'
+    END AS readable_refresh_interval
+FROM interval_to_minutes mv
+ORDER BY 
+    COALESCE(refresh_freq_in_minutes, 999999),
+    mvview_name;
