@@ -1,0 +1,89 @@
+add extract load1.sourceistable
+info all
+delete extract load1
+
+source 
+add extract load1.sourceistable
+info all 
+we dont see the process, 
+info load1 
+info all tasks
+
+edit param load1
+EXTRACT load1 
+:wq
+
+info credentialstore
+history 
+
+target side
+info mgr
+note down port 
+
+edit param load1
+EXTRACT load1 
+dblogin useridalias sourcegg1_cdb 
+RMTHOST ggate2.MGRPORT 7810 (TARGET MANAGER)
+RMTTASK REPLICAT.group load2 (here load2 is replicat name)
+TABLE pdb1.ggtraining1.dept11;
+TABLE pdb1.ggtraining1.emp11;
+:wq
+
+here in this case initial load extract process automatically starts replicat process 
+
+target side 
+info credentialstore
+add replicat load2.specialrun 
+
+edit param load2 
+REPLICAT LOAD2
+useridalias copy_paste_alias_name
+ASSUMETARGETDEFS
+TABLE PDB1.GGTRAINING1.DEPT11,TARGET pdb1.ggtraining2.dept22;
+TABLE PDB1.GGTRAINING1.EMP11,TARGET pdb1.ggtraining2.EMP22; 
+:wq
+
+view param load2
+
+now start load1 on source, automatically it starts corresponding replicat load2 
+
+start load1
+
+info load1 
+view report load1
+
+open ggserr.log in tail -f mode to monitor in target 
+
+start load1 
+
+refresh mgr 
+
+start load1 
+info load1 (will always show last table, after loading complete)
+view report load1 (will show record count by table in the end)
+this is initial direct load method 
+
+once initial load is over start normal replicat 
+
+2nd option is file to replicat 
+in this method extract copies files to the target server 
+replicat uses these files to apply on target 
+initial load of gg doesnt lock the table 
+
+edit param load1 
+EXTRACT load1 
+useridalias name
+RMTHOST ggate2.MGRPORT 7810
+--RMTTASK REPLICAT.group load2 
+RMTFILE file_path/dirdat/il  
+TABLE PDB1.GGTRAINING1.DEPT11,TARGET pdb1.ggtraining2.dept22;
+TABLE PDB1.GGTRAINING1.EMP11,TARGET pdb1.ggtraining2.EMP22; 
+
+start load1 
+info load1 
+exit 
+cd dirdat 
+ls -lart 
+we can see files il*
+
+now we need initial load replicat 
