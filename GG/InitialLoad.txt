@@ -87,3 +87,50 @@ ls -lart
 we can see files il*
 
 now we need initial load replicat 
+
+
+
+
+
+https://www.youtube.com/watch?v=yfh3IMVGVNw
+===========================================
+source side
+
+edit param load1
+EXTRACT load1
+USERID gg_admin, PASSWORD gg_admin
+RMTHOST 192.168.239.5, MGRPORT 7809
+RMTTASK replicat, GROUP load2
+TABLE FAHAD.ATHAR;
+
+target side
+
+./ggsci
+info all
+Dblogin userid gg_admin, password gg_admin
+edit params load2
+REPLICAT load2
+USERID gg_admin, PASSWORD gg_admin
+ASSUMETARGETDEFS
+MAP FAHAD.ATHAR,TARGET FAHAD.ATHAR;
+
+ADD EXTRACT load1, SOURCEISTABLE
+
+ADD REPLICAT load2, SPECIALRUN
+
+START EXTRACT load1
+(will automatically start replicat)
+
+info all will not show.
+
+info load1
+info load2
+info all tasks
+(to view the initial load processes)
+(after completion of the loading the process on both sides will stop automatically)
+
+now after initial load regular extract
+
+EXTRACT AB_DBEXT
+setenv (ORACLE_
+11 MIN
