@@ -1,0 +1,148 @@
+Oracle dataguard – Interview Questions
+
+1. What is the use of standby redolog?
+
+The Advantage of having Standby Redo Logs is that every record written into the Online RedoLogs of the Primary Database
+is transferred to the Standby database and written into the Standby Redo Logs at the same time.
+Therefore, it minimizes the probability of Data Loss on the Standby Database.
+
+For real time apply, it is mandatory to have standby redologs on standby database.
+
+Without Standby Redo Logs, an Archived Redo Log is created by the RFS process and when it has completed,
+this Archived Redo Log is applied to the Standby Database by the MRP process. An incomplete ArchiveLog 
+file cannot be applied on the Standby Database and will not be used in a Failover situation. 
+This causes a certain data loss.
+
+If you have Standby Redo Logs whenever a record is inserted into oracle redolog, the RFS process will 
+write into the Standby Redo Log of standby and it gets applied by MRP, which ensures real time sync. 
+When a log switch occurs, the Archiver Process of the Standby Database will archive this Standby Redo 
+Log to an Archived Redo Log, while the MRP process applies the information to the Standby Database. 
+In a Failover situation, you will also have access to the information already written in the Standby 
+Redo Logs, so the information will not be lost.
+
+Oracle recommends to keep standby redologs on both primary and standby database. (Though SLR is not mandatory for 
+primary, it will make the switchover quick without any additional DBA activity. i.e If you don’t have standby 
+redologs on primary, whenever we do switchover, we need to create the SLR .
+
+
+2. How many standby redo logs need to be created? What should be the size?
+
+It is recommended to create one additional standby redo log group per thread. And its size should be same as that of primary redo log.
+
+Suppose, we have 4 number of redo log groups of 200M on primary, Then we need to create 5 standby redo logs of 200M.
+
+Why extra:
+During heavy DML activity on primary, this extra standby log will help as a buffer in coping with the sync up.
+
+Please note, Oracle recommends not to multiplex the standby redologs on , As it puts unnecessary i/o overhead during log shipping.
+
+
+3. Explain different protection modes in dataguard?
+
+There are three modes.
+
+1. MAXIMUM PROTECTION
+This mode provides maximum protection. It guarantees zero data loss. In this mode the redo/transaction data must 
+be written to both primary redo log and standby redo log. For any reason(mostly N/W issue) if it is unable to 
+write to standby, Then primary database will get shutdown. i.e if a user commits transaction, then that commit will 
+not be be completed, unless primary receives a confirmation that write is completed on standby.
+
+2. MAXIMUM AVAILABILITY:
+It provides the highest level of data protection that is possible without affecting the availability of the 
+primary database. Transactions are not allowed to commit until all redo data are written to the online redo 
+logs and propagated to at least one synchronized secondary database. If for any reason, the primary database 
+cannot propagate its redo stream to one secondary database, the primary will NOT shutdown and operates 
+as it were in maximum performance mode until issues are fixed.
+
+3. MAXIMUM PERFORMANCE:(default one)
+This is the default protection mode. With this protection mode, a transaction is committed as soon as the 
+redo data needed to recover the transaction is written to the local (online) redo log.
+
+MODE                  Redo Transport            Action                    Risk of data loss
+
+maximum protection    SYNC and LGWR             The primary database      Zero data loss
+                                                needs to write at least
+                                                one standby db. Otherwise
+                                                it will shut down.
+
+Maximum Availability  SYNC and LGWR            If the primary database     Zero data loss in normal
+                                                cannot write redo to any    operation, but not
+                                                of its standby databases,  guaranteed.
+                                                it continues processing
+                                                transactions as is ASYNC
+                                                mode.
+
+Maximum Performance  ASYNC and LGWR/ARCH        Never expects acknowledg  Potential for minimal
+                                                ment from the standby      data loss in a normal
+                                                database.                  operation.
+
+
+4. What is snapshot standby database.
+Snapshot standby is a feature in Oracle 11g that allows doing a read-write operation on the standby database i. e
+we can convert the physical standby database to snapshot standby for testing purpose.  On that, we can do all 
+types of testing (BOTH READ/WRITE) or can be used as a development database (which is an exact replication 
+of production). Once the testing is over we can again convert the snapshot standby database to physical standby. 
+Once it is converted physical standby database, whatever changes were done to the snapshot standby will be reverted.
+
+5. Suppose my dataguard setup is having one primary and standby and it is in maximum protection mode. 
+Can i convert the standby to snapshot standby database?
+No we cannot covert the standby database to snapshot in maximum protection, when this is the only standby db.  
+Because in maximum protection mode, transaction data must be written to standby redo, before proceeding further.
+
+6. What is the difference between switchover and failover:
+A switchover means just switching roles between the primary database and standby db.
+The primary database changed to a standby role, and the standby database changed to the primary role.
+This is typically done for planned maintenance of the primary db server.
+
+A failover is when the primary database fails and one of the standby databases is transitioned to take 
+over the primary role. Failover is performed only in the event of a catastrophic failure of the primary 
+database, and there is no possibility of recovering the primary database in a timely manner. Failover 
+may or may not result in data loss depending on the protection mode in effect at the time of the failover.
+
+7. What is the process to apply a psu patch in dataguard setup.
+ Make sure lag between primary and standby is zero.
+ Cancel the recovery (MRP) on standby.
+ Shutdown standby db and listener.
+ Apply patch to  the standby database oracle home binary using opatch apply command.
+ Once patch applied to binary, startup the listener and standby in mount stage or OPEN(if active dataguard).
+ Now shutdown primary db and listener.
+ Apply patch to primary database home binary using opatch apply command.
+ Once patch applied to binary, startup open  the primary database and listener. 
+ Start the MRP recovery process on standby.
+ Run post patching script catbundle.sql(if 11g)  or datapatch -verbose command( if 12c) on primary database 
+
+8. What is fal_client and fal_server parameter:
+FAL Means – Fetch Archive log. FAL_CLIENT and FAL_SERVER parameters are used on standby database for archive gap resolution.
+
+FAL_SERVER and FAL_CLIENT parameters are required on standby database only.
+
+FAL_SERVER: Specify an Oracle Net Service Name (TNS-Alias or Connect Descriptor) that points to the Database from where 
+the missing ArchiveLog(s) should be requested i.e the tns alias of the primary db.
+
+FAL_CLIENT: Specify an Oracle Net Service Name (TNS-Alias or Connect Descriptor) that points  from FAL_SERVER TO standby db. 
+i.e the tns alias of the standby db. This parameter has been deprecated.
+
+fal_server = ‘primdb’
+fal_client = ‘stdbydb’
+
+9. What are different types of dataguard and their difference.
+There are three types of dataguard setups. PHYSICAL, LOGICAL and SNAPSHOT.
+
+PHYSICAL STANDBY:
+A physical standby database is an exact, block-for-block copy of a primary database. A physical standby is
+maintained as an exact copy through a process called REDO APPLY, in which redo data received from a
+primary database is continuously applied to a physical standby database using the database recovery 
+mechanisms. So it will be always in sync with primary.
+
+This Standby database can be opened in read only mode(knows as ACTIVE DATA GUARD), for reporting purpose. 
+Most of the corporations use physical standby for dataguard configuration.
+
+Physical standby database is suitable for high availability and disaster recovery.
+
+LOGICAL STANDBY:
+The logical standby database is kept synchronized with the primary database through 
+SQL APPLY, which transforms the data in the redo received from the primary database 
+into SQL statements and then executes the SQL statements on the standby database. 
+So it contains same logical information as that of production, but physical structure 
+of data can be different.
+
