@@ -1,5 +1,5 @@
 Enable Fast Start Failover Data Guard Broker
-
+============================================
 While Oracle Data Guard definitely protects a database when the entire production site is lost via its failover 
 capabilities, it’s still necessary for an Oracle DBA to intervene to complete the failover process.
 
@@ -9,7 +9,6 @@ capabilities, it’s still necessary for an Oracle DBA to intervene to complete 
     Disable FSFO 
 
 With this activity, we can enable automatic failover using Fast-Start-Failover Observer with Data Guard broker.
-
 
 Configure Fast Start Failover
 
@@ -48,7 +47,8 @@ that FSFO will wait before initiating failover
 DGMGRL> EDIT CONFIGURATION SET PROPERTY FastStartFailoverThreshold=30;
 DGMGRL> show fast_start failover
 
-Define FastStartFailoverLagLimit: We can optionally define how much time (in seconds) data we are ready to lose in case the Data Guard is in Max Performance Mode
+Define FastStartFailoverLagLimit: We can optionally define how much time (in seconds) data we are ready to lose in case 
+the Data Guard is in Max Performance Mode
 
 DGMGRL> EDIT CONFIGURATION SET PROPERTY FastStartFailoverLagLimit = 30;
 
@@ -75,7 +75,8 @@ On primary (proddb):
 sqlplus / as sysdba
 SQL> shut abort;
 
-Check logfiles: At this stage, check alert log and observer log files. FSFO must perform automatic failover and proddb_st would be your new primary database
+Check logfiles: At this stage, check alert log and observer log files. FSFO must perform automatic failover 
+and proddb_st would be your new primary database
 
 On new primary (proddb_st):
 ===========================
