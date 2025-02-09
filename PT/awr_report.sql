@@ -2,7 +2,8 @@ AWR Report – AWR (Automatic Workload Repository) reports
 
 0. Overview
 
-AWR Report – AWR (Automatic Workload Repository) reports are a useful diagnostic tool for the determination of the potential cause of database wide performance issues. 
+AWR Report – AWR (Automatic Workload Repository) reports are a useful diagnostic 
+	tool for the determination of the potential cause of database wide performance issues. 
 
 Typically when a performance issue is detected you would collect an AWR report covering the period of the poor performance.
 
@@ -17,7 +18,7 @@ Captures data from V$ performance views
 		–  Active Session History
 		–  Metrics
 		
-Stores data in AWR tables in SYSAUX  tablespace
+Stores data in AWR tables in SYSAUX tablespace
 
      – WRH$_xxx for data 
      – WRM$_xxx for metadata
@@ -96,10 +97,10 @@ If the parameter is set to BASIC, you simply need to modify the parameter in ord
 alter system set statistics_level=TYPICAL scope=both;
 alter system set statistics_level='ALL' scope=both;
 
-SQL> set pages 999
-SQL> set lines 180
-SQL> col STATISTICS_NAME for a50
-SQL> SELECT statistics_name, activation_level, system_status FROM v$statistics_level;
+set pages 999
+set lines 180
+col STATISTICS_NAME for a50
+SELECT statistics_name, activation_level, system_status FROM v$statistics_level;
 
 STATISTICS_NAME                                    ACTIVAT SYSTEM_S
 -------------------------------------------------- ------- --------
@@ -138,10 +139,11 @@ In below example the snapshot interval is one hour and retention is 8 days.
 
 The data type for the columns SNAP_INTERVAL, RETENTION is having two fields – days and time with hour, min, sec.
 
-SQL> set lines 180
-SQL> col SNAP_INTERVAL for a20
-SQL> col RETENTION for a20
-SQL> select * from dba_hist_wr_control;
+set lines 300
+col SNAP_INTERVAL for a20
+col RETENTION for a20
+col SRC_DBNAME for a30
+select * from dba_hist_wr_control;
 
       DBID SNAP_INTERVAL        RETENTION            TOPNSQL
 ---------- -------------------- -------------------- ----------
@@ -169,10 +171,10 @@ Snapshot Interval Minutes Retention Interval Minutes
 
 3. Display snapshots
 
-SQL> set lines 180
-SQL> col MIN(BEGIN_INTERVAL_TIME) for a30
-SQL> col max(BEGIN_INTERVAL_TIME) for a30
-SQL> SELECT MIN(snap_id), min(BEGIN_INTERVAL_TIME),MAX(snap_id), max(BEGIN_INTERVAL_TIME) FROM dba_hist_snapshot;
+set lines 180
+col MIN(BEGIN_INTERVAL_TIME) for a30
+col max(BEGIN_INTERVAL_TIME) for a30
+SELECT MIN(snap_id), min(BEGIN_INTERVAL_TIME),MAX(snap_id), max(BEGIN_INTERVAL_TIME) FROM dba_hist_snapshot;
 
 MIN(SNAP_ID) MIN(BEGIN_INTERVAL_TIME)       MAX(SNAP_ID) MAX(BEGIN_INTERVAL_TIME)
 ------------ ------------------------------ ------------ ------------------------------
