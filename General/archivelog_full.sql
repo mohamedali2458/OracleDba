@@ -50,7 +50,7 @@ Solution3: Change the archive log destination
 =============================================
 SQL> archive log list
 SQL> show parameter db_recovery_file_dest
-SQL> 
+
 set lines 1000 pages 1000
 col DEST_NAME for a20
 col STATUS for a15
@@ -74,19 +74,19 @@ ALTER SYSTEM SET log_archive_dest='location=USE_DB_RECOVERY_FILE_DEST' scope=bot
 
 Logs:
 =====
-env |grep ORA
+env | grep ORA
 sqlplus / as sysdba
 SQL> archive log list
 SQL> show parameter recovery
 
 SQL> alter system switch logfile;
-^Calter system switch logfile
+^C alter system switch logfile
 *
 ERROR at line 1:
 ORA-01013: user requested cancel of current operation
 
 
- set lines 1000 pages 1000
+set lines 1000 pages 1000
 col DEST_NAME for a20
 col STATUS for a15
 col DESTINATION for a30
@@ -102,7 +102,6 @@ delete noprompt obsolete;
 delete noprompt expired archivelog all;
 delete noprompt expired backup;
 }
-
 
 
 
@@ -122,7 +121,7 @@ SQL> show parameter recovery
 
 
 SQL> alter system switch logfile;
-^Calter system switch logfile
+^C alter system switch logfile
 *
 ERROR at line 1:
 ORA-01013: user requested cancel of current operation
