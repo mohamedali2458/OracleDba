@@ -14,7 +14,7 @@ Assumption: we assume that primary server has a database (SID=ip7) up and runnin
 The standby database has Oracle 12cR2 installation done in the same oracle home location as primary.
 
 Primary database changes
-
+========================
 Primary must run in archive log mode. Check the archive log mode
 
 SELECT log_mode FROM v$database;
@@ -30,21 +30,24 @@ SQL> alter database archivelog;
 SQL> alter database open;
 SQL> archive log list;
 
-Enable force logging on primary: In oracle, users can restrict redo generation for SQL by using NOLOGGING clause. 
-This NOLOGGING transaction will be a problem for physical standby. Hence, we force logging so even user uses NOLOGGING clause, 
-every SQL will be logged on to redo.
+Enable force logging on primary: In oracle, users can restrict redo generation 
+for SQL by using NOLOGGING clause. 
+This NOLOGGING transaction will be a problem for physical standby. Hence, we 
+force logging so even user uses NOLOGGING clause, every SQL will be logged on to redo.
 
 SQL> alter database force logging;
 SQL> select name, force_logging from v$database;
 
-
-Standby file management: We need to make sure whenever we add/drop datafile in primary database, those files are also added / dropped on standby.
+Standby file management: We need to make sure whenever we add/drop datafile in primary 
+database, those files are also added / dropped on standby.
 
 SQL> show parameter standby_file_management;
 SQL> alter system set standby_file_management = 'AUTO';
 
-Create standby log files: You must create standby log files on primary. These files are used by a standby database to store redo it 
-receives from primary database. Our primary may become standby later and we would need them, so better to create it. First check the current log groups
+Create standby log files: You must create standby log files on primary. These files are 
+used by a standby database to store redo it receives from primary database. Our primary 
+may become standby later and we would need them, so better to create it. First check the 
+current log groups
 
 SQL> select GROUP#, THREAD#, bytes/1024/1024/1024 size_gb, MEMBERS, STATUS from v$log order by 1;
 
@@ -62,10 +65,11 @@ MEMBER
 /u01/data/db_files/ip7/redo02.log
 /u01/data/db_files/ip7/redo01.log
 
-Add the standby logfiles, make sure group number should be from a different series like in this case we choose to 
-start with 11 and above. This helps in easy differentiation.
+Add the standby logfiles, make sure group number should be from a different series like 
+in this case we choose to start with 11 and above. This helps in easy differentiation.
 
-Make sure to keep the thread# and logfile size exactly same. Oracle also recommends to always create n+1 standby log files. 
+Make sure to keep the thread# and logfile size exactly same. Oracle also recommends to 
+always create n+1 standby log files. 
 Where n is the total number of logfiles
 
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 11 '/u01/data/db_files/ip7/stb_redo1.log' SIZE 200M;
@@ -77,7 +81,8 @@ Check the standby log files via below query
 
 SQL> SELECT GROUP#,THREAD#,SEQUENCE#,ARCHIVED,STATUS FROM V$STANDBY_LOG;
 
-Enable flashback on primary: Flashback database is highly recommended because in case of failover, you need not re-create primary database from scratch
+Enable flashback on primary: Flashback database is highly recommended because in case of 
+failover, you need not re-create primary database from scratch.
 
 SQL> alter system set db_recovery_file_dest_size=45g;
 SQL> alter database flashback on;
@@ -94,20 +99,18 @@ Check DB Unique name parameter on primary: Make sure your primary database has D
 parameter set for consistency. If it’s not set properly, use ALTER SYSTEM SET command
 
 SQL> show parameter db_name
-
 NAME                                 TYPE        VALUE
 ------------------------------------ ----------- -------------
 db_name                              string      ip7
 
 SQL> show parameter db_unique_name
-
 NAME                                 TYPE        VALUE
 ------------------------------------ ----------- -------------
 db_unique_name                       string      ip7
 
 
 Configure network
-
+=================
 Use below tns entries and put them under ORACLE user HOME/network/admin/tnsnames.ora. 
 Change host as per your environment and execute on both primary and standby.
 
@@ -192,13 +195,13 @@ lsnrctl start
 
 
 Configure redo transport
+========================
+Note: if you plan to use Oracle Data Guard broker, then you can skip this section 
+“configure redo transport” and jump to “Build Standby” section.
 
-Note: if you plan to use Oracle Data Guard broker, then you can skip this section “configure redo transport” 
-and jump to “Build Standby” section.
-
-Configure redo transport from primary to standby:  The below statement says that if the current database 
-is in primary role, then transport logs to standby. We need to change service and db_unique_name for 
-same parameter on standby server.
+Configure redo transport from primary to standby:  The below statement says that if 
+the current database is in primary role, then transport logs to standby. We need to 
+change service and db_unique_name for same parameter on standby server.
 
 On Primary Server
 =================
@@ -218,7 +221,7 @@ SQL> alter system set log_archive_config = 'dg_config=(ip7,ip7_stb)';
 
 
 Build standby
-
+=============
 Create pfile on primary, open it and create the necessary directories on the standby server
 
 On Primary Server
@@ -237,7 +240,8 @@ mkdir -p /u01/app/oracle/admin/ip7/adump
 mkdir -p /u01/data/db_files/ip7
 mkdir -p /u01/FRA/ip7
 
-On standby server, create parameter file with just db_name parameter and start the instance in nomount mode
+On standby server, create parameter file with just db_name parameter and start the 
+instance in nomount mode
 
 On standby server
 =================
@@ -261,7 +265,8 @@ If no password file exists, create one via below command and then copy
 orapwd file=$ORACLE_HOME/dbs/orapwip7 force=y
 
 Duplicate primary database via RMAN: On primary, connect to RMAN, specifying a full connect string 
-for both the TARGET and AUXILIARY instances. Do not attempt to use OS authentication else, the cloning will fail
+for both the TARGET and AUXILIARY instances. Do not attempt to use OS authentication else, 
+the cloning will fail
 
 To DORECOVERY option starts recovery by applying all available logs immediately after restore
 
@@ -300,14 +305,16 @@ SQL> alter database recover managed standby database disconnect;
 
 
 Verify standby configuration
-
+============================
 Once MRP is started, we must verify which archive log number MRP is applying on standby
 
 On standby:
 ===========
 select process, status, sequence# from v$managed_standby;
 
-select sequence#, applied, first_time, next_time, name filename from v$archived_log order by sequence#;
+select sequence#, applied, first_time, next_time, name filename 
+from v$archived_log 
+order by sequence#;
 
 Below queries will help you identify issues when your data guard setup is out of sync
 
@@ -316,7 +323,7 @@ On both primary & standby:
 set lines 999;
 select * from v$dataguard_status order by timestamp;
 
-select dest_id, status, destination, error from v$archive_dest where dest_id<=2;
+select dest_id, status, destination, error from v$archive_dest where dest_id<=5;
 
 IF you see ORA-16058, do this on primary:
 =========================================
@@ -326,12 +333,16 @@ SQL> select dest_id, status, destination, error from v$archive_dest where dest_i
 
 On primary:
 ===========
-select sequence#, first_time, next_time, applied, archived from v$archived_log where name = 'ip7_stb' order by first_time;
+select sequence#, first_time, next_time, applied, archived 
+from v$archived_log 
+where name = 'ip7_stb' 
+order by first_time;
 
 select STATUS, GAP_STATUS from V$ARCHIVE_DEST_STATUS where DEST_ID = 2;
 
 archive log list;
-Configure Archive deletion policy: We must set this policy in order to prevent accidental deletion of archive logs on primary database
+Configure Archive deletion policy: We must set this policy in order to prevent accidental 
+deletion of archive logs on primary database
 
 On Primary:
 ===========
