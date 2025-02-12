@@ -1,12 +1,7 @@
 Convert Physical Standby into Active Data Guard
-
+===============================================
 Active Data Guard is a feature of Oracle Database that allows the physical standby database to be open for read-only 
 and reporting operations while continuously applying changes from the primary database in real-time. 
-
-    Enable Active Data Guard 
-    Verify MRP is Running 
-    Test Active Data Guard 
-    Revert Back to Physical Standby 
 
 In very simple terms, when you open Physical Standby in read only mode, it is known as Active Data Guard. But, Active 
 Data Guard needs license for and you must check with Oracle for same before implementing it.
@@ -32,8 +27,9 @@ SQL> select process, status, sequence# from v$managed_standby;
 
 Test Active Data Guard
 
-As our active data guard is open for read only queries and background recover is active, let us create a 
-table on primary and see if it is reflected on standby
+As our active data guard is open for read only queries and background 
+recover is active, let us create a table on primary and see if it is 
+reflected on standby
 
 On primary:
 ===========
