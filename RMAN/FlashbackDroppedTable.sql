@@ -49,3 +49,12 @@ select * from "system generated name";
 
 select * from "system generated name" where rownum < 3;
 
+
+4. Recovering the table using Flashback Drop:-
+FLASHBACK TABLE TEST TO BEFORE DROP;
+SELECT COUNT(*) FROM TEST;
+
+If we want to recover the table under a different name: (optional)
+
+FLASHBACK TABLE test TO BEFORE DROP RENAME TO test_bkp;
+
