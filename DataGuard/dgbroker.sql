@@ -28,7 +28,7 @@ to manage and monitor (primary and standby) as one single unit.
 
 Benefits of Data Guard Broker
 
-One of the biggest benefits of Data Guard broker is that is centralizes the configuration, management and monitoring of Oracle Data Guard configurations.
+One of the biggest benefits of Data Guard broker is that it centralizes the configuration, management and monitoring of Oracle Data Guard configurations.
 
 Some of the operations that Data Guard broker simplifies are
     Create Data Guard configuration between primary and standby databases
@@ -42,8 +42,6 @@ Some of the operations that Data Guard broker simplifies are
 Configure Data Guard Broker
 
 Follow below steps to configure Data Guard broker.
-
-Note: At the time of writing article, below steps were performed on existing Primary and Standby setup that was created manually.
 
 Edit listeners
 
@@ -80,7 +78,7 @@ SID_LIST_LISTENER=
 
 Stop MRP on standby
 
-We would like to manage our data guard configuration using Data Guard Broker. Stop MRP and clear Log_Archive_dest_2 parameter
+We would like to manage our data guard configuration using Data Guard Broker. Stop MRP and clear Log_Archive_dest_2 parameter.
 
 On standby:
 ===========
@@ -128,7 +126,7 @@ DGMGRL> show configuration;
 
 Enable Data Guard broker
 
-Once primary and standby are registered, we must enable broker
+Once primary and standby are registered, we must enable broker.
 
 DGMGRL> ENABLE CONFIGURATION;
 DGMGRL> SHOW CONFIGURATION;
