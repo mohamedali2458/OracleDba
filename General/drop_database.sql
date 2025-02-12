@@ -1,4 +1,5 @@
 --RAC database
+==============
 sqlplus / as sysdba
 select name, open_mode from gv$database;
 select instance_name, status from gv$instance;
@@ -16,10 +17,11 @@ startup mount exclusive restrict;
 drop database;
 
 --standalone database
+=====================
 sqlplus / as sysdba
 select name, open_mode from v$database;
 select instance_name, status from v$instance;
-shutdown;
+shutdown immediate;
 startup nomount; --unable to drop db
 startup mount exclusive; -- unable to drop db
 startup mount restrict; --able to drop the database
