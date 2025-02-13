@@ -1,5 +1,5 @@
 Oracle CRSCTL Commands List
-
+===========================
 CRSCTL utility allows you to administer cluster resources. Here are few quick commands to help you administer Oracle RAC cluster!
     Check Cluster Status 
     Check Cluster Nodes 
