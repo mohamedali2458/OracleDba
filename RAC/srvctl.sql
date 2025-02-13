@@ -11,7 +11,9 @@ $olsnodes -c
 rac11
 
 Option 3
-navigate to the directory $CRS_HOME/cdata. Under this directory you will find a directory with the name of cluster which includes the OCR backup
+navigate to the directory $CRS_HOME/cdata. Under this directory you will find a 
+directory with the name of cluster which includes the OCR backup
+
 cd $CRS_HOME/cdata
 ls
 localhost  node1 node1.olr  rac11
