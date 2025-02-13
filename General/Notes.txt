@@ -1,19 +1,27 @@
 Row chaining, how does it happen? How can you reduce it? How do you correct it ?
+================================================================================
+Row chaining occurs when a VARCHAR2 value is updated and the length of the new 
+value is longer than the old value and would not fit in the remaining block 
+space. This results in the row chaining to another block. It can be reduced 
+by setting the storage parameters on the table to appropriate values. It can 
+be corrected by export and import of the effected table.
 
-Row chaining occurs when a VARCHAR2 value is updated and the length of the new value is longer than the old value 
-and would not fit in the remaining block space. This results in the row chaining to another block. It can be reduced 
-by setting the storage parameters on the table to appropriate values. It can be corrected by export and import of the 
-effected table.
+Row chaining occurs in Oracle databases when a single row of data cannot fit 
+into a single database block due to its size.
 
-
-Row chaining occurs in Oracle databases when a single row of data cannot fit into a single database block due to its size.
-
-This can lead to performance issues as multiple blocks need to be accessed to retrieve a single row. 
+This can lead to performance issues as multiple blocks need to be accessed to 
+retrieve a single row. 
 
 How Row Chaining Happens
 
-1. Large Rows: When a row is too large to fit into a single block. This often occurs with tables that have large columns such as BLOB, CLOB, or VARCHAR2 columns that store a lot of data.
+1. Large Rows: When a row is too large to fit into a single block. This often 
+occurs with tables that have large columns such as BLOB, CLOB, or VARCHAR2 
+columns that store a lot of data.
 
-2. Block Size Limitation: Oracle database blocks have a fixed size (e.g., 8KB, 16KB, etc.). If the data for a row exceeds this size, the row must be split across multiple blocks.
+2. Block Size Limitation: Oracle database blocks have a fixed size 
+(e.g., 8KB, 16KB, etc.). If the data for a row exceeds this size, 
+the row must be split across multiple blocks.
 
-3. Insertion of Data: When data is inserted, if the remaining space in a block is insufficient to hold the entire row, Oracle splits the row into pieces, chaining them across multiple blocks.
+3. Insertion of Data: When data is inserted, if the remaining space in a block 
+is insufficient to hold the entire row, Oracle splits the row into pieces, 
+chaining them across multiple blocks.
