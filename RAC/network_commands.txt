@@ -1,0 +1,10 @@
+root user
+
+cat /etc/resolv.conf
+
+nslookup prod-scan
+
+
+netstat -tulpn
+
+netstat -tulpn|grep dnsmasq
