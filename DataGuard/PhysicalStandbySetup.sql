@@ -1,17 +1,17 @@
 Oracle Data Guard Physical Standby Configuration
 ================================================
 Primary details
-SID: ip7
-ORACLE_HOME: /u01/app/oracle/product/12.2.0.1
-Host Name: srv1.dbagenesis.com
+SID: oradb
+ORACLE_HOME: /u01/app/oracle/product/19.0.0/db_1
+Host Name: srv1.localdomain
 
 Standby details
-SID: ip7
-ORACLE_HOME: /u01/app/oracle/product/12.2.0.1
-Host Name: srv2.dbagenesis.com
+SID: oradb
+ORACLE_HOME: /u01/app/oracle/product/19.0.0/db_1
+Host Name: srv2.localdomain
 
-Assumption: we assume that primary server has a database (SID=ip7) up and running. 
-The standby database has Oracle 12cR2 installation done in the same oracle home location as primary.
+Assumption: we assume that primary server has a database (SID=oradb) up and running. 
+The standby database has Oracle 19c installation done in the same oracle home location as primary.
 
 Primary database changes
 ========================
@@ -36,7 +36,7 @@ This NOLOGGING transaction will be a problem for physical standby. Hence, we
 force logging so even user uses NOLOGGING clause, every SQL will be logged on to redo.
 
 SQL> alter database force logging;
-SQL> select name, force_logging from v$database;
+SQL> select name, db_unique_name, force_logging from v$database;
 
 Standby file management: We need to make sure whenever we add/drop datafile in primary 
 database, those files are also added / dropped on standby.
