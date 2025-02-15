@@ -1,0 +1,15 @@
+ORAPWD OPW-00029: Password complexity failed for SYS user
+
+As part of the post RMAN duplicate database process to clone a new database, you should immediately change the db name and dbid.
+
+Once the new database name is successfully changed, you should shut down the database. The next step is to regenerate a new password file for the cloned database.
+
+You may encounter a new error in version 12c and up. In this version and newer, Oracle imposes more complex password restrictions.
+
+[dbs]$ orapwd file=orapwtestgg password=welcome1 force=y
+
+OPW-00029: Password complexity failed for SYS user: Password must contain at least one unique character.
+
+If, for whatever reason, you need to create the password as you type it (less complex), you can circumvent this new security measure by adding the following keyword on the command line: ‘format=12’. This allows you to bypass the stringent password restrictions.
+
+orapwd file=orapworadb_s password=manager force=y format=12 ignorecase=y
