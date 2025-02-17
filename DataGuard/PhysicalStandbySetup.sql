@@ -93,7 +93,7 @@ SQL> alter system set db_recovery_file_dest_size=45g;
 SQL> alter database flashback on;
 
 Check DB Unique name parameter on primary: Make sure your primary database has DB_UNIQUE_NAME 
-parameter set for consistency. If it’s not set properly, use ALTER SYSTEM SET command
+parameter set for consistency. If it’s not set properly, use ALTER SYSTEM SET command:
 
 SQL> show parameter db_name
 NAME                                 TYPE        VALUE
