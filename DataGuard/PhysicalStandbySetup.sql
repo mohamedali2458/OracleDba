@@ -17,12 +17,13 @@ Primary database changes
 ========================
 Primary must run in archive log mode. Check the archive log mode
 
-SELECT log_mode FROM v$database;
+set linesize 200
+SELECT name,db_unique_name,log_mode FROM v$database;
 LOG_MODE
 ------------
 NOARCHIVELOG
   
-If it is not running in archive log mode, then enable it
+If it is not running in archive log mode, then enable it.
 
 SQL> shutdown immediate
 SQL> startup mount
@@ -39,7 +40,7 @@ SQL> alter database force logging;
 SQL> select name, db_unique_name, force_logging from v$database;
 
 Standby file management: We need to make sure whenever we add/drop datafile in primary 
-database, those files are also added / dropped on standby.
+database, those files are also added/dropped on standby.
 
 SQL> show parameter standby_file_management;
 SQL> alter system set standby_file_management = 'AUTO';
@@ -47,18 +48,16 @@ SQL> alter system set standby_file_management = 'AUTO';
 Create standby log files: You must create standby log files on primary. These files are 
 used by a standby database to store redo it receives from primary database. Our primary 
 may become standby later and we would need them, so better to create it. First check the 
-current log groups
+current log groups.
 
 SQL> select GROUP#, THREAD#, bytes/1024/1024/1024 size_gb, MEMBERS, STATUS from v$log order by 1;
-
     GROUP#    THREAD# BYTES/1024/1024    MEMBERS STATUS
 ---------- ---------- --------------- ---------- ----------------
          1          1             200          1 INACTIVE
          2          1             200          1 CURRENT
          3          1             200          1 INACTIVE
 
-SQL> select member from v$logfile;
-
+SQL> select member from v$logfile order by group#;
 MEMBER
 ---------------------------------------------------
 /u01/data/db_files/ip7/redo03.log
@@ -69,26 +68,24 @@ Add the standby logfiles, make sure group number should be from a different seri
 in this case we choose to start with 11 and above. This helps in easy differentiation.
 
 Make sure to keep the thread# and logfile size exactly same. Oracle also recommends to 
-always create n+1 standby log files. 
-Where n is the total number of logfiles
+always create n+1 standby log files. Where n is the total number of logfiles.
 
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 11 '/u01/data/db_files/ip7/stb_redo1.log' SIZE 200M;
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 12 '/u01/data/db_files/ip7/stb_redo2.log' SIZE 200M;
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 13 '/u01/data/db_files/ip7/stb_redo3.log' SIZE 200M;
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 14 '/u01/data/db_files/ip7/stb_redo4.log' SIZE 200M;
 
-Check the standby log files via below query
-
-SQL> SELECT GROUP#,THREAD#,SEQUENCE#,ARCHIVED,STATUS FROM V$STANDBY_LOG;
+Check the standby log files via below query:
+SQL> SELECT GROUP#,THREAD#,SEQUENCE#,ARCHIVED,STATUS FROM V$STANDBY_LOG ORDER BY GROUP#;
 
 Enable flashback on primary: Flashback database is highly recommended because in case of 
 failover, you need not re-create primary database from scratch.
 
-SQL> alter system set db_recovery_file_dest_size=45g;
+SQL> alter system set db_recovery_file_dest_size=45g scope=both;
 SQL> alter database flashback on;
 SQL> select flashback_on from v$database;
 
-If flashback parameters are not set properly, use below commands
+If flashback parameters are not set properly, use below commands:
 
 SQL> show parameter recovery;
 SQL> alter system set db_recovery_file_dest='/u01/app/oracle/fast_recovery_area';
