@@ -28,13 +28,14 @@ to manage and monitor (primary and standby) as one single unit.
 
 Benefits of Data Guard Broker
 
-One of the biggest benefits of Data Guard broker is that it centralizes the configuration, management and monitoring of Oracle Data Guard configurations.
+One of the biggest benefits of Data Guard broker is that it centralizes the configuration, 
+management and monitoring of Oracle Data Guard configurations.
 
 Some of the operations that Data Guard broker simplifies are
     Create Data Guard configuration between primary and standby databases
     Add additional standby databases to existing Data Guard configuration
-    Mange Data Guard protection modes
-    Start switchover / failover by just one single command
+    Manage Data Guard protection modes
+    Start switchover/failover by just one single command
     Automate failover in case of primary not reachable
     Monitor redo apply, gaps and data guard performance
     Perform all above operations locally or remotely !
