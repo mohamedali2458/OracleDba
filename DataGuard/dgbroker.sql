@@ -112,8 +112,8 @@ On primary, connect to DGMGRL utility and register the primary database with bro
 
 On primary:
 ===========
-dgmgrl sys/sys@proddb
-DGMGRL> create configuration proddb as primary database is proddb connect identifier is proddb;
+dgmgrl sys/oracle@oradb
+DGMGRL> create configuration 'my_dg' as primary database is oradb connect identifier is oradb;
 DGMGRL> show configuration;
 
 
@@ -121,7 +121,7 @@ Register standby with broker
 
 In the same DGMGRL utility, register standby from primary server itself
 
-DGMGRL> add database proddb_st as connect identifier is proddb_st;
+DGMGRL> add database oradb_s2 as connect identifier is oradb_s2;
 DGMGRL> show configuration;
 
 
@@ -131,8 +131,8 @@ Once primary and standby are registered, we must enable broker.
 
 DGMGRL> ENABLE CONFIGURATION;
 DGMGRL> SHOW CONFIGURATION;
-DGMGRL> SHOW DATABASE proddb;
-DGMGRL> SHOW DATABASE proddb_st;
+DGMGRL> SHOW DATABASE oradb;
+DGMGRL> SHOW DATABASE oradb_s2;
 
 
 Manage Redo Apply via Broker
@@ -143,17 +143,17 @@ Stop log apply:
 ===============
 dgmgrl sys/sys@proddb
 DGMGRL> show configuration;
-DGMGRL> show database proddb_st;
-DGMGRL> edit database proddb_st set state=APPLY-OFF;
-DGMGRL> show database proddb_st;
+DGMGRL> show database oradb_s2;
+DGMGRL> edit database oradb_s2 set state=APPLY-OFF;
+DGMGRL> show database oradb_s2;
 
 Start log apply:
 ================
-dgmgrl sys/sys@proddb
+dgmgrl sys/sys@oradb
 DGMGRL> show configuration;
-DGMGRL> show database proddb_st;
-DGMGRL> edit database proddb_st set state=APPLY-ON;
-DGMGRL> show database proddb_st;
+DGMGRL> show database oradb_s2;
+DGMGRL> edit database oradb_s2 set state=APPLY-ON;
+DGMGRL> show database oradb_s2;
 
 
 Start/stop log shipping via Broker
@@ -162,16 +162,16 @@ How we can manually enable log shipping from primary to standby, the same way we
 
 Disable log shipping/transport:
 ===============================
-dgmgrl sys/sys@proddb
+dgmgrl sys/sys@oradb
 DGMGRL> show configuration;
-DGMGRL> show database proddb;
-DGMGRL> edit database proddb set state=TRANSPORT-OFF;
-DGMGRL> show database proddb;
+DGMGRL> show database oradb;
+DGMGRL> edit database oradb set state=TRANSPORT-OFF;
+DGMGRL> show database oradb;
 
 Enable log shipping/transport:
 ==============================
-dgmgrl sys/sys@proddb
+dgmgrl sys/sys@oradb
 DGMGRL> show configuration;
-DGMGRL> show database proddb;
-DGMGRL> edit database proddb set state=TRANSPORT-ON;
-DGMGRL> show database proddb;
+DGMGRL> show database oradb;
+DGMGRL> edit database oradb set state=TRANSPORT-ON;
+DGMGRL> show database oradb;
