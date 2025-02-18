@@ -34,21 +34,21 @@ from 19c max performance is enough
 
 redo log transfer must be in sync
 
-DGMGRL> show database testdg1 'LogXptMode';
+DGMGRL> show database oradb 'LogXptMode';
 ASYNC
 
-DGMGRL> show database testdg2 'LogXptMode';
+DGMGRL> show database oradb_s2 'LogXptMode';
 ASYNC
 
-DGMGRL> show database testdg1 'NetTimeout';
+DGMGRL> show database oradb 'NetTimeout';
 NetTimeout = '30'
 
-DGMGRL> show database testdg2 'NetTimeout';
+DGMGRL> show database oradb_s2 'NetTimeout';
 NetTimeout = '30'
 
-DGMGRL> edit database testdg1 set property NetTimeout=10;
+DGMGRL> edit database oradb set property NetTimeout=10;
 Property "nettimeout" updated
-DGMGRL> edit database testdg2 set property NetTimeout=10;
+DGMGRL> edit database oradb_s2 set property NetTimeout=10;
 Property "nettimeout" updated
 
 DGMGRL> enable fast_start failover;
