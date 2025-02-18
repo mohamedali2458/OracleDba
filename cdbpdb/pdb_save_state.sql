@@ -23,7 +23,11 @@ show pdbs;
 alter pluggable database pdb1 close;
 
 --to check current status
-select a.name,b.state from v$pdbs a, dba_pdb_saved_states b
+set linesize 300
+col name for a20
+col con_name for a20
+col instance_name for a20
+select a.name,b.con_name,b.instance_name,b.state from v$pdbs a, dba_pdb_saved_states b
 where a.con_id = b.con_id;
 
 show pdbs;
