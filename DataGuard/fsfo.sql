@@ -16,10 +16,10 @@ Check StaticConnectIdentifier: In order to enable FSFO, the StaticConnectIdentif
 
 On primary(proddb):
 ===================
-dgmgrl sys/sys@proddb
+dgmgrl sys/sys@oradb
 
-DGMGRL> show database proddb StaticConnectIdentifier;
-DGMGRL> show database proddb_st StaticConnectIdentifier;
+DGMGRL> show database oradb StaticConnectIdentifier;
+DGMGRL> show database oradb_s2 StaticConnectIdentifier;
 
 If StaticConnectIdentifier is blank: The StaticConnectIdentifier takes its value from LOCAL_LISTENER parameter from 
 the database. If this value is not set (or blank) for any database above, then connect to sqlplus and edit LOCAL_LISTENER parameter
@@ -34,16 +34,19 @@ standby with primary to let Fast Start Failover know which physical standby to b
 
 On primary (proddb):
 ====================
-dgmgrl sys/sys@proddb
+dgmgrl sys/sys@oradb
 DGMGRL> SHOW FAST_START FAILOVER
-DGMGRL> EDIT DATABASE proddb SET PROPERTY FastStartFailoverTarget = 'proddb_st';
-DGMGRL> EDIT DATABASE proddb_st SET PROPERTY FastStartFailoverTarget = 'proddb';
-DGMGRL> show database verbose proddb;
-DGMGRL> show database verbose proddb_st;
+dgmgrl> show database oradb FastStartFailoverTarget
+dgmgrl> show database oradb_s2 FastStartFailoverTarget
+DGMGRL> EDIT DATABASE oradb SET PROPERTY FastStartFailoverTarget = 'oradb_s2';
+DGMGRL> EDIT DATABASE oradb_s2 SET PROPERTY FastStartFailoverTarget = 'oradb';
+DGMGRL> show database verbose oradb;
+DGMGRL> show database verbose oradb_s2;
 
 Define FastStartFailoverThreshold: Next we need to let broker know when to initiate automatic failover. What is the time (in seconds) 
-that FSFO will wait before initiating failover
+that FSFO will wait before initiating failover.
 
+show fast_start failover 
 DGMGRL> EDIT CONFIGURATION SET PROPERTY FastStartFailoverThreshold=30;
 DGMGRL> show fast_start failover
 
