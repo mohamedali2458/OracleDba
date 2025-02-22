@@ -25,7 +25,7 @@ done
 #!/bin/bash
 while sleep 2
 do
-  date;du -sh /home/oracle/*|sort -hr|head -2
+  date;echo '******';du -sh /home/oracle/*|sort -hr|head -2
 done
 
 ls -l
