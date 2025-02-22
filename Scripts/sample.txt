@@ -1,0 +1,32 @@
+du -sh *
+du -sh *|sort -hr
+du -sh *|sort -hr|head -2
+
+file_growth_monitor.sh
+======================
+#!/bin/bash
+while du -sh *|sort -hr|head -2
+do
+  sleep 2
+done
+
+#!/bin/bash
+while du -sh /home/oracle/*|sort -hr|head -2
+do
+  sleep 2
+done
+
+#!/bin/bash
+while date;du -sh /home/oracle/*|sort -hr|head -2
+do
+  sleep 2
+done
+
+#!/bin/bash
+while sleep 2
+do
+  date;du -sh /home/oracle/*|sort -hr|head -2
+done
+
+ls -l
+chmod -R 775 file_growth_monitor.sh
