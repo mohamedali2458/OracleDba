@@ -1,1 +1,16 @@
-test
+cd $GG_HOME
+./ggsci
+dblogin userid ogg, password ogg
+
+info all
+stop mgr
+start mgr
+
+1. Every GG process will have a parameter file , except collector
+2. Everytime you connect to GG prompt, login to the DB (prompt will show this)
+
+Add table level supplemental logging via Golden Gate
+
+On Source:
+GGSCI> add trandata for.tab1
+1:40
