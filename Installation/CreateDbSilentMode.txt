@@ -1,0 +1,12 @@
+Create DB 19C – DBCA-SILENT
+
+Non-Container database
+
+set environment
+
+[oracle@srv1 ~]$ which dbca
+/u01/app/oracle/product/19.0.0/db_1/bin/dbca
+
+Create Database using DBCA silent mode
+--------------------------------------
+dbca -silent -createDatabase -templateName General_Purpose.dbc -gdbName rman.mydb.com -sid rman -sysPassword Mgr123$ -systemPassword Mgr@123 -emConfiguration NONE -datafileDestination /u01/app/oracle/oradata -storageType FS -characterSet AL32UTF8
