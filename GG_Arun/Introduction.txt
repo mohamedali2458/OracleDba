@@ -17,13 +17,15 @@ Add table level supplemental logging via Golden Gate
 
 On Source:
 Add table level supplemental logging via GG:
-GGSCI> add trandata for.tab1
+
+dblogin userid c##ogg1,password ogg1
+GGSCI> add trandata pdb1.fox.do
 
 Create GG Extract Process:
-GGSCI> ADD EXTRACT ext1, INTEGRATED TRANLOG, BEGIN NOW  --> Log mining service
-GGSCI> ADD EXTRACT ext1, TRANLOG, BEGIN NOW --> redo / archive
+GGSCI> ADD EXTRACT ext2, INTEGRATED TRANLOG, BEGIN NOW  --> Log mining service
+GGSCI> ADD EXTRACT ext2, TRANLOG, BEGIN NOW --> redo / archive
 
-GGSCI> register extract ext1 database --> (to start logmining service)
+GGSCI> register extract ext2 database --> (to start logmining service)
 
 Create local trail file for extract process
 GGSCI> add exttrail /u01/app/oracle/product/gg/dirdat/ex, extract ext1
