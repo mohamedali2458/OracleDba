@@ -51,4 +51,16 @@ EXTRACT dp1
 USERID ogg, PASSWORD ogg
 RMTHOST ggdev, MGRPORT 7809
 RMTTRAIL /u01/app/oracle/product/gg/dirdat/rt
+TABLE fox.tab1;
 
+Create GG Replicate on target:
+GGSCI> dblogin userid ogg, password ogg
+GGSCI> add replicat rep1, integrated exttrail /u01/app/oracle/product/gg/dirdat/rt
+
+Create parameter file for replicat on target:
+GGSCI> edit param rep1
+
+REPLICAT rep1
+USERID ogg, PASSWORD ogg
+ASSUMETARGETDEFS
+MAP fox.tab1 TARGET fox.tab1;
