@@ -6,11 +6,49 @@ info all
 stop mgr
 start mgr
 
-1. Every GG process will have a parameter file , except collector
+1. Every GG process will have a parameter file --> except collector
 2. Everytime you connect to GG prompt, login to the DB (prompt will show this)
+3. Every process needs 3 details
+    - Input Details
+    - Output Details
+    - Prameter File
 
 Add table level supplemental logging via Golden Gate
 
 On Source:
+Add table level supplemental logging via GG:
 GGSCI> add trandata for.tab1
-1:40
+
+Create GG Extract Process:
+GGSCI> ADD EXTRACT ext1, INTEGRATED TRANLOG, BEGIN NOW  --> Log mining service
+GGSCI> ADD EXTRACT ext1, TRANLOG, BEGIN NOW --> redo / archive
+
+GGSCI> register extract ext1 database --> (to start logmining service)
+
+Create local trail file for extract process
+GGSCI> add exttrail /u01/app/oracle/product/gg/dirdat/ex, extract ext1
+
+Create parameter file for extract process:
+GGSCI> edit param ext1
+
+EXTRACT ext1
+USERID ogg, PASSWORD ogg
+EXTRAIL /u01/app/oracle/product/gg/dirdat/ex
+TABLE fox.tab1;
+
+(first 2 params are common for all the processes)
+
+Create GG DP Process:
+GGSCI> add extract dp1, EXTTRAILSOURCE /u01/app/oracle/product/gg/dirdat/ex
+
+Create remote trail file for extract process:
+GGSCI> Add rmttrail /u01/app/oracle/product/gg/dirdat/rt, extract dp1
+
+Create parameter file for data pump process:
+GGSCI> edit param dp1
+
+EXTRACT dp1
+USERID ogg, PASSWORD ogg
+RMTHOST ggdev, MGRPORT 7809
+RMTTRAIL /u01/app/oracle/product/gg/dirdat/rt
+
