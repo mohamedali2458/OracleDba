@@ -98,10 +98,10 @@ source side
 
 edit param load1
 EXTRACT load1
-USERID gg_admin, PASSWORD gg_admin
-RMTHOST 192.168.239.5, MGRPORT 7809
+USERID c##ogg1, PASSWORD ogg1
+RMTHOST ogg2.localdomain, MGRPORT 7809
 RMTTASK replicat, GROUP load2
-TABLE FAHAD.ATHAR;
+TABLE pdb1.fox.do;
 
 target side
 
@@ -110,14 +110,15 @@ info all
 Dblogin userid gg_admin, password gg_admin
 edit params load2
 REPLICAT load2
-USERID gg_admin, PASSWORD gg_admin
+USERID c##ogg2, PASSWORD ogg2
 ASSUMETARGETDEFS
-MAP FAHAD.ATHAR,TARGET FAHAD.ATHAR;
+MAP pdb1.fox.do,TARGET pdb1.fox.do;
 
 ADD EXTRACT load1, SOURCEISTABLE
 
 ADD REPLICAT load2, SPECIALRUN
 
+start load1
 START EXTRACT load1
 (will automatically start replicat)
 
