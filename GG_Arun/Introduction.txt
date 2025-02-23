@@ -25,44 +25,56 @@ Create GG Extract Process:
 GGSCI> ADD EXTRACT ext2, INTEGRATED TRANLOG, BEGIN NOW  --> Log mining service
 GGSCI> ADD EXTRACT ext2, TRANLOG, BEGIN NOW --> redo / archive
 
+ggsci> dblogin userid c##ogg1@oradb,password ogg1
 GGSCI> register extract ext2 database --> (to start logmining service)
+register extract ext2 database container (pdb1)
+
 
 Create local trail file for extract process
-GGSCI> add exttrail /u01/app/oracle/product/gg/dirdat/ex, extract ext1
+GGSCI> add exttrail /u01/app/oracle/product/ogg/dirdat/ex, extract ext2
 
 Create parameter file for extract process:
-GGSCI> edit param ext1
+GGSCI> edit param ext2
 
-EXTRACT ext1
-USERID ogg, PASSWORD ogg
-EXTRAIL /u01/app/oracle/product/gg/dirdat/ex
-TABLE fox.tab1;
+EXTRACT ext2
+USERID c##ogg1, PASSWORD ogg1
+EXTRAIL /u01/app/oracle/product/ogg/dirdat/ex
+TABLE pdb1.fox.do;
 
 (first 2 params are common for all the processes)
 
 Create GG DP Process:
-GGSCI> add extract dp1, EXTTRAILSOURCE /u01/app/oracle/product/gg/dirdat/ex
+GGSCI> add extract dp2, EXTTRAILSOURCE /u01/app/oracle/product/ogg/dirdat/ex
 
 Create remote trail file for extract process:
-GGSCI> Add rmttrail /u01/app/oracle/product/gg/dirdat/rt, extract dp1
+GGSCI> Add rmttrail /u01/app/oracle/product/ogg/dirdat/rt, extract dp2
 
 Create parameter file for data pump process:
-GGSCI> edit param dp1
+GGSCI> edit param dp2
 
-EXTRACT dp1
-USERID ogg, PASSWORD ogg
-RMTHOST ggdev, MGRPORT 7809
-RMTTRAIL /u01/app/oracle/product/gg/dirdat/rt
-TABLE fox.tab1;
+EXTRACT dp2
+USERID c##ogg1, PASSWORD ogg1
+RMTHOST ogg2.localdomain, MGRPORT 7809
+RMTTRAIL /u01/app/oracle/product/ogg/dirdat/rt
+TABLE pdb1.fox.do;
 
 Create GG Replicate on target:
-GGSCI> dblogin userid ogg, password ogg
-GGSCI> add replicat rep1, integrated exttrail /u01/app/oracle/product/gg/dirdat/rt
+GGSCI> dblogin userid c##ogg2, password ogg2
+GGSCI> add replicat rep2, integrated exttrail /u01/app/oracle/product/ogg/dirdat/rt
 
 Create parameter file for replicat on target:
-GGSCI> edit param rep1
+GGSCI> edit param rep2
 
-REPLICAT rep1
-USERID ogg, PASSWORD ogg
+REPLICAT rep2
+USERID c##ogg2, PASSWORD ogg2
 ASSUMETARGETDEFS
-MAP fox.tab1 TARGET fox.tab1;
+MAP pdb1.fox.do TARGET pdb1.fox.do;
+
+
+
+
+GGSCI (ogg1.localdomain) 1> dblogin userid c##ogg1,password ogg1
+Successfully logged into database CDB$ROOT.
+
+GGSCI (ogg1.localdomain as c##ogg1@oradb/CDB$ROOT) 2> stats extract ext2 hourly
+stats extract ext2 daily
