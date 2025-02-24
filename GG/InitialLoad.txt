@@ -1,9 +1,9 @@
-add extract load1.sourceistable
+add extract load1, sourceistable
 info all
 delete extract load1
 
 source 
-add extract load1.sourceistable
+add extract load1, sourceistable
 info all 
 we dont see the process, 
 info load1 
@@ -22,7 +22,7 @@ note down port
 
 edit param load1
 EXTRACT load1 
-dblogin useridalias sourcegg1_cdb 
+useridalias sourcegg1_cdb 
 RMTHOST ggate2.MGRPORT 7810 (TARGET MANAGER)
 RMTTASK REPLICAT.group load2 (here load2 is replicat name)
 TABLE pdb1.ggtraining1.dept11;
@@ -33,7 +33,7 @@ here in this case initial load extract process automatically starts replicat pro
 
 target side 
 info credentialstore
-add replicat load2.specialrun 
+add replicat load2, specialrun 
 
 edit param load2 
 REPLICAT LOAD2
