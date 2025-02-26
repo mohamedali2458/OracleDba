@@ -39,6 +39,7 @@ RMAN> backup archivelog all delete input;
 
 To backup all files at a time
 RMAN> backup database include current controlfile plus archivelog;
+RMAN> backup database include current controlfile plus archivelog delete input;
 
 To store backup (piece) in a particular location
 RMAN> backup database format '/u01/bkp/full_bkp_%U';
@@ -48,8 +49,8 @@ List & Report Commands
 To get information about backups
 RMAN> list backup;
 RMAN> list backup of database;
-RMAN> list backup of datafile 12;
-RMAN> LIST BACKUP OF DATAFILE '/u01/app/oradata/TEST/users01.dbf';
+RMAN> list backup of datafile 7;
+RMAN> LIST BACKUP OF DATAFILE '/u01/app/oracle/oradata/ORADB/users01.dbf';
 RMAN> list backup of archivelog all;
 RMAN> list backup of controlfile;
 RMAN> list backup of spfile;
@@ -91,14 +92,14 @@ LV column lists the following:
 0 = incremental level 0 backup
 1 = incremental level 1 backup
 A = archivelogs
-f = full - backup database command
+F = full - backup database command
 
 S is the status:
 A = available
 U = unavailable
 
 As mentioned above F can represent either “FULL” backup or “Control File” Backup. 
-If your RMAN configuration for controlfile auto-backup is set to “ON” , the 
+If your RMAN configuration is for controlfile auto-backup is set to “ON”, the 
 control file backup will be taken automatically each time RMAN backup runs as 
 shown in the above picture.
 
@@ -118,16 +119,25 @@ Catalog (tables & views) -> Central repository that stores information of backup
 Configure catalog:
 In a separate box (machine) install Oracle software. The version must be same or higher from the 
 target databases and configure the Listener and do the following:
+
 Steps:
 a) Create a new database for the catalog : rman
 b) Create a tablespace: rmants
+SET LINESIZE 300
+COL NAME FOR A100
+SELECT FILE#,NAME FROM V$DATAFILE ORDER BY FILE#;
+
+CREATE TABLESPACE rmants DATAFILE '/u01/app/oracle/oradata/RMAN/rmants01.dbf' SIZE 100M;
+
 c) Create a user: rman and assign the above tablespace rmants as default
+CREATE USER rman IDENTIFIED BY rman DEFAULT TABLESPACE rmants QUOTA UNLIMITED ON rmants;
+
 d) Grant resource and recovery_catalog_owner roles (privileges) to rman user
 	(no need connect privilege, as recovery_catalog_owner has it)
-	1) SQL> grant resource, recovery_catalog_owner to rman identified by rman;
+	1) SQL> grant resource, recovery_catalog_owner to rman;
 e) connect to RMAN and create the catalog:
-$rman catalog rman/pwd@torman
-$rman catalog=rman/pwd@torman
+$rman catalog rman/rman@torman
+$rman catalog=rman/rman@torman
 RMAN> create catalog;
 
 For each Target database:
@@ -184,7 +194,6 @@ RMAN> configure retention policy to redundancy 1;
 	OR
 RMAN> configure retention policy to recovery window of 30 days;
 RMAN> configure backup optimization on;
-RMAN> configure controlfile autobackup on;
 
 run block
 =========
@@ -192,7 +201,7 @@ To execute multiple commands at a time.
 Eg:
 RMAN>run{
 backup current controlfile;
-backup datafile 4;}
+backup datafile 7;}
 
 Configure FRA (flash recovery area)
 ===================================
@@ -219,6 +228,15 @@ RMAN Scripts
 view: we can check following views to see rman scripts
 	rc_stored_script		(displays scripts name)
 	rc_stored_script_line		(display text of script)
+
+set linesize 300
+select db_name,script_name from rc_stored_script;
+
+set linesize 300
+col script_name for a20
+col text for a100
+select script_name,line,text from rc_stored_script_line order by line;
+
 note: we can create rman script in catalog mode only.
 
 
