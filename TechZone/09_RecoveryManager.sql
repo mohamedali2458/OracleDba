@@ -320,18 +320,16 @@ backup incremental level 1 database;
 backup incremental level 2 database;
 backup incremental level 1 cumulative database;
 backup incremental level 1 tablespace users;
-backup incremental level 1 datafile 4;
+backup incremental level 1 datafile 7;
 
 backup as compressed backupset incremental level 0 database;
 backup as compressed backupset incremental level 1 database;
 
-backup incremental level 1
-tablespace users
-datafile '/u01/prod/users01.dbf';
+backup incremental level 1 tablespace users;
+backup incremental level 1 datafile '/u01/app/oracle/oradata/ORADB/users01.dbf';
 (taking 2 times)
 
-backup incremental level=1 cumulative
-tablespace users;
+backup incremental level=1 cumulative tablespace users;
 
 Incrementally updated backups:
 run{
@@ -340,13 +338,12 @@ backup incremental level 1 for recover of copy with tag 'incr_update' database;}
 
 Incrementally updated backups: One week example:
 run{
-recover copy of database with tag 'incr_update'until time 'sysdate-7';
+recover copy of database with tag 'incr_update' until time 'sysdate-7';
 backup incremental level 1 for recover of copy with tag 'incr_update'database;}
 
 RMAN> backup incremental level 0 database format '/u01/bkp/full_incre_%U';
 RMAN> backup incremental level 1 database format '/u01/bkp/full_bkp_%U';
-RMAN> backup cumulative incremental level 0 database format
-		'/u01/bkp/full_cumm_bkp_%U';
+RMAN> backup cumulative incremental level 0 database format '/u01/bkp/full_cumm_bkp_%U';
 
 We can check the backups using the below query:
 select file#, incremental_level, completion_time, blocks, datafile_blocks
