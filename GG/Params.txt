@@ -1,0 +1,35 @@
+EXTRACT extwest
+EXTTRAIL ./dirdat/ew
+USERID gguser, PASSWORD gguser
+TABLE west.*;
+STATOPTIONS RESETREPORTSTATS
+REPORT AT 00:01
+REPORTROLLOVER AT 00:01
+REPORTCOUNT EVERY 60 SECONDS, RATE
+
+add extract extwest, tranlog, begin now
+
+add exttrail ./dirdat/ew, extract extwest, megabytes 50
+
+edit param pwest
+
+EXTRACT pwest
+RMTHOST 192.168.1.110, MGRPORT 15001, COMPRESS
+RMTTRAIL ./dirdat/pe
+PASSTHRU (no transformation)
+TABLE west.*;
+
+add extract pwest, exttrailsource ./dirdat/ew
+
+add rmttrail ./dirdat/pe, extract pwest, megabytes 50
+
+start extract extwest
+
+info er *
+
+start extract pwest
+
+info er *
+
+
+s
