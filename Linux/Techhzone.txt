@@ -1,6 +1,6 @@
 Group Administration
 ====================
-1. To add new group
+1. To add a new group
 [root@localhost ~]# groupadd amerpetgrp
 grep amerpetgrp /etc/group
 
