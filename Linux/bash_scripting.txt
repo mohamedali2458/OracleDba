@@ -1,0 +1,18 @@
+https://www.youtube.com/watch?v=xtS2NiABf54&list=PLtK75qxsQaMIlFCcFZpTBLnaCJ0I0uiaY
+
+1
+
+2
+echo "Hello there!"
+
+To store the result into a file or override
+echo "Hello there!" > hello.txt
+
+to append
+echo "Hello there!" >> hello.txt
+
+cat hello.txt
+
+cat testfile
+============
+This is a file
