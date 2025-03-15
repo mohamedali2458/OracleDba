@@ -88,3 +88,63 @@ can simply ignore the following parameters by not setting them at all:
 • LARGE_POOL_SIZE
 • JAVA_POOL_SIZE
 
+while setting the MEMORY_TARGET parameter is mandatory for implementing automatic memory management,
+the MEMORY_MAX_TARGET parameter isn’t—if you don’t set this parameter, Oracle sets its value internally to
+that of the MEMORY_TARGET parameter. Also, the MEMORY_MAX_TARGET parameter acts as the upper bound for
+the MEMORY_TARGET parameter. Oracle has different minimum permissible settings for the MEMORY_TARGET
+parameter, depending on the operating system. If you try to set this parameter below its minimum
+allowable value, the database will issue an error. Some of the memory components can’t shrink quickly
+and some components must have a minimum size for the database to function properly. Therefore,
+Oracle won’t let you set too low a value for the MEMORY_TARGET parameter.
+
+SQL> alter system set memory_target=360m scope=both;
+alter system set memory_target=360m scope=both
+*
+ERROR at line 1:
+ORA-02097: parameter cannot be modified because specified value is invalid
+ORA-00838: Specified value of MEMORY_TARGET is too small, needs to be at least
+544M
+SQL> alter system set memory_target=544m scope=both;
+alter system set memory_target=544m scope=both
+*
+ERROR at line 1:
+ORA-02097: parameter cannot be modified because specified value is invalid
+ORA-00838: Specified value of MEMORY_TARGET is too small, needs to be at least
+624M
+SQL> alter system set memory_target=624m scope=both;
+System altered.
+
+How does one go about setting the value of the MEMORY_MAX_TARGET parameter? It’s simple—you just
+pick a value that’s high enough to accommodate not only the current workloads, but also the future
+needs of the database. Since the MEMORY_TARGET parameter is dynamic, you can alter it on the fly and if
+necessary, re-allocate memory among multiple instances running on a server. Just be sure that you set
+the value of the MEMORY_MAX_TARGET parameter to a size that’s at least equal to the combined value of the
+present settings of the SGA_TARGET and the PGA_AGGREGATE_TARGET parameters. Always make sure to check 
+with your system administrator, so you don’t allocate too
+high an amount of memory for your Oracle instance, which could result in problems such as paging and
+swapping at the operating system level, which will affect not only your Oracle database, but also
+everything else that’s running on that server.
+
+
+3-2. Managing Multiple Buffer Pools
+
+You’re using automatic memory management, but have decided to allocate a minimum value for the
+buffer pool component. You’d like to configure the buffer pool so it retains frequently accessed
+segments, which may run the risk of being aged out of the buffer pool.
+
+In order to implement multiple buffer pools in your database, you need to do two things: create two separate buffer
+pools—the KEEP buffer pool and the RECYCLE buffer pool.
+
+Neither the KEEP nor the RECYCLE pool is part of the default BUFFER CACHE. Both of these pools are
+outside the default buffer cache.
+
+Here’s how you create the two types of buffer pools.
+In the SPFILE or the init.ora file, specify the two parameters and the sizes you want to assign to
+each of the pools:
+db_keep_cache_size=1000m
+db_recycle_cache_size=100m
+
+Here’s how you specify the default buffer pool for a segment:
+SQL> alter table employees storage (buffer_pool=keep);
+
+87
