@@ -1,0 +1,68 @@
+How to use RMANs RESTORE PREVIEW command
+========================================
+First we need to allocate a channel for maintenence
+
+Tape
+
+allocate channel for maintenance device type 'sbt_tape' parms='SBT_LIBRARY=/usr/openv/netbackup/bin/libobk.so64';
+
+Disk
+
+allocate channel for maintenance type disk ;
+
+RESTORE DATABASE PREVIEW;
+RESTORE TABLESPACE users PREVIEW;
+RESTORE DATAFILE 3 PREVIEW;
+RESTORE ARCHIVELOG FROM LOGSEQ 200 PREVIEW;
+RESTORE ARCHIVELOG FROM TIME 'SYSDATE-7' PREVIEW;
+RESTORE ARCHIVELOG FROM SCN 234546 PREVIEW;
+RESTORE DATABASE UNTIL TIME "TO_DATE('18.11.2014 18:00:00','DD.MM.YYYY HH24:MI:SS')" PREVIEW;
+
+Use summary to supress file details
+
+RESTORE DATABASE PREVIEW SUMMARY;
+RESTORE DATABASE UNTIL TIME "TO_DATE('31-08-2010 18:00:00', 'DD-MM-YYYY HH24:MI:SS')" PREVIEW summary;
+RESTORE DATABASE UNTIL TIME 'sysdate-3' PREVIEW SUMMARY;
+RESTORE DATABASE UNTIL TIME 'sysdate-1/24' preview summary; --> one hour ago
+RESTORE TABLESPACE users PREVIEW SUMMARY;
+RESTORE DATAFILE 3 PREVIEW SUMMARY;
+RESTORE ARCHIVELOG FROM SCN 234546 PREVIEW SUMMARY;
+
+If you need to validate your backups, these are the useful commands to run
+
+RESTORE DATABASE PREVIEW ;
+RESTORE DATABASE VALIDATE;
+RESTORE ARCHIVELOG FROM sequence xx UNTIL SEQUENCE yy THREAD nn VALIDATE;
+RESTORE CONTROLFILE VALIDATE;
+RESTORE SPFILE VALIDATE;
+
+Examples
+
+RMAN> RUN
+{
+set until time "to_date('02-FEB-2020 20:20:00','dd-mon-yyyyhh24:mi:ss')";
+RESTORE DATABASE PREVIEW;
+}   
+
+
+RMAN> RUN
+{
+set until time "to_date('02-FEB-2020 20:20:00','dd-mon-yyyyhh24:mi:ss')";
+restore database validate;
+}
+
+
+RMAN> RUN
+{
+restore archivelog from sequence 10 until sequence 20 thread 1 validate;
+restore archivelog from sequence 8 until sequence 15 thread 2 validate;
+}
+
+
+RMAN> RUN
+{
+set until time "to_date('02-FEB-2020 20:20:00','dd-mom-yyyyhh24:mi:ss')";
+restore controlfile validate;
+restore spfile validate;
+}
+
