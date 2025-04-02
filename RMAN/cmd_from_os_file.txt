@@ -6,11 +6,10 @@ report schema;
 show all;
 report schema;
 --save as rmancmd.txt
-type rmancmd.txt
+cat rmancmd.txt
 
 rman target /
 RMAN> @rmancmd.txt
 
 --RMAN Batch mode
 rman target / cmdfile rmancmd.txt
-
