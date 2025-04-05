@@ -1,6 +1,6 @@
 --alapati
 
-select user,sysdate from dual;
+	select user,sysdate from dual;
 
 --Managing Tablespaces
 
@@ -69,7 +69,7 @@ Creating Tablespaces
 ====================
 */
 set linesize 300 pagesize 60 colsep |
-col name for a50
+col name for a60
 select * from v$dbfile order by file#;
 
 CREATE TABLESPACE test
@@ -109,7 +109,10 @@ FROM dba_tablespaces;
 --Extent Allocation and Deallocation
 /*
 Once Oracle allocates space to a segment by allocating a certain number of extents to it, that
-space will remain with the extent unless you make an effort to deallocate it. If you truncate a table with the DROP STORAGE option (TRUNCATE TABLE table_name DROP STORAGE), for example, Oracle deallocates the allocated extents. You can also manually deallocate unused extents using the following command:
+space will remain with the extent unless you make an effort to deallocate it. If you truncate 
+a table with the DROP STORAGE option (TRUNCATE TABLE table_name DROP STORAGE), 
+for example, Oracle deallocates the allocated extents. You can also manually deallocate 
+unused extents using the following command:
 */
 
 ALTER TABLE table_name DEALLOCATE UNUSED;
