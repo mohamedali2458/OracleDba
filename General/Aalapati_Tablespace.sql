@@ -118,7 +118,8 @@ unused extents using the following command:
 ALTER TABLE table_name DEALLOCATE UNUSED;
 
 /*
-When Oracle frees extents, it automatically modifies the bitmap in the datafile where the extents are located, to indicate that they are free and available again.
+When Oracle frees extents, it automatically modifies the bitmap in the datafile where the extents are located, 
+to indicate that they are free and available again.
 
 Storage Parameters
 ------------------
@@ -130,11 +131,17 @@ Here is how Oracle determines extent sizing and extent allocation when you creat
     tablespace creation.
     
     You don't have to provide a value to the MAXEXTENTS parameter when you use locally managed
-    tablespaces. Under locally managed tablespaces, the MAXEXTENTS parameter is set to UNLIMITED, and you don't have to configure it at all.
+    tablespaces. Under locally managed tablespaces, the MAXEXTENTS parameter is set to UNLIMITED, 
+    and you don't have to configure it at all.
     
-    If you choose UNIFORM extent size, the size of all extents, including the first, will be determined by the extent size you choose.
+    If you choose UNIFORM extent size, the size of all extents, including the first, will be 
+    determined by the extent size you choose.
     
-Initial extent: This storage parameter determines the initial amount of space that is allocated to any object you create in this tablespace. For example, if you specify a UNIFORM extent size of 10MB and specify an INITIAL_EXTENT value of 20MB, Oracle will create two 10MB-sized extents, to start with, for a new object. The example in Listing 6-1 shows an initial extent size of 5,242,880 bytes, based on the UNIFORM SIZE value, which is 5MB for this tablespace.
+Initial extent: This storage parameter determines the initial amount of space that is allocated 
+to any object you create in this tablespace. For example, if you specify a UNIFORM extent size 
+of 10MB and specify an INITIAL_EXTENT value of 20MB, Oracle will create two 10MB-sized extents, 
+to start with, for a new object. The example in Listing 6-1 shows an initial extent size of 5,242,880 bytes, 
+based on the UNIFORM SIZE value, which is 5MB for this tablespace.
 
 Next extent: The NEXT_EXTENT storage parameter determines the size of the subsequent
 extents after the initial extent is created.
@@ -182,7 +189,10 @@ FROM dba_tablespaces;
 /*
 TEST04	1048576	1048576	LOCAL	UNIFORM	AUTO
 
-If you choose the AUTOALLOCATE method of sizing extents, Oracle will size the extents starting with a 64KB (65536 bytes) minimum extent size. Note that you can specify the autoallocate method for extent sizing either by explicitly specifying it with the AUTOALLOCATE keyword, or by simply leaving out the keyword altogether, since by default, Oracle uses the AUTOALLOCATE method anyway. Listing 6-3
+If you choose the AUTOALLOCATE method of sizing extents, Oracle will size the extents starting with 
+a 64KB (65536 bytes) minimum extent size. Note that you can specify the autoallocate method for extent 
+sizing either by explicitly specifying it with the AUTOALLOCATE keyword, or by simply leaving out the 
+keyword altogether, since by default, Oracle uses the AUTOALLOCATE method anyway. Listing 6-3
 shows an example that creates a tablespace with system-managed (automatically allocated) extents.
 
 Listing 6-3. Creating a Tablespace with Automatically Allocated Extents
@@ -200,24 +210,43 @@ WHERE tablespace_name = 'TEST05';
 --TEST05	65536		LOCAL	SYSTEM	AUTO
 
 /*
-Note that there is no value for the autoallocated tablespace for NEXT_EXTENT in Listing 6-3. When you choose the AUTOALLOCATE option (here it is chosen by default) rather than UNIFORM, Oracle allocates extent sizes starting with 64KB for the first extent. The next extent size will depend entirely upon the requirements of the segment (table, index, etc.) that you create in this tablespace.
+Note that there is no value for the autoallocated tablespace for NEXT_EXTENT in 
+Listing 6-3. When you choose the AUTOALLOCATE option (here it is chosen by default) 
+rather than UNIFORM, Oracle allocates extent sizes starting with 64KB for the first 
+extent. The next extent size will depend entirely upon the requirements of the 
+segment (table, index, etc.) that you create in this tablespace.
 */
 
 --Storage Allocation to Database Objects
 /*
-You can omit the specification of storage parameters, such as INITIAL, NEXT, MINEXTENTS, MAXEXTENTS, and PCTINCREASE, when you create objects like tables and indexes in the tablespaces. For locally managed tablespaces, Oracle will manage the storage extents, so there is very little scope for you to specify in terms of storage allocation parameters. Oracle retains the storage parameters for backward compatibility only.
+You can omit the specification of storage parameters, such as INITIAL, NEXT, MINEXTENTS, 
+MAXEXTENTS, and PCTINCREASE, when you create objects like tables and indexes in the tablespaces. 
+For locally managed tablespaces, Oracle will manage the storage extents, so there is very little 
+scope for you to specify in terms of storage allocation parameters. Oracle retains the storage 
+parameters for backward compatibility only.
 
-You don't have to set the PCTUSED parameter if you're using locally managed tablespaces. If you set it, your object creation statement won't error out, but Oracle ignores the parameter. However, you can use the PCTFREE parameter to specify how much free space Oracle should leave in each block for future updates to data. The default is 10, which is okay if you don't expect the existing rows to get longer with time. If you do, you can change the PCTFREE parameter upward, say to 20 or 30 percent.
+You don't have to set the PCTUSED parameter if you're using locally managed tablespaces. If you set 
+it, your object creation statement won't error out, but Oracle ignores the parameter. However, you 
+can use the PCTFREE parameter to specify how much free space Oracle should leave in each block for 
+future updates to data. The default is 10, which is okay if you don't expect the existing rows 
+to get longer with time. If you do, you can change the PCTFREE parameter upward, say to 20 or 30 percent.
 
-Of course, there is a price to pay for this'the higher the PCTFREE parameter, the more space you will 'waste' in your database.
+Of course, there is a price to pay for this'the higher the PCTFREE parameter, the more space you 
+will 'waste' in your database.
 */
 
 --CREATING TABLESPACES WITH NONSTANDARD BLOCK SIZES
 /*
-The default block size for all tablespaces is determined by the DB_BLOCK_SIZE initialization parameter for your database. You have the option of creating tablespaces with block sizes that are different from the standard database block size. In order to create a tablespace with a nonstandard block size, you must have already set the DB_CACHE_SIZE initialization parameter, and at least one DB_nK_CACHE_SIZE initialization parameter. For example, you must set the DB_16K_CACHE_SIZE parameter, if you wish to create tablespaces with a 16KB block
-size.
+The default block size for all tablespaces is determined by the DB_BLOCK_SIZE initialization parameter 
+for your database. You have the option of creating tablespaces with block sizes that are different 
+from the standard database block size. In order to create a tablespace with a nonstandard block size, 
+you must have already set the DB_CACHE_SIZE initialization parameter, and at least one DB_nK_CACHE_SIZE 
+initialization parameter. For example, you must set the DB_16K_CACHE_SIZE parameter, if you wish to 
+create tablespaces with a 16KB block size.
 
-By using a nonstandard block size, you can customize a tablespace for the types of objects it contains. For example, you can allocate a large table that requires a large number of reads and writes to a tablespace with a large block size. Similarly, you can place smaller tables in tablespaces with a smaller block size.
+By using a nonstandard block size, you can customize a tablespace for the types of objects it contains. 
+For example, you can allocate a large table that requires a large number of reads and writes to a 
+tablespace with a large block size. Similarly, you can place smaller tables in tablespaces with a smaller block size.
 
 Here are some points to keep in mind if you're considering using the multiple block size feature for tablespaces:
     Multiple buffer pools enable you to configure up to a total of five different pools in the buffer cache, each with a different block size.
