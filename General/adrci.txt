@@ -1,1 +1,32 @@
+adrci = automatic diagnostic repository commandline interface
 
+adrci>
+
+help
+show base
+show home
+show problem
+set home <path>
+show home
+show alert
+show tracefile
+show incident
+show log
+show control (important)
+set control (SHORTP_POLICY = 120) (5 DAYS)
+set control (LONGP_POLICY = 720)
+show control
+
+default values
+set control (SHORTP_POLICY = 720)
+set control (LONGP_POLICY = 8760)
+show control
+
+PURGE_PERIOD is for when to purge all the trace files
+to manually purge the tracefiles
+show tracefile -rt
+purge -age 2880 -type trace
+
+locate alert_sid
+cd <path>
+ls -ltr
