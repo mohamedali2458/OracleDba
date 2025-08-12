@@ -14,7 +14,7 @@ sql> alter system set control_files='/u01/prod/control01.ctl', '/u01/prod/contro
 
 SQL> shutdown immediate;
 
-$cp /u01/prod/control01.ctl /u01/prod/control03.ctl
+SQL> ! cp /u01/prod/control01.ctl /u01/prod/control03.ctl
 
 sql> startup
 
