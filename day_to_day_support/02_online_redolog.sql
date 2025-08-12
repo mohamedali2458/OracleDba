@@ -62,55 +62,34 @@ select group#, members, status,bytes from v$log;
 --now all will be of 100m size
 
 
+--Redolog File Multiplexing
 
+--Check redolog file members
 
+SQL> select member from v$logfile;
 
---Steps for Creating New Control Files
---1.	Make a list of all datafiles and redo log files of the database.
-SELECT MEMBER FROM V$LOGFILE;
+--To check redolog group info,status and size
+SQL> select group#, members, status, sum(bytes/1024/1024) "Mb" from v$log group by group#,members,status;
 
-SELECT NAME FROM V$DATAFILE;
+--To add a redolog file group
+SQL> alter database add logfile group 4('/u01/prod/redo04a.log','/u02/prod/redo04b.log') size 50m;
 
-SELECT VALUE FROM V$PARAMETER WHERE NAME = 'control_files';
+--To add a redolog member
+SQL> alter database add logfile member '/u02/prod/redo01b.log' to group 1;
 
---2.	Shutdown the database.
-shutdown abort;
+--To drop a redolog group
+SQL> alter database drop logfile group 4;
 
---3.	Back up all datafiles and redo log files of the database.
+--To drop a redolog member
+SQL> alter database drop logfile member '/u02/prod/redo01b.log';
 
---4.	Start up a new instance, but do not mount or open the database.
+--Rename or Relocate Redolog file, shutdown the DB
+SQL> shutdown immediate;
+SQL>! cp /u02/prod/redo01.log /u02/prod/redo01a.log
+--(If relocating, use the source and destination paths)
 
-sql> startup nomount;
+SQL> startup mount
+SQL> alter database rename file '/u02/prod/redo01.log' to '/u02/prod/redo01a.log';
 
---5.	Create a new control file for the database using the CREATE CONTROLFILE statement.
-
---6.	Store a backup of the new control file on an offline storage device.
-
---7.	Edit the CONTROL_FILES initialization parameter for the database to indicate all of the control files now part of your database as created in step 5 (not including the backup control file). If you are renaming the database, edit the DB_NAME parameter in your instance parameter file to specify the new name.
-
---8.	Recover the database if necessary. If you are not recovering the database, skip to step 9.
-
---9.	Open the database using one of the following methods:
-
-sql> alter database open;
-
-sql> ALTER DATABASE OPEN RESETLOGS;
-
-
-
---creating lost control file manually based on available files
-CREATE CONTROL FILE SET DATABASE test
-	LOGFILE GROUP 1 ('/u01/prod/redo01_01.log','/u01/prod/redo01_02.log'),
-		  GROUP 2 ('/u01/prod/redo02_01.log','/u01/prod/redo02_02.log'),
-              GROUP 3 ('/u01/prod/redo03_01.log’,'/u01/prod/redo03_02.log')
-RESETLOGS
-DATAFILE '/u01/prod/system01.dbf' SIZE 100M,
-         '/u01/prod/rbs01.dbf' SIZE 100M,
-         '/u01/prod/users01.dbf' SIZE 100M,
-         '/u01/prod/temp01.dbf' SIZE 50M
-MAXLOGFILES 50
-MAXLOGMEMBERS 3
-MAXLOGHISTORY 400
-MAXDATAFILES 200
-MAXINSTANCES 6
-ARCHIVELOG;
+SQL> alter database open;
+--The server process will update Control File with new redolog location.
