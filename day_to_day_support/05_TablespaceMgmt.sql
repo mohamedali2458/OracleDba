@@ -1,10 +1,11 @@
 --TABLESPACE MANAGEMENT - 1
 set linesize 300
 col name for a30
-select ts#, name, bigfile, flashback_on, con_id from v$tablespace;
-select tablespace_name,contents,status from dba_tablespaces order by 2;
+select ts#, name, bigfile, flashback_on, con_id from v$tablespace order by con_id,ts#;
 
-To check tablespace information
+select tablespace_name, contents, status from dba_tablespaces order by 2;
+
+--To check tablespace information
 Select tablespace_name from dba_tablespaces;
 select tablespace_name, contents, status 
 from dba_tablespaces order by 2;
