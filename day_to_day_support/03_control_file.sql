@@ -1,6 +1,10 @@
 --backup of controlfile to trace
 SQL> alter database backup controlfile to trace as '/u01/backup.ctl';
 
+SQL> alter database backup controlfile to trace;
+
+SQL> alter database backup controlfile to '/u02/oradata/backup/control.bkp';
+
 --Multiplexing the Control file
 
 set linesize 200
