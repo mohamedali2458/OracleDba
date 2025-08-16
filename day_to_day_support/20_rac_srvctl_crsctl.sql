@@ -250,3 +250,5 @@ Monitor Node 1/2
 crsctl stat res -t
 
 crsctl start cluster
+
+crsctl stop cluster -all
