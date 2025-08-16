@@ -1,0 +1,118 @@
+
+interview questions
+
+22. What is split-brain syndrome?
+Split brain will arise when two or more instances 
+attempt to control a cluster database. In a two-node 
+environment, one instance attempts to manage updates 
+simultaneously while the other instance attempts to 
+manage updates.
+
+23. What are various IPs used in RAC? Or How many 
+IPs do we need in RAC?
+Public IP, Private IP, Virtual IP, SCAN IP
+
+24. What is the use of virtual IP (VIP)?
+When a node fails, the VIP associated with it is 
+automatically failed over to some other node and 
+the new node re-arps the world indicating a new 
+MAC address for the IP. Subsequent packets sent 
+to the VIP go to the new node, which will send 
+error RST packets back to the clients. This 
+results in the clients getting errors immediately.
+
+Without using VIPs or FAN, clients connected to a 
+node that died will often wait for a TCP timeout 
+period (which can be up to 10 min) before getting 
+an error. As a result, you dont really have a 
+good HA solution without using VIPs.
+
+25. What is the use of SCAN IP (SCAN name) and 
+will it provide load balancing?
+Single Client Access Name (SCAN) was introduced 
+in Oracle Real Application Clusters (RAC) 11g Release 2, 
+feature that provides a single name for clients to 
+access an Oracle Database running in a cluster. 
+The benefit is clients using SCAN do not need to 
+change if you add or remove nodes in the cluster.
+
+26. How many SCAN listeners will be running?
+Three SCAN listeners only, irrespective of the 
+number of nodes in the cluster.
+
+27. What is FAN?
+Applications can use Fast Application Notification (FAN) 
+to enable rapid failure detection, balancing of connection 
+pools after failures, and re-balancing of connection pools 
+when failed components are repaired. The FAN process uses 
+system events that Oracle publishes when cluster servers 
+become unreachable or if network interfaces fail.
+
+28. What is FCF?
+Fast Connection Failover (FCF) provides high availability 
+to FAN integrated clients, such as clients that use JDBC, 
+OCI, or ODP.NET. If you configure the client to use fast 
+connection failover, then the client automatically subscribes 
+to FAN events and can react to database UP and DOWN events. 
+In response, Oracle gives the client a connection to an 
+active instance that provides the requested database service.
+
+29. What is TAF and TAF policies?
+Transparent Application Failover (TAF) - A runtime failover 
+for high availability environments, such as Real Application 
+Clusters, TAF refers to the failover and re-establishment 
+of application-to-service connections. It enables client 
+applications to automatically reconnect to the database 
+if the connection fails, and optionally resume a SELECT 
+statement that was in progress. This reconnect happens 
+automatically from within the Oracle Call Interface 
+(OCI) library.
+
+30. How will you upgrade the RAC database?
+
+31. What are rolling patches and how to apply them?
+Answer:
+
+32. How to add/remove a node?
+Answer:
+
+33. What are nodeapps?
+Answer:
+VIP, listener, ONS, GSD
+
+34. What is gsd (Global Service Daemon)?
+Answer:
+
+35. How to do load balancing in RAC?
+Answer:
+
+36. What are the uses of services? How to find 
+out the services in the cluster?
+Applications should use the services to connect 
+to the Oracle database. Services define rules 
+and characteristics (unique name, workload balancing, 
+failover options, and high availability) to control 
+how users and applications connect to database instances.
+
+37. How to find out the nodes in the cluster (or) 
+how to find out the master node? 
+To find out which is the master node, use any one of the below.
+i) # olsnodes  -- Which ever displayed first, is the master node of the cluster.
+ii) select MASTER_NODE from v$ges_resource;
+iii) check ocssd.log file and search for "master node number".
+iv) oclumon manage -get master        (From Oracle RAC 12c)
+v) ocrconfig -manualbackup
+
+38. How to know the public IPs, private IPs, VIPs in RAC?
+# olsnodes -n -p -i
+node1-pub       1       node1-prv       node1-vip
+node2-pub       2       node2-prv       node2-vip
+
+39. What utility is used to start DB/instance?
+srvctl start database –d database_name
+srvctl start instance –d database_name –i instance_name
+
+40. How can you shutdown a single instance?
+Change cluster_database=false
+srvctl stop instance –d database_name –i instance_name
+
