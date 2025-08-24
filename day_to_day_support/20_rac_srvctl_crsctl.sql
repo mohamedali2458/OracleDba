@@ -54,6 +54,8 @@ V$ views contain statistics for one instance,
 whereas GV$ views contains information from all
 the active instances. 
 
+SQL> select * from v$active_instances;
+ 
 Each GV$ view contains an INST_ID column of type 
 NUMBER, which can be used to identify the instance 
 associated with the data. 
