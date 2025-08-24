@@ -99,7 +99,7 @@ There will be 2 undo tablespaces for 2 nodes.
 
 show parameter undo_tablespace;
 
-run this command in both the nodes. 
+Run this command in both the nodes. We get differnt undo tbs in each node.
 
 
 Logfiles Information
@@ -129,7 +129,7 @@ select group_number, name, state from v$asm_diskgroup;
 column path format a40
 select name, path from v$asm_disk;
 
-select group_number, file_number, bytes/1024/1024/1024 "Gb"
+select group_number, file_number, round(bytes/1024/1024/1024) "Gb"
 from v$asm_file;
 
 SRVCTL Command on Node 1 / Node 2
