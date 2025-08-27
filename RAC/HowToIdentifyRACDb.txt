@@ -12,6 +12,7 @@ Once we connect to RAC cluster how DBA can identify whether the database is RAC 
   node2
 
 2. using srvctl commands 
+srvctl config database
 srvctl config database -d DEVDB 
 srvctl status database -d DEVDB
 
