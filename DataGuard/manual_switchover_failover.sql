@@ -1,8 +1,8 @@
-Oracle Data Guard Manual Switchover and Failover on Physical Standby
+--Oracle Data Guard Manual Switchover and Failover on Physical Standby
 
-Switchover
-==========
-Perform Manual Switchover on Physical Standby
+--Switchover
+
+--Perform Manual Switchover on Physical Standby
 
 Connect to proddb database via client and keep querying below
 
@@ -14,7 +14,7 @@ NAME      OPEN_MODE      DB_UNIQUE_NAME         DATABASE_ROLE
 --------- -------------- ---------------------- --------------
 proddb    READ WRITE     proddb                 PRIMARY
 
-Check primary and standby for any gaps
+--Check primary and standby for any gaps
 
 On primary:
 ===========
