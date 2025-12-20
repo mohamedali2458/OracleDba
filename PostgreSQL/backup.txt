@@ -1,0 +1,81 @@
+pg_basebackup and Point in Time Recovery
+========================================
+WAL : Write Ahead Logging
+
+Step 1 :- Configuring Continuous Archiving on the database cluster
+create directory for archive logs
+root@postgres:~#
+cd /var/lib/postgresql/16
+mkdir database_archive
+
+You now need to give the default PostgreSQL user, postgres, permission to 
+write to this directory. You can achieve this by changing the ownership of the
+directory using the chown command:
+
+sudo chown postgres:postgres database_archive
+ll (to check latest ownership)
+
+Open the configuration file with your text editor: and enable archive logging
+
+sudo nano /etc/postgresql/16/main/postgresql.conf
+
+archive_mode = on
+archive_command = 'test ! -f /var/lib/postgresql/16/database_archive/%f && cp %p /var/lib/postgresql/16/database_archive/%f'
+wal_level = replica #(minimal, replica, or logical)
+
+sudo systemctl restart postgresql@16-main
+sudo -u postgres psql -c "SELECT pg_switch_wal();"
+
+sudo -u postgres psql -c "SHOW data_directory;"
+
+sudo -u postgres psql
+
+postgres=# create database chirags_db1;
+
+postgres=# \c chirags_db1;
+
+chirags_db1=# CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(100), age INT);
+
+chirags_db1=# INSERT INTO users (name, age) VALUES ('Chirag Mahto', 35);
+chirags_db1=# INSERT INTO users (name, age) VALUES ('Sanju Mehta', 32);
+
+chirags_db1=# select * from users;
+
+chirags_db1=# select now();
+
+chirags_db1=# SELECT pg_switch_wal();
+
+chirags_db1=# \q
+
+Step 2 : Performing a Physical Backup of the PostgreSQL Cluster
+
+root@postgres:~#
+cd /var/lib/postgresql/16
+mkdir database_backup
+ll
+
+sudo chown postgres:postgres database_backup
+ll
+
+#Take basebackup
+root@postgres:~# sudo -u postgres pg_basebackup -D /var/lib/postgresql/16/database_backup
+
+#Now add some more records
+root@postgres:~# su - postgres
+postgres@postgres:~$ psql
+
+postgres=# \c chirags_db1;
+
+chirags_db1=# CREATE TABLE accounts (account_number SERIAL PRIMARY KEY,
+account_holder VARCHAR(100), balance DECIMAL(10,2));
+
+chirags_db1=# INSERT INTO accounts (account_holder, balance) VALUES ('Arjun', 1000.00);
+chirags_db1=# INSERT INTO accounts (account_holder, balance) VALUES ('Purab', 500.00);
+
+chirags_db1=# select * from accounts;
+
+chirags_db1=# \dt
+
+chirags_db1=# select now();
+https://www.youtube.com/watch?v=9k7h0bcryn8
+15:53
