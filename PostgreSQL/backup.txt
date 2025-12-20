@@ -77,5 +77,55 @@ chirags_db1=# select * from accounts;
 chirags_db1=# \dt
 
 chirags_db1=# select now();
-https://www.youtube.com/watch?v=9k7h0bcryn8
-15:53
+
+chirags_db1=# SELECT pg_switch_wal();
+
+chirags_db1=# \q
+
+Step 3 - Performing Point-In-Time-Recovery on the Database Cluster
+
+root@postgres:~# 
+sudo systemctl stop postgresql@16-main
+
+sudo mv /var/lib/postgresql/16/main/pg_wal ~/
+
+# destroy data directory
+sudo rm -rf /var/lib/postgresql/16/main
+
+# manually create data directory
+sudo mkdir /var/lib/postgresql/16/main
+
+# Restoration :
+sudo cp -a /var/lib/postgresql/16/database_backup/ ./var/lib/postgresql/16/main/
+
+sudo chown postgres:postgres /var/lib/postgresql/16/main
+
+sudo chmod 700 /var/lib/postgresql/16/main
+
+sudo rm -rf /var/lib/postgresql/16/main/pg_wal
+
+sudo cp -a ~/pg_wal /var/lib/postgresql/16/main/pg_wal
+
+sudo cp /var/lib/postgresql/16/database_archive/* /var/lib/postgresql/16/main/pg_wal
+
+root@postgres:~# sudo nano /etc/postgresql/16/main/postgresql.conf
+
+restore_command = 'cp /var/lib/postgresql/16/database_archive/$f $p'
+# recovery_target_time =
+# recovery_target = 'immediate'
+
+root@postgres:~# sudo touch /var/lib/postgresql/16/main/recovery.signal
+
+# Start PostgreSQL Services
+root@postgres:~# sudo systemctl start postgresql@16-main
+
+# Check status of PostgreSQL Services
+root@postgres:~# sudo systemctl status postgresql@16-main
+
+# Now try to add some more records
+root@postgres:~# sudo -u postgres psql
+
+postgres=# \c chirags_db1
+\dt
+select * from users;
+select * from accounts;
