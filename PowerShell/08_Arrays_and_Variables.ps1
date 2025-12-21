@@ -42,3 +42,124 @@ $MyVariable
 
 $MyVariable1 = 'Automate With Rakesh1'
 $MyVariable1
+
+$MyVariable = "Automate With Rakesh"
+$MyVariable
+
+#we can type clear in below terminal to clean
+
+$MyVariable1 = '06'
+$MyVariable1
+
+$MyVariable2 = 06
+$MyVariable2
+
+#properties (key symbol)
+$MyVariable = "Automate With Rakesh"
+$MyVariable
+$MyVariable.Length
+
+$MyVariable = '06'
+$MyVariable
+$MyVariable.Length
+
+#methods (cube symbol)
+$MyVariable = '06'
+$MyVariable
+$MyVariable.GetType()
+
+$MyVariable = 06
+$MyVariable
+$MyVariable.GetType()
+
+$MyVariable1 = 06
+$MyVariable2 = 05
+$MyVariable1 + $MyVariable2
+
+$MyVariable1 = 06
+$MyVariable2 = 05
+$MyVariableResult = $MyVariable1 + $MyVariable2
+$MyVariableResult
+
+#Arithmetic Operators
+$MyVariable1 = 06
+$MyVariable2 = 05
+$MyVariableResult = $MyVariable1 + $MyVariable2
+$MyVariableResult
+
+$MyVariable1 = 06
+$MyVariable2 = 05
+$MyVariableResult = $MyVariable1 - $MyVariable2
+$MyVariableResult
+
+$MyVariable1 = 06
+$MyVariable2 = 05
+$MyVariableResult = $MyVariable1 * $MyVariable2
+$MyVariableResult
+
+$MyVariable1 = 06
+$MyVariable2 = 05
+$MyVariableResult = $MyVariable1 / $MyVariable2
+$MyVariableResult
+
+#reminder
+$MyVariable1 = 06
+$MyVariable2 = 05
+$MyVariableResult = $MyVariable1 % $MyVariable2
+$MyVariableResult
+
+#Boolean Variables
+$MyBooleanVariable = $true
+$MyBooleanVariable.GetType()
+
+$MyBooleanVariable = $false
+$MyBooleanVariable.GetType()
+
+#Comparison Operators
+2 -eq 3
+2 -ne 3
+2 -gt 3
+2 -ge 3
+2 -lt 3
+2 -le 3
+
+#Arrays
+$a = 1,2,3,4,5
+$a.GetType()
+$a.Count
+$a[0]
+$a[1]
+$a[0 .. 3]
+
+$a = 1 .. 10
+$a
+$a[0 .. 4]
+
+$a = 1 .. 10
+$a[-9 .. -5]
+
+$a = 1,2,3,4,5
+$a[-2 .. -4]
+
+$a = 1,2,3,4,5
+$a[-4 .. -2]
+
+#ForEach Looping Construct
+$a = 1 .. 10
+
+foreach ($i in $a)
+{
+    $i
+}
+
+
+$a = 1 .. 10
+
+foreach ($i in $a)
+{
+    $i*2
+}
+
+
+#HashTable
+45:46
