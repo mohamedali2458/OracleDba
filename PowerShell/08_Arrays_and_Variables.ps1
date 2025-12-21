@@ -17,3 +17,28 @@ Verb-Noun
 
 Get-Service
 Get-Date
+
+Get-Service
+Get-Date
+Get-Command
+Get-Command -noun Service
+Get-Command -Verb Install
+Get-Help Install-Package -Full
+#alias
+Get-Help Get-Service -Full
+#gsv
+#Get-Service = gsv
+gsv
+#to see all aliases
+Get-Alias
+
+#variables
+#camelCase myVariable, PascalCase MyVariable, snake_case my_variable
+
+$MyVariable = "Automate With Rakesh"
+$MyVariable
+
+#we can type clear in below terminal to clean
+
+$MyVariable1 = 'Automate With Rakesh1'
+$MyVariable1
