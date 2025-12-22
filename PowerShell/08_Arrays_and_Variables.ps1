@@ -162,4 +162,24 @@ foreach ($i in $a)
 
 
 #HashTable
-45:46
+#HashTable Dictionary 
+#its key value pair
+# key must be unique
+$settings = @{
+    "AppName" = "App1"
+    "version" = "1.0.0"
+    "maxusers" = 100
+}
+
+$settings["appname"]
+
+$settings["appname", "version"]
+
+$settings["version"] = "2.0.0"
+
+$settings["version"]
+
+foreach ($i in $settings){
+    $i
+}
+
