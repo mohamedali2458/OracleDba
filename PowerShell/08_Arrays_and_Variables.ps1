@@ -183,4 +183,60 @@ foreach ($i in $settings){
     $i
 }
 
-53:36
+Name                           Value
+----                           -----
+maxusers                       100
+version                        2.0.0
+AppName                        App1
+
+
+foreach ($i in $settings){
+    $i.keys
+}
+
+maxusers
+version
+AppName
+
+foreach ($i in $settings){
+    $i.values
+}
+
+100
+2.0.0
+App1
+
+
+foreach ($i in $settings.keys){
+    $i
+}
+
+maxusers
+version
+AppName
+
+
+foreach ($i in $settings.keys){
+    $settings[$i]
+}
+
+100
+1.0.0
+App1
+
+
+
+
+
+$settings = @{
+    "AppName" = "App1"
+    "version" = "1.0.0"
+    "maxusers" = 100
+}
+
+$settings.ContainsKey("version")
+
+True
+
+https://www.youtube.com/watch?v=Hmkyn4yoLNQ
+56
