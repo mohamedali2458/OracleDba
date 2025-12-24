@@ -1,0 +1,26 @@
+${ORACLE_HOME}/bin/rman log "${TNS_ADMIN}/db_backup-${TNS}-${WEEK}.log" append target sys/"${SYSPASS}"@${TNS} using
+set echo on;
+run{
+  allocate channel backup_disk1 type disk connect 'sys@&2_vip1' formatt '&1/&2/%U';
+  allocate channel backup_disk2 type disk connect 'sys@&2_vip1' formatt '&1/&2/%U';
+  allocate channel backup_disk3 type disk connect 'sys@&2_vip2' formatt '&1/&2/%U';
+  allocate channel backup_disk4 type disk connect 'sys@&2_vip2' formatt '&1/&2/%U';
+CROSSCHECK BACKUP;
+CROSSCHECK ARCHIVELOG ALL;
+
+BACKUP 
+  INCREMENTAL LEVEL &3
+  DATABASE
+  INCLUDE CURRENT CONTROLFILE
+  PLUS ARCHIVELOG
+  DELEETE INPUT;
+
+release channel backup_disk1;
+release channel backup_disk2;
+release channel backup_disk3;
+release channel backup_disk4;
+
+DELETE NOPROMPT EXPIRED BACKUP;
+DELETE NOPROMPT EXPIRED ARCHIVELOG ALL;
+DELETE NOPROMPT OBSOLETE;
+}
