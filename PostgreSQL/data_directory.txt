@@ -1,0 +1,47 @@
+How to change Data Directory to a new location
+==============================================
+1.
+show data_directory;
+
+postgres=# show data_directory;
+           data_directory
+-------------------------------------
+ C:/Program Files/PostgreSQL/13/data
+(1 row)
+
+2.
+shutdown postgre service:
+sudo systemctl status postgresql-12
+sudo systemctl stop postgresql-12
+sudo systemctl status postgresql-12
+
+3.
+copy/move data from current data directory to new location:
+chown postgres:postgres /postgres/data
+hmod -R 750 /postgres/data
+
+cd /var/lib/pgsql/12/data/
+cp -r * /postgres/data
+cd /postgres/data
+ls -lrt
+
+
+4.
+cp /var/lib/pgsql/12/data/PostgreSQL.conf /var/lib/pgsql/12/data/PostgreSQL.conf_orig
+sudo vi /var/lib/pgsql/12/data/PostgreSQL.conf
+data_directory = '/postgres/data/'
+
+5. 
+Restarting postgres
+sudo systemctl start postgresql-12
+sudo systemctl status postgresql-12
+tail -10f /var/log/messages
+
+6. 
+Verify new location
+
+sudo -u postgres psql
+show data_directory;
+/postgres/data
+(1 row)
+
