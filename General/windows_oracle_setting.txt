@@ -1,0 +1,21 @@
+SET ORACLE_HOME=E:\oracle\product\10.2.0\db_1
+echo %ORACLE_HOME%
+cd $ORACLE_HOME\bin
+sqlplus / as sysdba
+
+SET ORACLE_SID=ORCL
+echo %ORACLE_SID%
+
+To start a Windows service using PowerShell, follow these steps:
+
+Open PowerShell with administrative privileges.
+
+get-service -Name Oracle*
+get-service -Name "OracleServiceORCL"
+get-service -Name "OracleOraDb10g_home1TNSListener"
+
+start-service -Name "OracleServiceORCL"
+start-service -Name "OracleOraDb10g_home1TNSListener"
+
+stop-service -Name "OracleServiceORCL"
+stop-service -Name "OracleOraDb10g_home1TNSListener"
