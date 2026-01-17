@@ -1,0 +1,45 @@
+PostgreSQL Internal Authentication
+==================================
+Postgres manages internal authentication mechanism as is mentioned in pg_hba.conf file.
+
+cat $PGDATA/pg_hba.conf | grep -i method
+# METHOD can be "trust", "reject", "md5", "password", "scram-sha-256"
+# authentication methods -- refer to the "Client Authentication"
+
+Note: is an inter-process communication mechanism that allows bidirectional data 
+exchange between processes running
+
+
+type	database	user 	address		method
+
+column 1:
+	Local is used the Unix-Domain socket, if is a host mention the host IP address in the address domain.
+
+col 2:
+	Used for the database, mention the database name.
+	If its has been set to all, then all the databases of PostgreSQL cluster will use the same authentication mechanism.
+
+col 3:
+	If it is the user, It can be set to separate authentication methods for different users and "all" means for all users.
+
+col 4:
+	IP address for example IP address can use particular authentication method.
+
+col 5:
+	which auth mode of authentication has to used.
+
+Auth method - trust
+-------------------
+A user who is mentioned with trust does not require any password for authentication.
+
+Example
+# TYPE		DATABASE	USER	ADDRESS		METHOD
+  host		all		all	127.0.0.1/32	trust
+
+any host which is not local host that connection will be rejected
+
+md5 authentication:
+	When using the md5 authentication, you havve to provide the password.
+
+SCRAM Authentication:
+	It is one of the most secure authentication methods, uses cryptographically-hashed security mechanism to store the passwords on the system.
