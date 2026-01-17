@@ -1,0 +1,43 @@
+To set the PostgreSQL path in Windows, you need to add the path to the PostgreSQL bin 
+directory to your system's Environment Variables. This allows you to use command-line 
+tools like psql from any command prompt window.
+
+Step-by-Step Guide
+==================
+Locate the PostgreSQL bin directory. The default installation path is usually similar 
+to C:\Program Files\PostgreSQL\<version>\bin, where <version> is your installed 
+PostgreSQL version (e.g., 16, 15, 14).
+
+Open the "Environment Variables" editor.
+Press the Win + R keys to open the Run dialog.
+Type sysdm.cpl and press Enter to open the "System Properties" window.
+
+Alternatively, search for "Edit the system environment variables" in the Windows search 
+bar and select the matching result.
+
+Access the Environment Variables.
+In the "System Properties" window, go to the Advanced tab.
+Click the Environment Variables... button at the bottom.
+Edit the Path variable.
+
+In the "Environment Variables" window, under the System variables section (or User variables 
+if you don't have administrator privileges or only want it for your account), find the Path 
+variable and select it.
+
+Click the Edit... button.
+
+Add the PostgreSQL bin path.
+
+In the "Edit environment variable" window, click the New button.
+
+Paste the path you copied earlier (e.g., C:\Program Files\PostgreSQL\16\bin) into the new row. 
+You may also optionally add the lib directory path (e.g., C:\Program Files\PostgreSQL\16\lib).
+
+Click OK to save the new path, and then OK on the other windows to close them out.
+
+Verify the installation.
+Close and reopen any existing Command Prompt or PowerShell windows for the changes to take effect.
+Open a new Command Prompt or PowerShell window and type the following command:
+bash
+psql --version
+If the path is set correctly, it should display the PostgreSQL version. You can then connect to the database using psql -U postgres and entering your password when prompted. 
