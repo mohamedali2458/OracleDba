@@ -38,6 +38,8 @@ Click OK to save the new path, and then OK on the other windows to close them ou
 Verify the installation.
 Close and reopen any existing Command Prompt or PowerShell windows for the changes to take effect.
 Open a new Command Prompt or PowerShell window and type the following command:
-bash
+
 psql --version
-If the path is set correctly, it should display the PostgreSQL version. You can then connect to the database using psql -U postgres and entering your password when prompted. 
+
+If the path is set correctly, it should display the PostgreSQL version. You can then connect to the 
+database using psql -U postgres and entering your password when prompted. 
