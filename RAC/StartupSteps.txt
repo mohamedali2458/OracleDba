@@ -1,0 +1,15 @@
+Oracle RAC Startup Steps
+
+01. Start OS & CRS - Boot OS & Start OHASD
+02. Node Apps Start - giP, gVIP, mdnsd, gpnpd
+03. CSSD Starts - Cluster Membership Up
+04. CRSD Online - Resource Master Online
+05. CTSSD - Time Synchronization
+06. EVMd - Event Management Daemon
+07. GPnP / mDNS - Cluster Map Services
+08. ASM Disk Groups - Mount ASM Disk Groups
+09. Network Resources - SCAN, VIP & Listener Online
+10. Start DB Instances - srvctl start database
+11. Background Processes - PMON, SMON & More
+12. RAC Global Services - LMS, LMD, LMON
+13. OPEN Database - Check All Instances are OPEN
