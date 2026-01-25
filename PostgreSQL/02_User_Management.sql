@@ -205,6 +205,7 @@ mydb(>     dept_id SERIAL PRIMARY KEY,
 mydb(>     dept_name VARCHAR(100) NOT NULL,
 mydb(>     location VARCHAR(100)
 mydb(> );
+
 ERROR:  permission denied for schema blp
 LINE 1: CREATE TABLE blp.departments (
                      ^
@@ -224,3 +225,65 @@ mydb=>
 mydb=> \du+ bob
 mydb-> \dt+ blp.*
   
+mydb=> select * from blp.employees;
+
+mydb=> INSERT INTO blp.employees (first_name, last_name, hire_date, salary) VALUES
+mydb-> ('Bob', 'Williams', '2024-04-01', 5800.00),
+mydb-> ('Clara', 'Brown', '2024-05-10', 6200.00),
+mydb-> ('David', 'Lee', '2024-06-15', 5300.00);
+ERROR:  permission denied for table employees
+mydb=>
+
+
+16: Set Schema Search Path
+
+[postgres@pg17 ~]$ psql -h 192.168.2.31 -U BLP -d mydb -W
+Password:
+
+mydb=> \conninfo
+
+mydb=> \dt+ blp.*
+
+mydb=> select * from employees;
+ERROR:  relation "employees" does not exist
+LINE 1: select * from employees;
+
+mydb=> SET search_path to BLP; -- Temporarily for this session
+
+mydb=> select * from employees;
+
+-- Make the Schema Default for the user BLP -- Permenant
+ALTER ROLE blp_owner SET search_path = BLP;
+
+
+17: Groups
+
+postgres=# CREATE GROUP app_users;
+postgres=# ALTER GROUP app_users ADD USER alice;
+postgres=# ALTER GROUP app_users ADD USER bob;
+postgres=# ALTER GROUP app_users ADD USER charlie;
+postgres=# ALTER GROUP app_users DROP USER charlie;
+postgres=# ALTER GROUP app_users RENAME TO appusers;
+postgres=# DROP GROUP appusers;
+
+mydb=> select * from pg_group;
+
+
+18: PostgreSQL Object-Level Privilege Summary
+
+mydb=> \z blp.employees
+
+Tip: the shorthand string you see in \z (for example arwdDxt) can be expanded 
+by mapping each letter to the rows above, then converting them into one or 
+more GRANT statements.
+
+Short	Full Privilege	Example GRANT
+r	    SELECT	        GRANT SELECT ON employees TO hr_user;
+a	    INSERT	        GRANT INSERT ON employees TO hr_user;
+w	    UPDATE	        GRANT UPDATE ON employees TO hr_user;
+d	    DELETE	        GRANT DELETE ON employees TO hr_user;
+D	    TRUNCATE	      GRANT TRUNCATE ON employees TO hr_user;
+x	    REFERENCES	    GRANT REFERENCES ON employees TO hr_user;
+t	    TRIGGER	        GRANT TRIGGER ON employees TO hr_user;
+R	    RULE	          GRANT RULE ON employees TO hr_user; (rarely used)
+
