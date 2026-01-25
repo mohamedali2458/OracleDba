@@ -45,3 +45,53 @@ Understanding the difference is fundamental for both daily DBA operations and in
 📌 DBA Golden Rule:
 Redo logs keep the database running,
 Archive logs keep the business protected.
+
+
+
+
+
+Topic : Redo Log File Management.
+================================
+Redo log files are critical in Oracle because they record every change made to the database. 
+They help Oracle recover data after failures.
+
+💥What Are Redo Log Files?
+ • Store redo entries (change records)
+ • Written by LGWR process
+ • Required for instance & crash recovery
+
+--> Types of Log Switch
+Manual Log Switch → Triggered by DBA
+
+ALTER SYSTEM SWITCH LOGFILE;
+Automatic Log Switch → Happens when current redo log becomes full
+
+💥Redo Log File Status & Meaning
+Status	Meaning
+CURRENT -	Currently being written by LGWR
+ACTIVE -	Needed for recovery, not yet reusable
+INACTIVE - No longer needed, can be reused
+UNUSED - Never used since creation
+
+1)Check Redo Log Status
+SELECT group#, status FROM v$log;
+SELECT member FROM v$logfile;
+
+2)Add Redo Log Group
+ALTER DATABASE ADD LOGFILE
+GROUP 4 ('/u01/oradata/redo04.log') SIZE 200M;
+
+3)Add Member
+ALTER DATABASE ADD LOGFILE MEMBER
+'/u02/oradata/redo01b.log' TO GROUP 1;
+
+4)Drop Redo Log Group
+ALTER DATABASE DROP LOGFILE GROUP 4;
+
+5)Drop Redo Log Member
+ALTER DATABASE DROP LOGFILE MEMBER
+
+📌 DBA Tips
+ • Use multiplexing for safety
+ • Avoid dropping CURRENT or ACTIVE redo logs
+ • Monitor frequent log switches
