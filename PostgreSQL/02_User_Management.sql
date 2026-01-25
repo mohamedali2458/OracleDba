@@ -287,3 +287,31 @@ x	    REFERENCES	    GRANT REFERENCES ON employees TO hr_user;
 t	    TRIGGER	        GRANT TRIGGER ON employees TO hr_user;
 R	    RULE	          GRANT RULE ON employees TO hr_user; (rarely used)
 
+
+
+
+  
+
+additional notes
+================
+Create users and assign privileges:
+create schema hr;
+drop schema hr;
+
+CREATE DATABASE ams;
+
+CREATE ROLE ams WITH password 'ams' CREATEROLE LOGIN;
+CREATE ROLE ams_write WITH password 'ams' LOGIN;
+CREATE ROLE ams_read WITH password 'ams' LOGIN;
+
+ALTER DATABASE ams OWNER TO ams;
+\c ams
+
+create schema ams;
+grant usage on schema ams to ams;
+grant create on schema ams to ams;
+grant select,insert,update,delete on all tables in schema ams to ams_write;
+grant usage on schema ams to ams_write;
+grant select on all tables in schema ams to ams_read;
+grant usage on schema ams to ams_read;
+GRANT ALL PRIVILEGES ON DATABASE ams to ams;
