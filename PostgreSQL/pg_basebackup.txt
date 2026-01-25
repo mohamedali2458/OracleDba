@@ -23,6 +23,8 @@ To create a base backup of the server at localhost and store it in the local dir
 $pg_basebackup -U replication_user -D "C:\Program Files\PostgreSQL\backup"
 pg_basebackup -U postgres -D "C:\Program Files\PostgreSQL\backup"
 
+to perform backup on a remote server we can add -h hostname
+
 To create a backup of the local server with one compressed tar file for each tablespace,
 and store it in the directory backup, showing a progress report while running:
 pg_basebackup -U replication_user -D "C:\Program Files\PostgreSQL\backup" -Ft -z -P
