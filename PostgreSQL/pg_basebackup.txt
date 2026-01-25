@@ -1,0 +1,39 @@
+pg_basebackup -h localhost -p 5432 -U postgres -D "C:\Program Files\PostgreSQL\backup" -Ft -Xs -P
+pg_ctl status -D "c:\Program Files\PostgreSQL\13\data"
+
+prerequisites for performing backup
+===================================
+Role creation to perform the backup:
+CREATE USER replication_user WITH REPLICATION ENCRYPTED PASSWORD 'password';
+drop role replication_user;
+\du
+\du+
+
+Adding created user in pg_hba.conf file to allow backup:
+echo "host replication replication_user 192.168.1.51/32 md5" >> $PGDATA/pg_hba.conf
+view $PGDATA/pg_hba.conf
+
+Get the changes into effect through a reload:
+#sudo su - postgres
+$psql -U postgres -c "select pg_reload_conf()"
+
+To create a base backup of the server at localhost and store it in the local directory
+"C:\Program Files\PostgreSQL\backup":
+
+$pg_basebackup -U replication_user -D "C:\Program Files\PostgreSQL\backup"
+pg_basebackup -U postgres -D "C:\Program Files\PostgreSQL\backup"
+
+To create a backup of the local server with one compressed tar file for each tablespace,
+and store it in the directory backup, showing a progress report while running:
+pg_basebackup -U replication_user -D "C:\Program Files\PostgreSQL\backup" -Ft -z -P
+pg_basebackup -v -U postgres -D  "C:\Program Files\PostgreSQL\backup"
+pg_basebackup -U postgres -D  "C:\Program Files\PostgreSQL\backup" -Ft -z -P
+pg_basebackup -v -U postgres -D  "C:\Program Files\PostgreSQL\backup" -Ft -z -P
+
+$pg_basebackup -U replication_user -D /postgres/backup/pgbackup -Ft -z -P
+
+To create a backup of a single-tablespace local database and compress this with bzip2:
+$pg_basebackup -D - -Ft -X fetch | bzip2 > backup.tar.bz2
+
+$pg_basebackup -U replication_user -h 192.168.1.51 -D - -Ft -X fetch | bzip2 > /postgres/backup/pgbackup/backup.tar.bz2
+(This command will fail if there are multiple tablespaces in the database.)
