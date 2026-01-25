@@ -1,0 +1,128 @@
+Change Data Directory
+
+0. Overview
+
+To change the PostgreSQL 17 data directory from its default location
+From: /var/lib/pgsql/17/data To: /pgData/pgsql17/data
+
+1. Stop PostgreSQL Service
+
+[postgres@lxicbpgdsgv01 ~]$ psql -c "SHOW data_directory;"
+     data_directory
+------------------------
+ /var/lib/pgsql/17/data <---- existing data directory
+(1 row)
+
+[root@lxicbpgdsgv01 ~]# systemctl stop postgresql-17
+
+[root@lxicbpgdsgv01 ~]# ps -ef | grep postgres
+root        5759    4079  0 18:09 pts/1    00:00:00 grep --color=auto postgres
+
+
+2. Create the New Directory
+[root@lxicbpgdsgv01 ~]# mkdir -p /pgData/pgsql17/data
+[root@lxicbpgdsgv01 ~]# chown postgres:postgres /pgData/pgsql17/data
+[root@lxicbpgdsgv01 ~]# chmod 700 /pgData/pgsql17/data
+[root@lxicbpgdsgv01 ~]#
+
+
+3. Copy Existing Data to New Location
+[postgres@lxicbpgdsgv01 ~]$ nohup rsync -av --progress /var/lib/pgsql/17/data/ /pgData/pgsql17/data/ > rsync_pgdata.log 2>&1 &
+[1] 5863
+[postgres@lxicbpgdsgv01 ~]$
+
+[postgres@lxicbpgdsgv01 ~]$ tail -f rsync_pgdata.log
+pg_wal/000000010000000000000002
+     16,777,216 100%   17.68MB/s    0:00:00 (xfr#1621, to-chk=3/1652)
+pg_wal/archive_status/
+pg_wal/summaries/
+pg_xact/
+pg_xact/0000
+          8,192 100%    8.84kB/s    0:00:00 (xfr#1622, to-chk=0/1652)
+
+sent 73,827,441 bytes  received 31,005 bytes  49,238,964.00 bytes/sec
+total size is 73,717,583  speedup is 1.00
+^C[1]+  Done                    nohup rsync -av --progress /var/lib/pgsql/17/data/ /pgData/pgsql17/data/ > rsync_pgdata.log 2>&1
+
+[postgres@lxicbpgdsgv01 ~]$
+
+
+4. Move existing data directory
+[postgres@lxicbpgdsgv01 ~]$ mv /var/lib/pgsql/17/data /var/lib/pgsql/17/data_bkp_10072025
+[postgres@lxicbpgdsgv01 ~]$
+
+
+5. Update PostgreSQL Configuration to Use New Data Directory
+[postgres@lxicbpgdsgv01 ~]$ cat /usr/lib/systemd/system/postgresql-17.service | grep -i "Environment=PGDATA"
+Environment=PGDATA=/var/lib/pgsql/17/data/  <-----
+[postgres@lxicbpgdsgv01 ~]$
+
+[root@lxicbpgdsgv01 ~]# ls -ltr /usr/lib/systemd/system/postgresql-17.service
+-rw-r--r--. 1 root root 1788 Aug 13 17:39 /usr/lib/systemd/system/postgresql-17.service
+[root@lxicbpgdsgv01 ~]#
+
+[root@lxicbpgdsgv01 ~]# sed -i 's|^Environment=PGDATA=.*|Environment=PGDATA=/pgData/pgsql17/data/|' /usr/lib/systemd/system/postgresql-17.service
+[root@lxicbpgdsgv01 ~]#
+[root@lxicbpgdsgv01 ~]# cat /usr/lib/systemd/system/postgresql-17.service | grep -i "Environment=PGDATA"
+Environment=PGDATA=/pgData/pgsql17/data/ <------
+[root@lxicbpgdsgv01 ~]#
+
+
+6. Reload systemd and start PostgreSQL
+[root@lxicbpgdsgv01 ~]# systemctl daemon-reload
+[root@lxicbpgdsgv01 ~]#
+
+[root@lxicbpgdsgv01 ~]# systemctl start postgresql-17
+[root@lxicbpgdsgv01 ~]#
+
+[root@lxicbpgdsgv01 ~]# systemctl cat postgresql-17 | grep -i Environment=PGDATA
+Environment=PGDATA=/pgData/pgsql17/data/ <-----
+[root@lxicbpgdsgv01 ~]#
+
+[root@lxicbpgdsgv01 ~]# systemctl status postgresql-17
+● postgresql-17.service - PostgreSQL 17 database server
+     Loaded: loaded (/usr/lib/systemd/system/postgresql-17.service; enabled; preset: disabled)
+     Active: active (running) since Tue 2025-10-07 18:33:05 +08; 2min 26s ago
+       Docs: https://www.postgresql.org/docs/17/static/
+    Process: 5911 ExecStartPre=/usr/pgsql-17/bin/postgresql-17-check-db-dir ${PGDATA} (code=exited, status=0/SUCCESS)
+   Main PID: 5916 (postgres)
+      Tasks: 7 (limit: 15700)
+     Memory: 21.3M
+        CPU: 177ms
+     CGroup: /system.slice/postgresql-17.service
+             ├─5916 /usr/pgsql-17/bin/postgres -D /pgData/pgsql17/data/
+             ├─5917 "postgres: logger "
+             ├─5918 "postgres: checkpointer "
+             ├─5919 "postgres: background writer "
+             ├─5921 "postgres: walwriter "
+             ├─5922 "postgres: autovacuum launcher "
+             └─5923 "postgres: logical replication launcher "
+
+Oct 07 18:33:05 lxicbpgdsgv01.rajasekhar.com systemd[1]: Starting PostgreSQL 17 database server...
+Oct 07 18:33:05 lxicbpgdsgv01.rajasekhar.com postgres[5916]: 2025-10-07 18:33:05.392 +08 [5916] LOG:  redirecting log output to logging collector process
+Oct 07 18:33:05 lxicbpgdsgv01.rajasekhar.com postgres[5916]: 2025-10-07 18:33:05.392 +08 [5916] HINT:  Future log output will appear in directory "log".
+Oct 07 18:33:05 lxicbpgdsgv01.rajasekhar.com systemd[1]: Started PostgreSQL 17 database server.
+7. Edit postgres .bash_profile
+[postgres@lxicbpgdsgv01 ~]$ cat .bash_profile | grep -i PGDATA=
+PGDATA=/var/lib/pgsql/17/data
+[postgres@lxicbpgdsgv01 ~]$
+
+[postgres@lxicbpgdsgv01 ~]$ sed -i 's|^PGDATA=.*|PGDATA=/pgData/pgsql17/data|' ~/.bash_profile
+[postgres@lxicbpgdsgv01 ~]$
+[postgres@lxicbpgdsgv01 ~]$ cat .bash_profile | grep -i PGDATA=
+PGDATA=/pgData/pgsql17/data <-----
+[postgres@lxicbpgdsgv01 ~]$ . .bash_profile <-- reload the profile
+[postgres@lxicbpgdsgv01 ~]$
+8. Verify New Data Directory is in Use
+[postgres@lxicbpgdsgv01 ~]$ psql -c "SHOW data_directory;"
+    data_directory
+----------------------
+ /pgData/pgsql17/data  <---- new data directory
+(1 row)
+
+[postgres@lxicbpgdsgv01 ~]$
+9. Remove Old Data Directory (Optional – A week after)
+[postgres@lxicbpgdsgv01 ~]$ ls -ld /var/lib/pgsql/17/data_bkp_10072025
+drwx------. 20 postgres postgres 4096 Oct  7 18:20 /var/lib/pgsql/17/data_bkp_10072025
+[postgres@lxicbpgdsgv01 ~]$ rm -rf /var/lib/pgsql/17/data_bkp_10072025
+[postgres@lxicbpgdsgv01 ~]$
