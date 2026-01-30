@@ -1,0 +1,34 @@
+OCI Oracle Cloud
+AWS Cloud
+AZURE Cloud
+
+Cloud Migration: Moving on-premise databases to OCI, AWS (RDS/EC2), or Azure.
+Remote Performance Tuning: Using AWR (Automatic Workload Repository) and ASH (Active Session History) reports to troubleshoot lag from a distance.
+Security & Compliance: Managing encryption (TDE) and auditing (Unified Auditing) to ensure data remains secure even when accessed over a VPN.
+Automated Backups: Configuring and monitoring RMAN and Data Guard to ensure disaster recovery without needing to "swap tapes" manually.
+
+Essential Skills & Tools for 2026
+
+Technical	  Oracle 19c/23c, RAC (Real Application Clusters), RMAN, GoldenGate.
+Cloud	      OCI Architect/DBA Associate certifications, AWS/Azure database services.
+Automation	Python, Bash, Ansible, or Terraform (Infrastructure as Code).
+WFH Tools	  Slack/Teams, Jira, PagerDuty (for on-call), and Secure VPNs.
+
+Pro-Tips for Landing Remote Roles
+
+The "On-Call" Setup: In interviews, mention your home office setup. 
+Employers want to know you have a stable internet connection and a reliable 
+way to respond to 2 AM database crashes (PagerDuty) without delay.
+
+Get Certified: Remote employers rely on credentials to verify your skills. 
+The Oracle Certified Professional (OCP) and OCI Database Specialist are the 
+current gold standards.
+
+Focus on Autonomous: Familiarity with Oracle Autonomous Database is a huge 
+plus for WFH roles, as it demonstrates you understand modern, hands-off administration.
+
+Where to Look
+
+Specialized Boards: Dice, Wellfound (for startups), and LinkedIn (filtered by "Remote").
+
+Top Companies: Oracle (Support/Cloud divisions), Rackspace, Ensono, and various healthcare RCM (Revenue Cycle Management) firms.
