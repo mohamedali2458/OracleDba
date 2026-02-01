@@ -1,0 +1,52 @@
+Oracle DBA Learning Series
+==========================
+Topic : Common ORA Errors Every L1 & L2 DBA Should Know.
+
+🔹 L1 DBA – Monitoring & User Issues
+-------------------------------------
+1) ORA-00054 (Resource busy)
+ Approach 👇 
+ Wait for transaction to finish or use NOWAIT carefully.
+ Check blocking sessions before retrying.
+2) ORA-01017 (Invalid username/password)
+  Approach 👇  
+ Verify username/password and case sensitivity.
+ Check account status and password expiry.
+3) ORA-01109 (Database not open)
+  Approach 👇  
+  Start database using STARTUP.
+  Confirm database state using V$INSTANCE.
+4) ORA-01555 (Snapshot too old)
+  Approach 👇 
+  Increase UNDO tablespace size.
+  Tune long-running queries.
+5) ORA-12154 (TNS resolution error)
+  Approach 👇 
+  Check tnsnames.ora entry.
+  Verify service name and network configuration.
+
+🔹 L2 DBA – Storage, Memory & Recovery
+---------------------------------------
+1) ORA-01157 / ORA-01110 (Datafile missing)
+  Approach 👇
+ Check datafile location and OS permissions.
+ Restore or recover the missing datafile.
+2) ORA-01653 (Tablespace full)
+  Approach 👇
+  Add datafile or enable autoextend.
+  Monitor space usage proactively.
+3) ORA-16014 (Archive destination full)
+  Approach 👇
+ Clear old archive logs.
+  Increase archive destination space.
+4) ORA-04031 (Shared pool memory issue)
+  Approach 👇
+ Flush shared pool or increase memory.
+ Check for memory fragmentation.
+5) ORA-00257 (Archiver error)
+ Approach 👇 
+ Free archive destination space immediately.
+ Take backup and delete old archive logs.
+
+📌 DBA Golden Rule:
+ Always check alert log and trace files before applying a fix.
