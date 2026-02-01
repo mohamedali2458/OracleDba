@@ -1,5 +1,5 @@
 
-CREATE NEW PDB BY CLONING AN EXISTING PDB - testing
+CREATE NEW PDB BY CLONING AN EXISTING PDB
 =========================================
 create pluggable database pdb2 from pdb1 storage unlimited tempfile reuse file_name_convert=('PDB1','PDB3');
 
