@@ -1,0 +1,41 @@
+Interview Questions Asked in My Latest Oracle DBA Interview | 4 Years Experience Recently
+
+Oracle DBA Interview Questions
+
+1 What is the major difference between Oracle 12c and 19c?
+
+2 What is the default port for the Oracle Listener?
+
+3 Explain Oracle Database Architecture.
+
+4 What are the types of cloning in Oracle?
+
+5 What are the reasons for node eviction in RAC?
+
+6 Explain the steps for rolling patching in a 3-node RAC environment.
+
+7 What is a Materialized View?
+
+8 What is an Explain Plan?
+
+9 A query took 10 minutes yesterday but 1 hour today - what steps will you take to troubleshoot and fix the issue?
+
+10 How to add a datafile in ASM and what are the pre-checks?
+
+11 Explain the steps for Oracle upgrade from 12c to 19c.
+
+12 Explain how you performed migration from RHEL 7 to RHEL 8.
+
+What is Auditing in Oracle Database?
+
+
+Key Learning
+
+This interview focused heavily on:
+
+Oracle Architecture & Performance Tuning
+RAC & ASM Concepts
+Upgrade & Migration Scenarios
+Real-time DBA troubleshooting
+Preparing real-time scenarios is as important as theoretical knowledge.
+If you are preparing for Oracle DBA interviews, I hope these questions help you!
