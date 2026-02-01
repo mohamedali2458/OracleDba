@@ -1,0 +1,14 @@
+Important Oracle 19c Patching Update (19.29 / 19.30)
+===================================================
+Oracle has temporarily put the 19.30 DB Release Update on hold due to a RAC-specific issue that may lead to block and redo corruption during rolling updates.
+🔹 Impacted versions: 19.29 & 19.30 DBRUs
+ 🔹 Scope: RAC databases only (no impact to ASM, GI, Client, or non-RAC)
+ 🔹 Root cause: Bug 34352668 affecting RAC lock state handling
+ 🔹 Mitigation: Apply Patch 38854064 and set
+ _gcs_recoverable_asserts = 3 (online, no restart)
+📌 19.30 availability
+ • Linux x86-64: available 30-Jan-2026
+ • Other platforms (incl. Windows): delayed to 14-Feb-2026
+ • Oracle plans to re-release 19.30 with the fix reverted
+👉 Recommendation: Pause production rollouts of 19.30, and ensure RAC environments on 19.29 are mitigated per MOS guidance.
+Refer KB867473 for detailed information.
