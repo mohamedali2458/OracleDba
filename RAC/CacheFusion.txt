@@ -1,0 +1,22 @@
+What is Cache Fusion in Oracle RAC?
+
+Cache Fusion is the heart of Oracle Real Application Clusters (RAC) ❤️
+
+In a RAC environment, multiple database instances access the same database 
+at the same time. Cache Fusion enables these instances to share data blocks 
+directly through high-speed interconnect, without writing to disk.
+
+How it works (Simply):
+1. Each RAC instance has its own buffer cache
+2. When one instance needs a data block already modified by another instance
+3. Oracle transfers the block directly from memory to memory
+4. No disk I/O → faster performance ⚡
+
+Why Cache Fusion is important?
+ ✅ Eliminates unnecessary disk reads
+ ✅ Improves scalability
+ ✅ Enables true active-active database architecture
+ ✅ Ensures data consistency across nodes
+
+In short:
+ Cache Fusion = Fast data sharing + High availability + Better performance
