@@ -1,144 +1,146 @@
 Linux
 =====
 $pwd
-displays the current directory (present working directory)
+#displays the current directory (present working directory)
 
 $clear (ctrl+l)
-used to make the screen clear
+#used to make the screen clear
 
 $ls
-lists all files and directories in the specified directory
+#lists all files and directories in the specified directory
 
 $ls -al
-The -a flag lists hidden "." files. 
-The "-l" flag lists file permissions.
-$ls -l (files and their permissions)
-$ll (same as above)
-$ls -a (visible and hidden files together)
+#The -a flag lists hidden "." files. 
+#The "-l" flag lists file permissions.
+$ls -l #(files and their permissions)
+$ll #(same as above)
+$ls -a #(visible and hidden files together)
 
 $ls -s
-to see size of files
+#to see size of files
 
 $ls -ltr
-Will sort by time.
+#Will sort by time.
 
 $cd
-is used to change directories
+#is used to change directories
 $cd $ORACLE_HOME
 
 $touch
-is used to create a new empty file with the default permissions.
+#is used to create a new empty file with the default permissions.
 
-$touch f1 f2 f3 f4  (creates f1 f2 f3 f4 empty text files)
+$touch f1 f2 f3 f4 #(creates f1 f2 f3 f4 empty text files)
 
 $cat
-is used to display file contents.
+#is used to display file contents.
 
 $cat > filename 
-to create new text file and enter data into the file 
-press ctrl+d to save&exit
+#to create new text file and enter data into the file 
+#press ctrl+d to save&exit
 
 $cat >> filename
-to enter the data and to append existing data in a file.
+#to enter the data and to append existing data in a file.
 
 $cat f1 f2 > f3 
-copy data of f1 and f2 to f3
+#copy data of f1 and f2 to f3
 
 $cp
-The cp command is used to copy files from one location to other.
+#The cp command is used to copy files from one location to other.
+
 $cp -rvf oldfileloc newfileloc
-(-r flag indicates recursively)
-(-v flag indicates verbose means display to us)
-(-f flag indicates forcibly means if old exist replace it)
+#(-r flag indicates recursively)
+#(-v flag indicates verbose means display to us)
+#(-f flag indicates forcibly means if old exist replace it)
 
 $mv
-is used to move or rename files and directories
+#is used to move or rename files and directories
+
 $mv oldloc newloc
 $mv $ORACLE_HOME/dbs/spfileprod.ora /u01/user10/
 
 $head
-is used to display top lines of the file
+#is used to display top lines of the file
 $head -10 filename
-(will display top 10 lines)
+#(will display top 10 lines)
 
 $tail 
-to see the last lines of a file
+#to see the last lines of a file
 $tail -20 filename
 
 $who 
-to see the users logged in to the server and their IP addresses
-$who --> no of login users
-$whoami --> current working username
+#to see the users logged in to the server and their IP addresses
+$who #--> no of login users
+$whoami #--> current working username
 
 $passwd
-to change password of oracle user.
+#to change password of oracle user.
 $passwd oracle
 
 $cal
-is used to display calendar
-$cal -3 --> displays previous, current and next months calendar
+#is used to display calendar
+$cal -3 --> #displays previous, current and next months calendar
 
 $mkdir 
-is used to create new directories
+#is used to create new directories
 $mkdir dir1
 
 $rm
-is used to delete files and directories
+#is used to delete files and directories
 $rm dir1
 $rm -r dir1/dir2/
-The -r flag tells the command to recurse through subdirectories.
+#The -r flag tells the command to recurse through subdirectories.
 
 $cp
-is used to copy files and directories
+#is used to copy files and directories
 $cp dir1/file1 dir2/
 $rmdir
-is used to delete directories
+#is used to delete directories
 
 $mkdir dir1
 $rmdir dir1
 
 $find
-can be used to find the location of specific files
+#can be used to find the location of specific files
 $find / -name tnsnames.ora
 $find / -print | grep -I tnsnames.ora
 $find . -name file_name -> to find file location from current dir
-The "/" flag represents the starting directory for the search. Wildcards such 
-as "dbms" can be used for the filename.
+#The "/" flag represents the starting directory for the search. Wildcards such 
+#as "dbms" can be used for the filename.
 
 $which
-can be used to find the location of an executable you are using 
+#can be used to find the location of an executable you are using 
 $which sqlplus
-The which command searches your PATH setting for occurances of the specified executable.
+#The which command searches your PATH setting for occurances of the specified executable.
 
 $umask
-can be used to read or set default file permissions for the current user.
+#can be used to read or set default file permissions for the current user.
 $umask oo2
-The umask value is subtracted from the default permissions(666) to give the final permission.
+#The umask value is subtracted from the default permissions(666) to give the final permission.
 666 : default permission
 022 : -umask value
 644 : final permission
 
 $chmod
-is used to alter file permissions after the file has been created
+#is used to alter file permissions after the file has been created
 $chmod 777 *.log (character equivalents can be used in the chmod command)
 $chmod 0+rwx *.log
 $chmod g+r *.log
 
 $chown
-is used to reset the ownership of files after creation
+#is used to reset the ownership of files after creation
 $chown -R oracle:oinstall *
 $chown -R oracle:oinstall /u01
-The "-R" flag causes the command to recurse through any subdirectories.
+#The "-R" flag causes the command to recurse through any subdirectories.
 
 $groupadd
-is used to create a new group
+#is used to create a new group
 $groupadd -g oinstall
 $chgrp
-used to change the group of the user
+#used to change the group of the user
 $chgrp newgroup filename
 
 $useradd
-is used to add OS users
+#is used to add OS users
 $useradd -G oinstall -g dba -d /u01/home -m -s /bin/sh oracle
 - The "-G" flag specifies the primary group.
 - The "-g" flag specifies the secondary group.
@@ -146,38 +148,38 @@ $useradd -G oinstall -g dba -d /u01/home -m -s /bin/sh oracle
 - The "-m" flag specifies creates the default directory.
 - The "-s" flag specifies the default shell.
 
-$chsh (to change the default shell)
+$chsh #(to change the default shell)
 $passwd
-is used to set, or reset the users login password
+#is used to set, or reset the users login password
 $passwd oracle
 
 $usermod
-is used to modify the user settings after a user has been created.
+#is used to modify the user settings after a user has been created.
 $usermod -s /bin/ksh oracle
 
 $userdel
-is used to delete existing users.
+#is used to delete existing users.
 $usedel -r oracle
-The "-r" flag removes the default directory.
+#The "-r" flag removes the default directory.
 
-The "who" command can be used to list all users who have OS connections.
+#The "who" command can be used to list all users who have OS connections.
 $who
 $who | head -5
 $who | tail -5
 $who | grep -i ora
 $who | wc -l
-- The "head -5" command restricts the output to the first 5 lines of the who commad result.
-- The "tail -5" command restricts the output to the last 5 lines of the who command result.
-- The "grep -i ora" command restricts the output to lines containing "ora".
-- The "wc -i" command returns the number of lines from "who", and hence number of connected users.
+#- The "head -5" command restricts the output to the first 5 lines of the who commad result.
+#- The "tail -5" command restricts the output to the last 5 lines of the who command result.
+#- The "grep -i ora" command restricts the output to lines containing "ora".
+#- The "wc -i" command returns the number of lines from "who", and hence number of connected users.
 
 $wc
-To see the number of lines in a text file(can be used to find the number of records while loading data from text file).
+#To see the number of lines in a text file(can be used to find the number of records while loading data from text file).
 $wc -l filename
-$wc filename (wll show number of lines, number of words and size)
+$wc filename #(wll show number of lines, number of words and size)
 
 $sort
-is used to sort the contents of a file.
+#is used to sort the contents of a file.
 $sort <option> filename
 $sort -r file1 
 sort and display contents of file1 in reverse order

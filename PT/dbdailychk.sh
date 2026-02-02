@@ -87,7 +87,7 @@ VER="[4.1]"
 # ###################################################################################################
 SCRIPT_NAME="dbdailychk${VER}"
 SRV_NAME=`uname -n`
-MAIL_LIST="mahboob.srd@gmail.com"
+MAIL_LIST="youremail@yourcompany.com"
 
 	case ${MAIL_LIST} in "youremail@yourcompany.com")
 	 echo

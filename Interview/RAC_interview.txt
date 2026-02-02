@@ -1,0 +1,357 @@
+What keyword you use to transport tablespace to another location in data pump?
+-----------------------------------------------------------------------------
+To transport a tablespace to another location using Oracle Data Pump, the primary keyword you need is TRANSPORT_TABLESPACES.
+
+While that is the "trigger" keyword, the process actually involves a few specific parameters depending on whether you are exporting the metadata or importing it into the new location.
+
+The Essential Keywords
+
+Parameter               Action                  Purpose
+
+TRANSPORT_TABLESPACES   Export / Import         Defines the list of tablespaces to be moved.
+
+TRANSPORT_FULL_CHECK    Export                  (Optional) Set to Y to verify the tablespace set is self-contained.
+
+REMAP_DATAFILE          Import                  Crucial for moving to a "new location." It maps the old source file path 
+                                                to the new destination path.
+
+How the Process Works
+
+Transporting tablespaces is essentially a "metadata-only" export. You aren't moving the actual data rows through the pump; you are moving the "map" of where that data lives.
+
+1.
+Set to Read-Only: You must set the source tablespace to READ ONLY mode.
+
+2.
+Export Metadata: Use expdp with the TRANSPORT_TABLESPACES parameter.
+
+3.
+Physical Move: Copy the actual .dbf datafiles to the new physical disk location.
+
+4.
+Import Metadata: Use impdp with TRANSPORT_DATAFILES or REMAP_DATAFILE to tell the new database where those files are now sitting.
+
+Note: If you are moving tablespaces between different platforms (e.g., Windows to Linux), you may need to use RMAN to convert the endianness of the files before the import step.
+
+
+
+Difference between crss & cssd
+------------------------------
+Since you’ve got the names spot on this time—CRSD (Cluster Ready Services) and CSSD (Cluster Synchronization Services)—let’s dive into exactly how they divide the labor within Oracle Grid Infrastructure.
+
+While they both live under the ohasd (Oracle High Availability Services) umbrella, they have completely different "personalities."
+
+1. CSSD: The Foundation (Survival)
+CSSD is the most critical process in the cluster. It doesn't care about your database or your listener; it only cares that the nodes are "alive" and talking to each other.
+
+Heartbeat Monitoring: It manages the network heartbeat (private interconnect) and the disk heartbeat (Voting Disks).
+
+Membership: It decides who is allowed to be part of the cluster.
+
+The "Executioner": If a node loses communication or becomes "unhealthy," CSSD is responsible for Node Eviction. It will literally reboot the server to prevent data corruption (Split-Brain syndrome).
+
+Storage: It relies on the Voting Disks.
+
+2. CRSD: The Manager (Operations)
+CRSD sits on top of CSSD. It is the project manager that handles the "work" the cluster is supposed to be doing.
+
+Resource Management: It tracks the status of things like Databases, Listeners, VIPs, and Services.
+
+Automation: If a database instance crashes, CRSD sees that it's down and tries to restart it automatically.
+
+The Registry: It manages the OCR (Oracle Cluster Registry), which is the "master list" of all resources and their configurations.
+
+Storage: It relies on the OCR.
+
+
+The Startup "Pecking Order"
+It’s important to remember the hierarchy. CRSD cannot start until CSSD is up and running and the ASM disk groups (where the OCR usually lives) are mounted.
+
+ohasd starts up.
+
+cssd starts and finds the Voting Disks to confirm the node is in the cluster.
+
+asm starts up using the disks.
+
+crsd finally starts up, reads the OCR from ASM, and begins launching your databases and listeners.
+
+Pro Tip: If you run crsctl check crs, you'll see the status of both. If CSS is down, your node is likely about to reboot or is already offline.
+
+
+
+
+
+What is sequential read and scattered read
+------------------------------------------
+In Oracle Database terminology, these terms describe how the database reads data from the disk into the SGA (System Global Area). The names are actually quite famous for being counter-intuitive to beginners.
+
+Here is the breakdown of what is happening under the hood.
+
+1. Sequential Read (db file sequential read)
+Despite the name, a sequential read usually refers to a single-block read.
+
+How it works: The database knows exactly which block it needs (usually from an index) and goes to the disk to get that specific block.
+
+Why is it called "Sequential"? It’s called sequential because the blocks are being read into the buffer cache in a specific, sequential order as requested by the process—not because the blocks are physically next to each other on the disk.
+
+Common Scenario: An Index Lookup. You find the ROWID in the index, then perform a single-block I/O to get the corresponding row from the table.
+
+2. Scattered Read (db file scattered read)
+A scattered read refers to a multi-block read.
+
+How it works: The database reads a whole "chunk" of blocks (defined by db_file_multiblock_read_count) in one I/O operation.
+
+Why is it called "Scattered"? This is the part that trips people up. It is called "scattered" because when those multiple blocks arrive from the disk, they are "scattered" into different, non-contiguous buffers in the Buffer Cache memory. On the disk, however, these blocks are usually physically adjacent.
+
+Common Scenario: A Full Table Scan or a Fast Full Index Scan. The database realizes it needs a lot of data, so it grabs big gulps of blocks at once to be efficient.
+
+Comparison Table
+
+Feature                 Sequential Read                         Scattered Read
+I/O Type                Single-block I/O                        Multi-block I/O
+
+Wait Event              db file sequential read                 db file scattered read
+
+Triggered By            Index probes, fetching specific rows.   Full Table Scans (FTS), Index Full Scans.
+
+Efficiency              Best for small data sets/specific rows. Best for large data sets (reduces I/O overhead).
+
+Memory Placement        Placed in a single buffer.              Scattered across multiple buffers in the SGA.
+
+Why should you care?
+If you are looking at a performance report (AWR or Statspack):
+
+High Sequential Read waits: Usually means your indexes are being used heavily. This is often "good" but can be bad if you are doing millions of tiny lookups that could be replaced by a single bulk operation.
+
+High Scattered Read waits: Usually means you are doing Full Table Scans. If the table is small, this is fine. If the table is 1TB and doesn't have a proper index, this is likely why your application is slow.
+
+
+
+
+
+
+What is resumable keyword in data pump?
+
+The RESUMABLE keyword is a lifesaver for DBAs handling large data migrations. It allows a Data Pump job to "pause" instead of failing when it hits a space-related error.
+
+Think of it as a "save point." If you’re eight hours into a ten-hour import and you run out of tablespace, without this keyword, the job crashes, and you have to start over. With it, the job simply waits for you to fix the problem.
+
+How it Works
+
+When you set RESUMABLE=Y, Oracle monitors the job for specific "suspension-event" errors (like ORA-01653: unable to extend table).
+
+Instead of throwing a fatal error:
+
+The job suspends: All operations for that job stop.
+
+The error is logged: An entry appears in the alert log and the Data Pump log.
+
+The clock starts: The job stays suspended for a specific amount of time (the timeout).
+
+The DBA fixes it: You add a datafile or increase a quota.
+
+The job resumes: Once the space is available, the job automatically picks up exactly where it left off.
+
+
+Common Errors Handled
+
+The RESUMABLE parameter only kicks in for specific issues. It won't help if there's a syntax error or a network failure. It primarily handles:
+
+Out of space: Tablespace is full.
+
+Maximum extents reached: The object cannot grow further.
+
+Space quota exceeded: The user has hit their assigned limit in a tablespace.
+
+
+impdp system/password directory=data_pump_dir dumpfile=big_data.dmp \
+remap_schema=hr:hr_new \
+RESUMABLE=Y \
+RESUMABLE_NAME='Monthly_Import' \
+RESUMABLE_TIMEOUT=3600
+
+
+How to Check Status
+If your job seems to have "frozen," you can check if it's waiting on space by querying the database:
+
+SQL
+SELECT name, status, error_msg FROM dba_resumable;
+
+
+
+
+
+
+Top 5 events in awr
+-------------------
+In an Oracle AWR (Automatic Workload Repository) report, the "Top 5 Timed Foreground Wait Events" is the heartbeat of your performance analysis. It tells you exactly where your database spent its time during the snapshot period.
+
+While the "Top 5" varies for every database, these are the usual suspects that keep DBAs up at night.
+
+1. DB CPU
+Technically not a "wait" event, but it's usually at the top. It represents the time your sessions spent actually doing work on the processor.
+
+Is it good? If this is #1 and your system is fast, your database is healthy and "working."
+
+Is it bad? If it’s high and users are complaining, it usually means your SQL is doing too much logical work (billions of buffer gets) or you’re suffering from high "hard parsing."
+
+
+2. db file sequential read
+This represents Single-Block I/O. The database is going to the disk to grab one specific block.
+
+The Cause: Usually Index Lookups.
+
+When to worry: If the "Avg Wait" is higher than 10–15ms, your storage is slow. If the percentage of DB time is huge, you might have unselective indexes that are forcing the database to do millions of tiny reads instead of one big "gulp."
+
+
+3. db file scattered read
+This represents Multi-Block I/O. The database is grabbing a chunk of blocks at once.
+
+The Cause: Full Table Scans (FTS) or Fast Full Index Scans.
+
+The Fix: Check the "SQL ordered by Reads" section. You likely have a large table missing an index, or an optimizer that thinks a full scan is cheaper than an index.
+
+
+4. log file sync
+This is the "Commit Wait." When a session issues a COMMIT, it must wait for the Log Writer (LGWR) to flush the redo buffer to the disk.
+
+The Cause: Either your application is "committing in a loop" (tiny, frequent transactions) or your Redo Log disks are too slow to keep up with the write volume.
+
+The Fix: Batch your commits or move your Redo Logs to faster (SSD/NVMe) storage.
+
+
+5. direct path read / write
+These are I/O operations that bypass the Buffer Cache and go straight to the session's PGA.
+
+The Cause: Usually Parallel Queries, massive sorts that don't fit in memory (using TEMP), or large data loads.
+
+The Fix: If it’s direct path read temp, you likely need to tune your PGA_AGGREGATE_TARGET or look for SQL that is performing massive disk-based sorts.
+
+
+
+
+
+what is retention policy in RMAN
+--------------------------------
+In the Oracle world, an RMAN Retention Policy is your "hoarding management" tool. It is a persistent configuration that tells the Recovery Manager how long backups are actually useful before they are marked as Obsolete (junk you can safely delete).
+
+Without a policy, you’d either run out of disk space by keeping everything forever or accidentally delete the one backup you actually needed to save your job on a Tuesday morning.
+
+The Two Types of Policies
+1. Recovery Window (Time-Based)
+2. Redundancy (Count-Based)
+
+
+SHOW RETENTION POLICY;
+REPORT OBSOLETE;
+DELETE OBSOLETE;
+CONFIGURE RETENTION POLICY TO NONE;
+
+
+
+
+
+How to configure retention policy in RMAN
+-----------------------------------------
+To configure the retention policy in RMAN, you use the CONFIGURE command while connected to the target database. These settings are persistent, meaning once you set them, they stay in effect for all future sessions until you change them again.
+
+You can choose one of two types of policies (but not both at the same time).
+
+1. Configure a Recovery Window (Time-Based)This ensures that you can perform a point-in-time recovery to any time within the last $N$ days. RMAN will keep all backups and archived logs necessary to satisfy this requirement.
+
+-- To keep backups for a 7-day recovery window
+RMAN> CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 7 DAYS;
+
+2. Configure Redundancy (Count-Based)
+This ensures that a specific number of full or level 0 backups are always maintained. Once you exceed this number, the oldest becomes obsolete.
+
+-- To keep at least 3 full copies of each datafile
+RMAN> CONFIGURE RETENTION POLICY TO REDUNDANCY 3;
+
+3. How to Verify and Manage the Policy
+Setting the policy is only the first step. You need to know how to check it and how to clean up the files it identifies as "trash."
+
+
+To check the current setting:
+RMAN> SHOW RETENTION POLICY;
+-- OR to see all configurations
+RMAN> SHOW ALL;
+
+To see which backups are now useless (Obsolete):
+RMAN> REPORT OBSOLETE;
+
+To physically delete the obsolete files:
+RMAN> DELETE OBSOLETE;
+
+4. Special Scenarios
+Disable the Policy: If you don't want RMAN to ever mark backups as obsolete (dangerous for disk space), use:
+
+RMAN> CONFIGURE RETENTION POLICY TO NONE;
+
+Reset to Default: The default policy is REDUNDANCY 1. To go back to this:
+
+RMAN> CONFIGURE RETENTION POLICY CLEAR;
+
+Important Rule for Archived Logs
+RMAN's retention policy automatically extends to Archived Redo Logs.
+
+In a Recovery Window, logs are kept if they are needed to recover to any point in that window.
+
+In a Redundancy policy, logs are kept if they are needed to recover the oldest "non-obsolete" backup to the current time.
+
+
+
+
+
+
+What is cashe fusion
+- What is power limit in ASM+ 1-11 1
+- What is rebalancing
+- what is log file sync wait event
+- How to backup OCR and VD - 10g, 11g
+- how to restore/recover OCR & VD
+- what are individual wait events & system wait events
+- for a 4 node setup, how many VD (2n+1) and OCR will you configure
+- Golden gate and exadata
+- How oracle support works
+- RMAN backup automation using OEM
+- corntab job in oracle
+- what is OCFS 2
+- what is ASM Lib
+- How to configure RMAN channels
+- How to take incremental backups
+- Patching in cluster database
+- which is supre user for ASM
+- How to apply only a perticular missed archive log file standby database.
+- Difference between 10g and 11g rac
+- What are oracle cluster components
+- What are the background process avaiable in RAC (CSSD, CRSD, EVMD)
+- Startup sequence of Oracle RAC - HAS Agent, cssd agent, CRSD agent,
+- How scan works and what are the min and max scan listeners you can configure.
+- Difference between node listener and scan listener
+- Difference between crsctl & srvctl
+- How to check cluster services on all nodes and one node - crsctl check cluster, crsctl check crs
+- how to find voting disk location
+- What do you mean by consistency=y in export
+- Types of cloning and explain them
+- CRS is not starting after node reboot. What command you will issue
+- Load balancing in RAC and how it works
+- You lost OCR disk, what is your next step
+- Describe some RAC wait events you experienced
+- How to view contents of OCR - OCRDUMP, crs_stat -p
+- Difference between OHAS and CRS
+- How to configure primary database using snapshot standby?
+- How would you go about generating explain plan?
+- How would you go about increasing the buffer cache hit ratio.
+- Name three advisory statistics you can collect.
+- Give two methods you could use to determine what DDL changes have been made.
+- What does coalescing a tablespace do?
+- for a 4 node setup, how many VD (2n+1) and OCR will you configure
+- how to restore/recover OCR & VD
+- How oracle support works
+- corntab job in oracle
+- Patching in cluster database
+- How to apply only a perticular missed archive log file standby database.
+- Types of cloning and explain them
+- Difference between OHAS and CRS
+- How to configure primary database using snapshot standby?

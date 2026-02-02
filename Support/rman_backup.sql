@@ -14,7 +14,7 @@ set papersize 100
 set linesize 300
 col STATUS for a20
 col hrs for 999.99
-select SESSION_KEY, INPUT_TYPE, STATTUS,
+select SESSION_KEY, INPUT_TYPE, STATUS,
 to_char(START_TIME,'dd/mm/yyyy hh24:mi') start_time,
 to_char(END_TIME,'dd/mm/yyyy hh24:mi') end_time,
 elapsed_seconds/3600 hrs
