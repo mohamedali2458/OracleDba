@@ -1,9 +1,10 @@
 Oracle dataguard – Interview Questions
 
 1. What is the use of standby redolog?
-
-The Advantage of having Standby Redo Logs is that every record written into the Online RedoLogs of the Primary Database
-is transferred to the Standby database and written into the Standby Redo Logs at the same time.
+--------------------------------------
+The Advantage of having Standby Redo Logs is that every record written 
+into the Online RedoLogs of the Primary Database is transferred to the 
+Standby database and written into the Standby Redo Logs at the same time.
 Therefore, it minimizes the probability of Data Loss on the Standby Database.
 
 For real time apply, it is mandatory to have standby redologs on standby database.
@@ -26,7 +27,7 @@ redologs on primary, whenever we do switchover, we need to create the SLR .
 
 
 2. How many standby redo logs need to be created? What should be the size?
-
+--------------------------------------------------------------------------
 It is recommended to create one additional standby redo log group per thread. And its size should be same as that of primary redo log.
 
 Suppose, we have 4 number of redo log groups of 200M on primary, Then we need to create 5 standby redo logs of 200M.
@@ -34,17 +35,17 @@ Suppose, we have 4 number of redo log groups of 200M on primary, Then we need to
 Why extra:
 During heavy DML activity on primary, this extra standby log will help as a buffer in coping with the sync up.
 
-Please note, Oracle recommends not to multiplex the standby redologs on , As it puts unnecessary i/o overhead during log shipping.
+Please note, Oracle recommends not to multiplex the standby redologs on, As it puts unnecessary i/o overhead during log shipping.
 
 
 3. Explain different protection modes in dataguard?
-
+--------------------------------------------------
 There are three modes.
 
 1. MAXIMUM PROTECTION
 This mode provides maximum protection. It guarantees zero data loss. In this mode the redo/transaction data must 
 be written to both primary redo log and standby redo log. For any reason(mostly N/W issue) if it is unable to 
-write to standby, Then primary database will get shutdown. i.e if a user commits transaction, then that commit will 
+write to standby, then primary database will get shutdown. i.e if a user commits transaction, then that commit will 
 not be be completed, unless primary receives a confirmation that write is completed on standby.
 
 2. MAXIMUM AVAILABILITY:
@@ -78,6 +79,7 @@ Maximum Performance  ASYNC and LGWR/ARCH        Never expects acknowledg  Potent
 
 
 4. What is snapshot standby database.
+------------------------------------
 Snapshot standby is a feature in Oracle 11g that allows doing a read-write operation on the standby database i. e
 we can convert the physical standby database to snapshot standby for testing purpose.  On that, we can do all 
 types of testing (BOTH READ/WRITE) or can be used as a development database (which is an exact replication 
