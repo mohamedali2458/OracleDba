@@ -1,5 +1,5 @@
 Interview Questions Asked in My Latest Oracle DBA Interview | 4 Years Experience Recently
-
+-----------------------------------------------------------------------------------------
 Oracle DBA Interview Questions
 
 1 What is the major difference between Oracle 12c and 19c?
