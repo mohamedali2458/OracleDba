@@ -33,13 +33,13 @@ Oracle monitors the DML activity for all tables and records it in the SGA.
 The monitoring information is periodically flushed to disk, and is exposed in the *_TAB_MODIFICATIONS view.
 
 Why do we care about statistics?
-Poor statistics usually lead to poor plans
-Collecting good quality stats is not straightforward
-Collecting good quality stats may be time consuming
-Improving statistics quality improves the chance to find an optimal plan (usually)
-The higher the sample the higher the accuracy
-The higher the sample the longer it takes to collect
-The longer it takes the less frequent we can collect fresh stats!
+Poor statistics usually lead to poor plans.
+Collecting good quality stats is not straightforward.
+Collecting good quality stats may be time consuming.
+Improving statistics quality improves the chance to find an optimal plan (usually).
+The higher the sample, the higher the accuracy.
+The higher the sample, the longer it takes to collect.
+The longer it takes, the less frequent we can collect fresh stats!.
 
 If your data changes frequently, then
 

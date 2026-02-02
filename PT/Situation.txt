@@ -1,5 +1,5 @@
 Scenario: The "Mystery" Slowdown at 9:00 AM
-=================================
+===========================================
 The DB was fine at 8:00 AM. By 9:00 AM, the Top 5 Wait Events are screaming:
  🚩 cursor: pin S wait on X
  🚩 library cache mutex X
