@@ -1,0 +1,5 @@
+PERFORMANCE TUNING
+
+log file switch (checkpoint incomplete) Waits event
+https://dbaclass.com/article/log-file-switch-checkpoint-incomplete-waits-event/
+
