@@ -362,3 +362,601 @@ Oracle Administrator Question & Answers
 67) What is a foreign key?
     A foreign key is an attribute in a child table that matches the 
     primary key value in the parent table.
+
+
+
+Oracle DBA Interview Questions and Answers - Architecture
+*********************************************************
+    
+1) What is the primary duty of the DBA?
+    The primary duty of the DBA is to protect the database and provide 
+    continuous access to that data for the user community.
+
+    Duties of a DBA might include software and hardware installation, 
+    configuration of new hardware and software, security, performance tunning, 
+    backup and recovery, routine maintenance, trouble shooting and failure recovery.
+ 	
+2) What is the difference between oracle SID and Oracle service name?
+    Oracle SID is the unique name that uniquely identifies your 
+    instance/database where as the service name is the TNS alias can be 
+    same or different as SID.
+
+3) What are bind variables?
+    With bind variable in SQL, Oracle can cache queries in a single time 
+    in the SQL cache area. This avoids a hard parse each time, which saves 
+    on various locking and latching resources we use to check object existence 
+    and so on.
+
+4) What is the difference between data block/extent/segment?
+    A data block is the smallest unit of logical storage for a database object. 
+    As objects grow they take chunks of additional storage that are composed of 
+    contiguous data blocks. These groupings of contiguous data blocks are called 
+    extents. All the extents that an object takes when grouped together are considered 
+    the segment of the database object.
+
+5) What is SGA? Define structure of shared pool component of SGA?
+    The system global area is a group of shared memory area that is dedicated to 
+    oracle instance. All oracle processes uses the SGA to hold information. The SGA 
+    is used to store incoming data and internal control information that is needed 
+    by the database. You can control the SGA memory by setting the parameter db_cache_size, 
+    shared_pool_size and log_buffer.
+
+    Shared pool portion contain three major area: 
+    Library cache
+    data dictionary cache
+    data buffer cache
+
+6) What is the difference between SMON and PMON processes?
+     SMON (System Monitor) performs recovery after instance failure, monitor temporary 
+     segments and extents; clean temp segment, coalesce free space. It is mandatory 
+     process of DB and starts by default.
+
+     PMON (Process Monitor) failed process resources. In shared server architecture 
+     monitor and restarts any failed dispatcher or server process. It is mandatory 
+     process of DB and starts by default.
+
+7) What is the main purpose of CHECKPOINT in oracle database?
+    A checkpoint is a database event, which synchronize the database blocks in 
+    memory with the datafiles on disk. It has two main purposes: To establish 
+    a data consistency and enable faster database Recovery.
+
+8) What happens when we fire SQL statement in Oracle?
+    First it will check the syntax and semantics in library cache, 
+    after that it will create execution plan. 
+    If already data is in buffer cache it will directly return to the client. 
+    If not it will fetch the data from datafiles and write to the 
+    database buffer cache after that it will send server and finally 
+    server send to the client.
+
+9) What is the use of large pool, which case you need to set the large pool?
+    You need to set large pool if you are using: MTS (Multi thread server) 
+    and RMAN Backups. Large pool prevents RMAN & MTS from competing with other 
+    sub system for the same memory. RMAN uses the large pool for backup & restore 
+    when you set the DBWR_IO_SLAVES or BACKUP_TAPE_IO_SLAVES parameters to 
+    simulate asynchronous I/O. If neither of these parameters is enabled, then 
+    Oracle allocates backup buffers from local process memory rather than 
+    shared memory. Then there is no use of large pool.
+
+10) What does database do during the mounting process?
+    While mounting the database oracle reads the data from controlfile which 
+    is used for verifying physical database files during sanity check. Background 
+    processes are started before mounting the database only.
+
+11) What is log switch?
+    The point at which oracle ends writing to one online redo log file and 
+    begins writing to another is called a log switch. Sometimes you can force the log switch.
+    
+    ALTER SYSTEM SWITCH LOGFILE;
+
+12) How to check Oracle database version?
+    SQL> Select * from v$version;
+
+13) Explain Oracle Architecture?
+Oracle Instance:
+means to access an Oracle database,always opens one and only one database and 
+consists of memory structures and background process.
+
+Oracle server:
+a DBMS that provides an open, comprehensive, integrated approach to information 
+management,Consists of an Instance and a database.
+
+Oracle database:
+a collection of data that is treated as a unit, Consists of Datafiles, Control files, 
+Redo log files. (optional param file, passwd file, archived log).
+
+Instance memory Structures:
+System Global Area (SGA):
+SGA Memory structures:
+Includes Shared Pool, Database Buffer Cache, Redo Log Buffer, Data Dictionary Cache, 
+Database Buffer Cache, User process, Server process.
+
+Program Global Area (PGA):  
+Memory area used by a single Oracle server process.
+Allocated when the server process is started, deallocated when the process is 
+terminated and used by only one process.
+Used to process SQL statements and to hold logon and other session information.
+
+Background processes: 
+Started when an Oracle Instance is started.
+Background Processes Maintains and enforces relationships between physical and memory structures.
+
+There are two types of database processes:
+      1. Mandatory background processes
+      2. Optional background processes
+Mandatory background processes:
+  DBWn, PMON, CKPT, LGWR, SMON
+Optional background processes:
+  ARCn, LMDn, RECO, CJQ0, LMON, Snnn, Dnnn, Pnnn, LCKn, QMNn
+
+System Monitor (SMON) Responsibilities:
+  Instance recovery
+Process Monitor (PMON) Cleans up after failed processes by:
+  Rolling back the transaction
+  Releasing locks
+
+14) Why do you run orainstRoot and ROOT.SH once you finalize 
+    the Installation?
+    orainstRoot.sh needs to be run to change the Permissions and 
+    groupname to 770 and to dba.
+    Root.sh (ORACLE_HOME) location needs to be run to create a 
+    ORATAB in /etc/oratab or /opt/var/oratab in Solaris and to 
+    copy dbhome, oraenv and coraenv to /usr/local/bin.
+    orainstRoot.sh
+
+15) What is oraInventory?
+    oraInventory is repository (directory) which store/records oracle 
+    software products & their oracle_homes location on a machine. 
+    This Inventory now a days in XML format and called as XML Inventory 
+    where as in past it used to be in binary format & called as binary Inventory.
+
+16) Difference between RESETLOGS and NORESETLOGS ?
+    I) The NORESETLOGS option does not clear the redo log files during 
+       startup and the online redo logs to be used for recovery. Only 
+       used in scenario where MANUAL RECOVERY is started, CANCEL is used, 
+       and then RECOVER DATABASE is started.
+    II)Once RESETLOGS is used then the redo log files cannot be used 
+       and any completed transactions in those redo logs are lost!!
+
+17) What is SCN (System Change Number) ?
+      The system change number (SCN) is an ever-increasing value that uniquely 
+      identifies a committed version of the database at a point in time. Every 
+      time a user commits a transaction Oracle records a new SCN in redo logs.
+
+      Oracle uses SCNs in control files datafile headers and redo records. 
+      Every redo log file has both a log sequence number and low and high SCN. 
+      The low SCN records the lowest SCN recorded in the log file while the 
+      high SCN records the highest SCN in the log file.
+
+18) What is Database Incarnation?
+      Database incarnation is effectively a new  version  of the database 
+      that happens when you reset the online redo logs using  
+      alter database open resetlogs;
+      Database incarnation falls into following category 
+      Current, Parent, Ancestor and Sibling.
+
+19) How to view Database Incarnation history of Database?
+      Using SQL> select * from v$database_incarnation;
+      Using RMAN>LIST INCARNATION;
+
+20) What is SGA_TARGET and SGA_MAX_SIZE ?
+       SGA_MAX_SIZE is the largest amount of memory that will 
+       be available for the SGA in the instance and it will 
+       be allocated from memory. You do not have to use it all, 
+       but it will be potentially wasted if you set it too high 
+       and don't use it. It is not a dynamic parameter. Basically 
+       it gives you room for the Oracle instance to grow.
+
+       SGA_TARGET is actual memory in use by the current SGA. This 
+       parameter is dynamic and can be increased up to the value of SGA_MAX_SIZE.
+
+21) What is an Oracle Instance?
+       An Oracle database server consists of an Oracle database 
+       and an Oracle instance. Every time a database is started, 
+       a system global area (SGA) is allocated and Oracle 
+       background processes are started. The combination of 
+       the background processes and memory buffers is called 
+       an Oracle instance. We can run multiple instances on the 
+       same Oracle Database Server, where each instance connects 
+       to its database.
+
+22) What information is stored in Control File?
+Oracle Database must have at least one control file. Its a binary file contains like:
+The database name and unique ID
+The timestamp of database creation
+The names and locations of associated datafiles and redo log files
+Tablespace information
+Datafile offline ranges
+Archived log information and history
+Backup set and backup piece information
+Backup datafile and redo log information
+Datafile copy information
+Log records: sequence numbers, SCN range in each log
+RMAN Catalog
+Database block corruption information
+
+23) When you start an Oracle DB which file is accessed first?
+    Oracle first opens and reads the initialization parameter file (init.ora)
+
+24) What is Instance Recovery?
+    While Oracle instance fails, Oracle performs an Instance Recovery 
+    when the associated database is being re-started.
+
+Instance recovery occurs in two steps:
+
+Cache recovery:
+Changes being made to a database are recorded in the database buffer cache. 
+These changes are also recorded in online redo log files simultaneously. 
+When there are enough data in the database buffer cache, they are written 
+to data files. If an Oracle instance fails before the data in the database 
+buffer cache are written to data files, Oracle uses the data recorded in 
+the online redo log files to recover the lost data when the associated 
+database is re-started. This process is called cache recovery.
+
+Transaction recovery:
+When a transaction modifies data in a database, the before image of 
+the modified data is stored in an undo segment. The data stored in 
+the undo segment is used to restore the original values in case a 
+transaction is rolled back. At the time of an instance failure, 
+the database may have uncommitted transactions. It is possible that 
+changes made by these uncommitted transactions have gotten saved 
+in data files. To maintain read consistency, Oracle rolls back 
+all uncommitted transactions when the associated database is re-started. 
+Oracle uses the undo data stored in undo segments to accomplish this. 
+This process is called transaction recovery.
+
+25) What is a Tablespace
+       A tablespace is a logical storage unit within an Oracle database. 
+       Tablespace is not visible in the file system of the machine on 
+       which the database resides. A tablespace, in turn, consists of 
+       at least one datafile which, in turn, are physically located 
+       in the file system of the server.
+       
+       A datafile belongs to exactly one tablespace. Each table, index 
+       and so on that is stored in an Oracle database belongs to a 
+       tablespace. The tablespace builds the bridge between the Oracle 
+       database and the filesystem in which the table s or index  data is stored.
+      Permanent tablespaces
+      Undo tablespaces
+      Temporary tablespaces
+
+26) Which default Database roles are created when you create a Database?
+      CONNECT , RESOURCE and DBA are three default roles. The DBA_ROLES data 
+      dictionary view can be used to list all roles of a database and the 
+      authentication used for each role.
+
+27) What is a Checkpoint?
+      A checkpoint occurs when the DBWR (database writer) process writes 
+      all modified buffers in the SGA buffer cache to the database data 
+      files. Data file headers are also updated with the latest checkpoint 
+      SCN, even if the file had no changed blocks. Checkpoints occur 
+      AFTER (not during) every redo log switch and also at intervals 
+      specified by initialization parameters.
+
+28) Which Process reads data from Datafiles?
+      Server Process 
+      There is no background process which reads data from datafile or 
+      database buffer. Oracle creates server processes to handle requests 
+      from connected user processes. A server process communicates with 
+      the user process and interacts with Oracle to carry out requests 
+      from the associated user process. For example, if a user queries 
+      some data not already in the database buffers of the SGA, then the 
+      associated server process reads the proper data blocks from the 
+      datafiles into the SGA. Oracle can be configured to vary the number 
+      of user processes for each server process. In a dedicated server 
+      configuration, a server process handles requests for a single user 
+      process. A shared server configuration lets many user processes 
+      share a small number of server processes, minimizing the number 
+      of server processes and maximizing the use of available system resources.
+
+29) Which Process writes data in Datafiles?
+       Database Writer background process DBWn (20 possible) writes dirty 
+       buffers from the buffer cache to the data files. In other words, 
+       this process writes modified blocks permanently to disk.
+
+30) What is a Shared Pool?
+       The shared pool portion of the SGA contains the library cache, 
+       the dictionary cache, buffers for parallel execution messages, 
+       and control structures. The total size of the shared pool is 
+       determined by the initialization parameter SHARED_POOL_SIZE. 
+       The default value of this parameter is 8MB on 32-bit platforms 
+       and 64MB on 64-bit platforms. Increasing the value of this parameter 
+       increases the amount of memory reserved for the shared pool.
+
+31) What is kept in the Database Buffer Cache?
+      The database buffer cache is the portion of the SGA that holds 
+      copies of data blocks read from datafiles. All user processes 
+      concurrently connected to the instance share access to the 
+      database buffer cache.
+
+32) What is difference between PFile and SPFile?
+       A PFILE is a static, text file located in $ORACLE_HOME/dbs UNIX
+       An SPFILE (Server Parameter File) is a persistent server-side 
+       binary file that can only be modified with the  ALTER SYSTEM SET  
+       command.
+
+34) Can you change SHARED_POOL_SIZE online?
+       YES. That s possible.
+       SQL>alter system set shared_pool_size=500M scope=both;
+
+35) You want users to change their passwords every 2 months. How do you enforce this?
+    Oracle password security is implemented via Oracle profiles which are assigned to users.
+    PASSWORD_LIFE_TIME limits the number of days the same password can be used for authentication.
+
+First, start by creating security  profile  in Oracle database and then alter 
+the user to belong to the profile group.
+1) creating a profile:
+2) Create user and assign user to the all_users profile
+3) To  alter profile  parameter, say; change to three months:
+
+36) What is Automatic Management of Segment Space setting?
+      Oracle9i New Feature Series: Automatic Segment Space Management
+      Automatic Segment Space Management (ASSM) introduced in Oracle9i 
+      is an easier way of managing space in a segment using bitmaps.
+      It eliminates the DBA from setting the parameters pctused, freelists, 
+      and freelist groups.
+      ASSM can be specified only with the locally managed tablespaces (LMT).
+     Oracle uses bitmaps to manage the free space. Bitmaps allow Oracle 
+     to manage free space more automatically.
+
+37) Compare and contrast TRUNCATE and DELETE for a table?
+      Both the truncate and delete command have the desired outcome 
+      of getting rid of all the rows in a table. The difference between 
+      the two is that the truncate command is a DDL operation and just
+      moves the high water mark and produces a now rollback. The delete 
+      command, on the other hand, is a DML operation, which will produce 
+      a rollback and thus take longer to complete.
+
+38) How do you move tables from one tablespace to another tablespace?
+      There are several methods to do this;
+      1) export the table, drop the table, create the table definition in the new
+         tablespace, and then import the data (imp ignore=y).
+      2) Create a new table in the new tablespace with the CREATE TABLE 
+         statement AS SELECT all from source table
+SQL Statement:
+CREATE TABLE temp_name TABLESPACE new_tablespace AS SELECT * FROM source_table;
+Then drop the original table and rename the temporary table as the original:
+DROP TABLE real_table;
+RENAME temp_name TO real_table;
+
+39) Define transaction?
+      A transaction is a sequence of SQL statements that Oracle Database treats as a single unit.
+
+40) What is the difference between sql&oracle?
+       SQL is Stuctured Query Language.Oracle is a Database.SQL is used to write queries against Oracle DB.
+
+41) What are different Oracle database objects?
+       TABLES
+       VIEWS
+       INDEXES
+       SYNONYMS
+       SEQUENCES
+       TABLESPACES
+
+42) What are the dictionary tables used to monitor a database spaces ?
+       DBA_FREE_SPACE
+       DBA_SEGMENTS
+       DBA_DATA_FILES
+
+43) What is a database instance?
+       A database instance is a set of memory structure and background processes that 
+       access a set of database files. The processes can be shared by all of the users.
+
+44) What is the difference between a view and a synonym?
+       Synonym is just a second name of table used for multiple link of database.View 
+       can be created with many tables, and with virtual columns and with conditions.
+       But synonym can be on view.
+
+45) What command would you use to create a backup control file?
+       Alter database backup control file to trace.
+
+46) What is the difference between database and instance?
+       Database is a collection of data files that contain the information of 
+       interest; whereas, instance is the combination of background processes 
+       and memory structure.
+
+47) What are the three types of files that make up an Oracle database?
+      The three types of files that make up an Oracle database are :
+      Datafiles
+      Control files and Redo log files.
+
+48) What are the types of privileges?
+      Oracle has two kinds of privileges :
+      System Privileges
+      Object Privileges
+
+49) What is the difference between system and object privileges?
+      This statement when executed will display all the available system 
+      privileges such as Create Session, Drop User, Alter Database and so on.
+
+50) What are the different types of memory structure available in Oracle?
+       System Global Area(SGA)
+       Program Global Area(PGA)
+
+51) What is log switch?
+       A log switch is a point when loG WRiter (LGWR)fills one online redo 
+       log group and writing to another.At every log switch a checkpoint,occurs.
+
+52) What is Oracle table?
+       A table is the basic unit of data storage in an Oracle database.
+       The tables of a database hold all of the user accessible data.
+       Table data is stored in rows and columns.
+
+53)  What Oracle object is used for read consistency?
+        The rollback segments are used for read consistency.
+
+54) What is the control file?
+      Control file is a file that contains all the information about the 
+      physical structure of the database,such as the number of log files and their location.
+
+55) Which files must be backed up?
+      The following files must be backed up :
+      Database files
+      Control files
+       Archived log files
+
+56) What is SQL*Loader?
+       SQL*Loader is a tool to load data from file to a database table.
+
+57) What is a synonym?
+       A synonym is simply an alias to another object in the database. 
+       This object can be a table, view, sequence or program unit.
+
+58) What is archive log file?
+       Archive log file stores redo log information persistentiy. A redo 
+       log is overwritten with time;therefore,archive log maintains that lost information.
+ 	
+59) How do you control the maximum number of redo log files in a database?
+      The maximum number of redo log files can be controlled by the parameter MAXLOGFILES.
+ 	
+
+60) What is the difference between a privilege and a role?
+       A privilege is the authority to perform a certain act or command.
+       A role is a collection of privileges and roles that can be assigned to a user.
+
+
+61) What is the difference between a temporary table space and a permanent table space?
+       A temporary tablespace provides temporary storage during the processing of 
+       database function, such as sorting; whereas
+       A permanent tablespace is used to store permanent database objects, 
+       such as tables, partitions, indexes and clusters.
+
+62) Define Database Management System (DBMS) and RDBMS?
+      DBMS is a program that defines the rules for data storage and retrieval.
+      RDBMS is a special type of DBMS that stores the data in the relational 
+      format as described in the relational theory by E.F. Codd.
+
+63) How do you add a datafile to a tablespace?
+      You can add a datafile to a tablespace by using the ALTER TABLESPACE 
+      ADD DATAFILE SIZE; statement.
+
+64) What view would you use to determine free space in a tablespace?
+       The DBA_FREE_SPACE view can be used to determine free space in a tablespace.
+
+65) What is the control file? What kind of information is stored in a control file?
+       Control file is a file that contains all the information about the physical 
+       structure of the database, such as number of log files and their location.
+       Oracle database server uses control file to find its physical component.
+Control file stores information about log switches, checkpoints, and modification in disk resources
+
+66) How to check how many database is running from os level?
+      ps -ef|grep pmon
+
+67) What is maxbytes?
+       The MAXBYTES function counts the number of bytes in the longest line of a 
+       multiline text expression. The result returned by MAXBYTES has the same 
+       dimensions as the specified expression.
+
+68) How to check size of table?
+      select segment_name,segment_type,bytes/1024/1024 MB
+      from dba_segments
+      where segment_type='TABLE' and segment_name='<yourtablename>';
+
+69) Difference between static listener and dynamic listener?
+      1. Static Registration :- A static registration of database to a listener 
+      is used when we want to remotely start our database. Static registration 
+      is like hardcoding a instance details in listener.ora file. In a static 
+      registration an instance is registered with the listener whether its up 
+      or not. When a client request comes listener opens a dedicated connection, 
+      and server later find out that instance is not up then it gives error 
+      message as "Oracle not available". 
+      2. Dynamic Registration :- In Dynamic registration , registration is 
+      performed by PMON process. Once a Database instance starts, its PMON 
+      process registers instance details with associated listener. Dynamic 
+      registration does not require any manual configuration in the listener.ora 
+      file where as Static configuration does.From Oracle 8i dynamic configuration 
+      introduced. 
+
+70) Why do we need SCOPE=BOTH clause?      
+       BOTH indicates that the change is made in memory and in the server 
+       parameter file. The new setting takes effect immediately and persists 
+       after the database is shut down and started up again. If a server parameter 
+       file was used to start up the database, then BOTH is the default. If a 
+       parameter file was used to start up the database, then MEMORY is the default, 
+       as well as the only scope you can specify.                                                                                                                                                                                               
+
+71) What kind of information is stored in UNDO segments?     
+      Only before image of data is stored in the UNDO segments. If transaction is 
+      rolled back information from UNDO is applied to restore original datafile. 
+      UNDO is never multiplexed.  
+
+72)  What are new memory parameters in Oracle 11g?
+       MEMORY_TARGET
+
+73) What are the mandatory background processes?
+      DBWR LGWR SMON PMON CKPT RECO.
+
+74) What process will get data from datafiles to DB cache?
+      Server process
+
+75) What background process will writes data to datafiles?
+      DBWR
+
+76) What background process will write undo data?
+      DBWR
+
+77) What are physical components of Oracle database?
+      Oracle database is comprised of three types of files. One or more 
+      datafiles, two or more redo log files, and one or more control files. 
+      Password file and parameter file also come under physical components.
+
+78) What are logical components of Oracle database?
+       Blocks, Extents, Segments, Tablespaces.
+
+79) What is a datafile?
+       Every Oracle database has one or more physical datafiles. Datafiles 
+       contain all the database data. The data of logical database structures 
+       such as tables and indexes is physically stored in the datafiles 
+       allocated for a database.
+
+80) What are the contents of control file?
+      Database name, SCN, LSN, datafile locations, redolog locations, 
+      archive mode, DB Creation Time, RMAN Backup & Recovery Details, 
+      Flashback mode.
+
+81) What is the use of redo log files?
+      Online redo logs serve to protect the database in the event of an 
+      instance failure. Whenever a transaction is committed, the 
+      corresponding redo entries temporarily stored in redo log buffers
+      of the system global area are written to an online redo log file 
+      by the background process LGWR.
+
+82) What is the use of password file?
+       If the DBA wants to start up an Oracle instance there must be 
+       a way for Oracle to authenticate this DBA. That is if (s)he is 
+       allowed to do so. Obviously, his password can not be stored in 
+       the database, because Oracle can not access the database before 
+       the instance is started up. Therefore, the authentication of the 
+       DBA must happen outside of the database. There are two distinct 
+       mechanisms to authenticate the DBA: using the password file or 
+       through the operating system.
+
+      The init parameter remote_login_passwordfile specifies if a 
+      password file is used to authenticate the DBA or not. If it 
+      set either to shared or exclusive a password file will be used.
+
+83)  How to create password file?
+       $ orapwd file=orapwSID password=sys_password force=y nosysdba=y
+
+84) How many types of indexes are there?
+      Clustered and Non-Clustered
+      1.B-Tree index
+      2.Bitmap index
+      3.Unique index
+      4.Function based index
+
+85)  What is bitmap index & when it ll be used?
+       Bitmap indexes are preferred in Data warehousing environment.
+       Preferred when cardinality is low.
+
+86) What is B-tree index & when it ll be used?
+       B-tree indexes are preferred in OLTP environment.
+       Preferred when cardinality is high.
+
+87) What is the difference between view and materialized view?
+      View is logical, will store only the query, and will always gets latest data.
+      Mview is physical, will store the data, and may not get latest data.
+
+88) What is the use of root.sh & oraInstRoot.sh?
+      Changes ownership & permissions of oraInventory
+      Creating oratab file in the /etc directory
+      In RAC, starts the clusterware stack

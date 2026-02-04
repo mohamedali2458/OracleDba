@@ -1,0 +1,79 @@
+Tablespace Question & Answers
+*****************************
+1) What is a Tablespace?
+     A database is divided into Logical Storage Unit called tablespace. 
+     A tablespace is used to grouped related logical structures together.
+
+2) Why use materialized view instead of a table?
+     Materialized views are basically used to increase query performance 
+     since it contains results of a query. They should be used for reporting 
+     instead of a table for a faster execution.
+
+3) How undo tablespace can guarantee retain of required undo data?
+    Alter tablespace undo_ts retention guarantee;
+
+4) What is the use/size of temporary tablespace?
+     Temporary tablespaces are used to manage space for database sort 
+     operations and for storing global temporary tables
+
+5) What is the difference between dictionary managed tablespace 
+   and locally managed tablespace?
+   In dictionary managed tablespace, free block information is 
+   maintained in data dictionary cache there by increases IO. 
+   In locally managed tablespace, the same information is maintained in 
+   datafile header itself there by reducing the IO. Hence LMT is better than DMT
+
+6) How to change the segment management type for an existing tablespace?
+    Once defined, we cannot change segment space management for any tablespace
+
+7) What happens when you take a tablespace/datafile offline immediate?
+     Any existing transactions will be stopped and datafiles of this 
+     tablespace need recovery when we make them online
+
+8) How to identify which datafiles are modified today?
+    By looking at the timestamp of the files at OS level
+
+9) What is the new feature of 11g tablespace management?
+    Encryption of the tablespace
+
+10) What is bigfile tablespace and its use?
+    It gives easy managebility for VLDB by providing terabytes 
+    size to a single datafile itself
+	
+11) How will do capacity planning for your production databases?
+    We will take every quarter for normal databases and every week 
+    for critical and fast growing databases.
+
+12) What is OMF? What are its advantages and disadvantages?
+    It helps in managing files by oracle automatically. But naming 
+    convention will be the problem.
+
+13) How you will get timezone of database?
+    NLS_TIMESTAMP_TZ_FORMAT
+
+14) How will you find out the current users who are using temporary 
+    tablespace segments?
+    By checking in v$tempseg_usage
+
+15) How to drop a datafile without dropping a tablespace?
+    SQL> alter database datafile  path  offline drop;
+
+16) How to check SCN of the database?
+    SQL> select current_scn from v$database;
+
+17) What is the relation between db_files and maxdatafiles?
+    Both will specify how many max datafiles can be there in the database
+
+18) How do you add a datafile to a tablespace?
+    You can add a datafile to a tablespace by using the 
+    ALTER TABLESPACE ADD DATAFILE SIZE; 
+    statement.
+
+19) What are the advantages of using locally managed tablespace?
+      Reduced contention on data dictionary tables
+      No rollback generated
+      No coalescing required
+      Reduced recursive space management
+
+20) What view would you use to determine free space in a tablespace?
+      The DBA_FREE_SPACE view can be used to determine free space in a tablespace.
