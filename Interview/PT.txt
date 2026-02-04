@@ -1,0 +1,51 @@
+Top 15 Performance Tuning Interview Questions for Experienced Oracle DBAs.
+
+1️⃣ System Hangs & Core Internals
+1. Oracle database hangs with no waits, no CPU, no I/O. Sessions are connected but idle.
+ 👉 Which internal components can still block progress, and how do you validate them?
+
+2. Explain why Oracle still generates redo for NOLOGGING operations.
+ 👉 What exactly is protected, and what is not?
+
+3. What breaks first when LGWR is slow versus when DBWR is slow?
+ 👉 Explain real production symptoms and wait events.
+
+4. How does Oracle decide which buffers are aged out when the buffer cache is full?
+ 👉 Explain touch count, LRU, and hot/cold buffer behavior.
+
+5. What is the exact difference between a latch, mutex, spinlock, and enqueue?
+ 👉 Give one real Oracle use case for each.
+
+2️⃣ Recovery Awareness (Performance Impact)
+6. If control files are multiplexed and all copies are corrupted identically,
+ 👉 what recovery options remain and what are the performance implications?
+
+7. Why does Oracle not checkpoint on COMMIT, even though transaction consistency is guaranteed?
+ 👉 Explain the performance trade-off involved.
+
+3️⃣ Performance Analysis – The Killer Zone
+8. AWR shows high DB CPU, but top SQL statements have low elapsed time.
+ 👉 Where is the CPU actually being consumed?
+
+9. Why can an index rebuild make performance worse, even if it reduces index height?
+ 👉 Explain clustering factor, buffer gets, and execution plan changes.
+
+10. Explain a real production scenario where a hash join performs worse than nested loops,
+ even on large datasets.
+
+4️⃣ Optimizer & Execution Plan Behavior
+11. A SQL runs fast in SQL*Plus but slow in the application.
+ 👉 Which optimizer-level causes do you investigate first (before blaming the app)?
+
+12. How do bind peeking, adaptive plans, and SQL plan baselines interact —
+ 👉 and in what scenarios do they conflict with each other?
+
+13. When and why would you disable adaptive features in Oracle 19c?
+ 👉 What risks does this introduce?
+
+5️⃣ Memory & Cursor Management
+14. Explain why increasing PGA can unexpectedly increase TEMP usage.
+ 👉 Cover workarea sizing, spills, and concurrency effects.
+ 
+15. What happens internally when cursor_sharing = FORCE breaks an application?
+ 👉 Explain parsing behavior, plan instability, and functional side effects.
