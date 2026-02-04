@@ -1,0 +1,321 @@
+Oracle Administrator Question & Answers
+***************************************
+1) State five duties of an Oracle DBA?
+    Duties of a DBA might include software and hardware installation, 
+    configuration of new hardware and software, security, performance tunning, 
+    backup and recovery, routine maintenance, trouble shooting and failure recovery.
+ 	
+2) What is the primary duty of the DBA?
+    The primary duty of the DBA is to protect the database and provide continuous 
+    access to that data for the user community.
+
+3) What is database?
+    Databse is a structure that stores information about multiple types of entities, 
+    the attributes (or characteristics) of the entities, and the relationships among the entities.
+	
+4) What is a database instance?
+     A database instance is a set of memory structure and background processes that 
+     access a set of database files. The processes can be shared by all of the users.
+
+5) What is the differnece between DBMS and RDBMS?
+    DBMS is program that defines rules for data stroage and retrival,
+    RDBMS is special type of DBMS that stores the data in relational 
+    format as described in the relational.
+
+6) What are the components of an oracle instance ?
+     Background process and memory structures.
+
+7) What are the components of sga ?
+     Buffer cache, log buffer, shared pool, large pool,  and java pool.
+
+8) Why do you need pga?
+     It is a memory area used by oracle instance. it is requried to strore 
+     session specific information.
+
+9) What are the different types of memory structures available in oracle?
+     Shared Global Area (SGA) and Program Global Area(PGA)
+
+10) What is database writer(DBWR) ?
+       It writes changed data blocks (dirty blocks) from buffer cache to datafile.
+
+11) When does DBWR write to the datafile?
+       When checkpoint occurs
+       When number of dirty blocks reaches a threshold
+       Every three seconds due to timeout
+       When server process needs free space in buffer cache to read new blocks
+
+11) What are the differences between clustered and a non-clustered index?
+      A clustered index is a special type of index that reorders the way 
+      records in the table are physically stored. Therefore table can have 
+      only one clustered index. The leaf nodes of a clustered index contain 
+      the data pages. 
+
+      A Nonclustered index is a special type of index in which the logical 
+      order of the index does not match the physical stored order of the rows on disk.
+
+12) What is a Tablespace?
+       A database is divided into Logical Storage Units called tablespaces. 
+       A tablespace is used to group related logical structures together.
+
+13) Why we use materialized views instead of a table?
+      Materialized views are basically used to increase query performance 
+      since it contains results of a query. They should be used for reporting 
+      instead of a table for a faster execution.
+
+14) What are the different Oracle database objects?
+       TABLES
+       VIEWS
+       INDEXES
+       SYNONYMS
+       SEQUENCES
+       TABLESPACES
+
+15) What is schema?
+       A schema is collection of database objects of a user.
+
+16) What are Roles?
+      Roles are named groups of related privileges that are granted to users or other roles.
+
+17) What are the dictionary tables used to monitor a database spaces ?
+      DBA_FREE_SPACE
+      DBA_SEGMENTS
+      DBA_DATA_FILES
+
+18) Explain the difference between a data block, an extent and a segment?
+      A data block is the smallest unit of logical storage for a database 
+      object. As objects grow they take chunks of additional storage that 
+      are composed of contiguous data blocks. These groupings of contiguous 
+      data blocks are called extents. All the extents that an object takes 
+      when grouped together are considered the segment of the database object.
+
+19) What command would you use to create a backup control file?
+       alter database backup control file to trace;
+
+20) What is difference between UNIQUE constraint and PRIMARY KEY constraint?
+       A column defined as UNIQUE can contain Nulls while a column defined 
+       as PRIMARY KEY can't contain Nulls. A table can have only one primary key.
+
+21) What is a data segment?
+      Data segments are the physical areas within a database block in which 
+      the data associated with tables and clusters are stored.
+
+22) Name a tablespace, which is automatically created when you create a database?
+      The system tablespace is created automatically during database creation.
+
+23) Which flle is accessed first when you start an oracle database?
+       Parameter file, and spfile. 
+
+24) What are the advantages of using spfile?
+       It supports dynamic changes in parameter values.
+       The changes in spfile can only be made by using in oracle statements.
+       Backup of spfile is possible through RMAN.
+
+25) How do you view parameter values when you are using pfile or spfile?
+      Show parameter command from sql*plus and query v$paramter command 
+      view to see values of the paqramters.
+
+      show parameter spfile;
+
+26) How can you convert spfile to pfile and pfile to spfile?
+      sql> create spfile from pfile;
+      sql> create pfile from spfile;
+      sql> create spfile from memory;
+      sql> create pfile from memory;
+
+21) How can you backup the parameter files?
+      In Rman 
+      RMAN> configure controlfile autobackup on;
+      In Rman restore an spfile
+      RMAN> restore controfile from autobackup;
+
+22) What happen alter a user process fails?
+       PMON clean up the memory after user process fails. 
+
+21) What is the difference between database and instance?
+       Database is a collection of data files that contain the information of interest; whereas, instance is the combination of background processes and memory structure.
+ 	
+22) What are the three types of files that make up an Oracle database?
+      Datafiles
+      Control files and
+      Redo log files.
+
+23) What is the Oracle Enterprise manager?
+      The Oracle Enterprise Manager is the new graphical administration tool designed to help the DBA manage one or more Oracle systems.
+
+24) Name three Oracle Utilities?
+      The SQL*Loader
+      The Export utility and
+      The Import utility
+
+25) What is the difference between PGA and SGA?
+       The basic difference between SGA and PGA is that PGA cannot be shared between multiple processes, in the sense, that it is used only for requirements of a particular process whereas the SGA is used for the whole instance and it is shared.
+
+26) What are the types of privileges?
+       System Privileges
+       Object Privileges
+
+27) What is the difference between system and object privileges?
+       This statement when executed will display all the available system privileges such as Create Session, Drop User, Alter Database and so on.
+
+28) What is log switch?
+       A log switch is a point when log Writer (LGWR) fills one online redo log group and writing to another. At every log switch a checkpoint occurs.
+
+29) What is Global Resource Directory (GRD)?
+      GRD is used by GES and GCS to maintain status of datefiles and cached blocks. This process provides required information for cache fusion and maintains data integrity.
+
+30) What background process refreshes materialized views?
+       The job queue
+
+31) What is the Recovery Manager used for?
+      The Recovery Manager is used for backup and recovery. This product performs these operations and maintains a catalog of previous backups.
+ 	
+32) What is the difference between an index cluster and a hash cluster?
+      An index cluster is a cluster that has an index on the cluster key,
+     Whereas the hash cluster uses a hashing function to access the cluster key.
+
+33) What is a recovery catalog?
+       Recovery catalog is an inventory of the backup taken by RMAN for the database.  It is used to restore a physical backup, reconstruct it, and make it available to the server.
+ 	
+34) What is load balancing?
+       Load balancing is a server process that monitors loading on all of the forms servers. Each of the forms servers runs a load balancing client which keeps the load balancing server apprised of its load.
+
+35) What in Streams pool in Oracle 10g?
+      Streams pool is a part of System Global Area (SGA) from which memory for streams is allocated if it is configured. It can be configured by specifying initialization parameter STREAMS_POOL_SIZE.
+ 
+36) Name the four types of segments?
+      Data
+      Index
+      Rollback
+      Temporary
+
+37) What is a dedicated server process?
+      A dedicated server process has a one to one correlation between the user process and the server process.
+      Each user process gets one server process.
+
+38) What Oracle object is used for read consistency?
+       The rollback segments are used for read consistency.
+
+39) What is RAC Cluster?
+       RAC Cluster is a database with a shared cache architecture that overcomes the limitations of traditional shared nothing and shared disk approaches.
+       It is a key component of Oracle's private cloud architecture.
+
+40) What is the control file?
+      Control file is a file that contains all the information about the physical structure of the database, such as the number of log files and their location.
+
+41) What is the difference between incremental backup and differential backup?
+      Both, incremental and differential backup files that have been modified or created after the previous backup. However, attributes are reset after the incremental backup but after the differential backup.
+
+42) Which files must be backed up?
+      Database files
+      Control files
+      Archived log files
+
+43) What is the use of Oracle Cluster Registry (OCR)?
+      OCR stores information about cluster resources and their configuration. The CRS process uses that information to manage resources.
+ 	
+44) What are the different types of connection load balancing?
+      Server side load balancing
+      Client side load balancing
+
+45) What is system change number?
+       SCN is an ID that Oracle generates for every transaction. It is recorded with the corresponding change in a redo entry.
+
+46) What is an SID?
+       The SID is the system identifier. This environment variable is used to determine which database to connect to.
+
+47) What is the difference between hot backup and cold backup?
+       Hot backup is taken when database is still online while cold backup is taken when database is offline.
+       Database needs to be in the archive log mode for the hot backup but there is no such requirement for the cold backup.
+
+48) What Oracle object is used for recovery operations?
+      The redo log files and the archieve log files are used for database recovery.
+
+49) What is the difference between hot backup and cold backup?
+      Hot backup is taken when database is still online while cold backup is taken when database is offline.
+      Database needs to be in the archive log mode for the hot backup but there is no such requirement for the cold backup.
+
+50) What is SQL*Loader?
+       SQL*Loader is a tool to load data from file to a database table.
+
+51) What are the components of SGA?
+      Buffer cache
+      Log buffer
+      Shared pool
+      Large pool
+      Java pool
+
+52) What is a synonym?
+       A synonym is simply an alias to another object in the database. This object can be a table, view, sequence or program unit.
+
+53) What is archive log file?
+       Archive log file stores redo log information persistentiy. A redo log is overwritten with time; therefore, archive log maintains that lost information.
+
+54) What is a backup set?
+      Backup set is a logical grouping of backup files that are created when you issue an RMAN backup command. It is RMANs name for a collection of files associated with a backup. A backup set is composed of one or more backup pieces.
+ 	
+51) What does database tier consist of?
+      Database tier consists of Oracle database, which stores all the data. The database server contains Oracle Home and data files.
+
+52) What is an interconnect network?
+       An interconnect network is a network between nodes of a cluster. It uses switches to ensure that only nodes can access this network. Generally, this is a high speed connection.
+ 	
+53) What is a shared server process?
+      The shared server process handles more than one user process. The dispatcher queues the job and the shared server process executes it.
+ 
+54) What is the parameter file?
+      The parameter file is a file that contains additional command line parameters.
+
+55) What is rolling upgrade?
+       Rolling upgrade refers to the software upgrade while database is still functional without bringing the database down for upgrade. This is the new feature of Oracle 11g.
+
+56) What is the difference between SPFILE and PFILE?
+      Oracle can use both SPFILE and PFILE as initialization parameter files.
+      SPFILE is a binary file while PFILE is a text file.
+      You can change the values in PFILE by directly by editing it but those changes would not take effect until the restart of the database.
+ 
+57) What is RAC?
+      Real application cluster (RAC) is a clustering solution.
+      It ensures high availability for database application.
+      A RAC setup contains at least two nodes for a database.
+      RAC provides high availability and load balancing through these nodes.
+
+58) How do you control the maximum number of redo log files in a database?
+      The maximum number of redo log files can be controlled by the parameter MAXLOGFILES.
+
+59) What is the difference between a privilege and a role?
+       A privilege is the authority to perform a certain act or command.
+       A role is a collection of privileges and roles that can be assigned to a user.
+
+60) How many types of cloning are available?
+      Adclone
+      Rapidclone
+
+61) What is LoGWRiter (LGWR)?
+       LGWR is the background process that writes redo information from redo log buffers to the log files.
+
+62) What is the difference between a temporary table space and a permanent table space?
+       A temporary tablespace provides temporary storage during the processing of database function, such as sorting; whereas
+       A permanent tablespace is used to store permanent database objects, such as tables, partitions, indexes and clusters.
+
+63) What is RMAN?
+       RMAN is an Oracle supplied tool or utility that can be used to manage backup and recovery activities.
+ 	
+64) What is ACFS?
+       ACFS provides an Oracle Home shared file system or a general cluster file system on ASM storage. It needs ASM Dynamic Volume Manager (ADVM) to communicate to the operating system.
+
+65) What are the disk components?
+      Data files
+      Redo Logs
+      Control files
+      Password files and
+      Parameter files
+      are the disk components.
+
+66) What is a primary key?
+       A primary key is an attribute (or a collection of attributes) that uniquely identifies each row in the table. In other words, each entity instance in a table must be unique; and therefore, primary key is a way of ensuring this.
+       tains data types for attributes and indexes.
+
+67) What is a foreign key?
+       A foreign key is an attribute in a child table that matches the primary key value in the parent table.
+
+==================================================THE END================================================
