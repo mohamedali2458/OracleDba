@@ -1,0 +1,202 @@
+My Day-to-Day Activities as an Oracle DBA
+=========================================
+
+1. OS Level Checks
+
+Check 1: Server Load & Uptime
+[oracle@localhost \~]$ uptime
+
+Check 2: Mount Points
+[oracle@localhost \~]$ df -h
+
+Check 3: Listener Status
+[oracle@localhost \~]$ lsnrctl status
+
+
+2. Database Level Checks
+
+Check 4: Database & Instance Status
+SQL> SELECT INSTANCE_NAME, STATUS, DATABASE_STATUS FROM V$INSTANCE;
+SQL> SELECT NAME, OPEN_MODE, LOG_MODE FROM V$DATABASE;
+
+Check 5: Alert Log Monitoring
+
+Step 1 (Location dhoondo):
+SQL> SHOW PARAMETER background_dump_dest;
+
+NAME				                    TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+
+background\_dump\_dest		            string	 /u01/app/oracle/product/19.0.0
+
+
+SQL> select name, value from v$diag_info where name='Diag Trace';
+
+NAME
+----------------------------------------------------------------
+
+VALUE
+--------------------------------------------------------------------------------
+
+Diag Trace
+
+/u01/app/oracle/diag/rdbms/sha/sha/trace
+
+
+
+Step 2 (OS pe check karo):
+
+[oracle@localhost \~]$ cd /u01/app/oracle/product/19.0.0/dbhome_1/rdbms/log
+
+[oracle@localhost log]$ ls -ltr alert_sha.log
+
+-rw-r-----. 1 oracle oinstall 139 Jan 18 03:30 alert_sha.log
+
+[oracle@localhost \~]$ cd /u01/app/oracle/product/19.0.0/dbhome_1/rdbms/log
+
+[oracle@localhost log]$ ls -ltr alert_sha.log
+-rw-r-----. 1 oracle oinstall 139 Jan 18 03:30 alert_sha.log
+
+[oracle@localhost log]$
+
+[oracle@localhost log]$ cd /u01/app/oracle/diag/rdbms/sha/sha/trace
+
+[oracle@localhost trace]$
+
+[oracle@localhost trace]$ ls -ltr alert_sha.log
+
+-rw-r-----. 1 oracle oinstall 144097 Feb  3 11:57 alert_sha.log
+
+
+
+[oracle@localhost trace]$ tail -100f alert_sha.log
+28912691,28915561,28917080,28918429,28919145,28922227,28922532,28922608,
+ERROR: Shared memory area is accessible to instance startup process
+&#x20;prior to instance startup operation.
+2026-02-03T11:57:31.087259-05:00
+Warning: VKTM detected a forward time drift.
+Please see the VKTM trace file for more details:
+/u01/app/oracle/diag/rdbms/sha/sha/trace/sha\_vktm\_5021.trc
+
+
+
+[oracle@localhost trace]$ grep -i "ORA-" alert_sha.log
+ORA-1109 signalled during: ALTER DATABASE CLOSE NORMAL...
+ORA-00313: open failed for members of log group 1 of thread 1
+ORA-00312: online log 1 thread 1: '/u01/app/oracle/oradata/SHA/redo01.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 1 of thread 1
+ORA-00312: online log 1 thread 1: '/u01/app/oracle/oradata/SHA/redo01.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 2 of thread 1
+ORA-00312: online log 2 thread 1: '/u01/app/oracle/oradata/SHA/redo02.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 2 of thread 1
+ORA-00312: online log 2 thread 1: '/u01/app/oracle/oradata/SHA/redo02.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 3 of thread 1
+ORA-00312: online log 3 thread 1: '/u01/app/oracle/oradata/SHA/redo03.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 3 of thread 1
+ORA-00312: online log 3 thread 1: '/u01/app/oracle/oradata/SHA/redo03.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 1 of thread 1
+ORA-00312: online log 1 thread 1: '/u01/app/oracle/oradata/SHA/redo01.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 1 of thread 1
+ORA-00312: online log 1 thread 1: '/u01/app/oracle/oradata/SHA/redo01.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 2 of thread 1
+ORA-00312: online log 2 thread 1: '/u01/app/oracle/oradata/SHA/redo02.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 2 of thread 1
+ORA-00312: online log 2 thread 1: '/u01/app/oracle/oradata/SHA/redo02.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 3 of thread 1
+ORA-00312: online log 3 thread 1: '/u01/app/oracle/oradata/SHA/redo03.log'
+ORA-27037: unable to obtain file status
+ORA-00313: open failed for members of log group 3 of thread 1
+ORA-00312: online log 3 thread 1: '/u01/app/oracle/oradata/SHA/redo03.log'
+ORA-27037: unable to obtain file status
+
+
+
+[oracle@localhost trace]$ grep -B 2 "2026-02-03" alert_sha.log
+2026-02-02T15:05:50.750522-05:00
+Resize operation completed for file# 3, old size 552960K, new size 563200K
+2026-02-03T11:48:46.512818-05:00
+ERROR: Shared memory area is accessible to instance startup process
+&#x20;prior to instance startup operation.
+2026-02-03T11:57:31.087259-05:00
+
+(Identify critical errors (ORA-) and database events.)
+
+
+
+Check 6: Tablespace Usage
+
+SQL> SELECT df.tablespace_name,
+ROUND(df.total_space_mb, 2) Total_MB,
+ROUND(df.total_space_mb - fs.free_space_mb, 2) Used_MB,
+ROUND((df.total_space_mb - fs.free_space_mb) / df.total_space_mb * 100, 2) Pct_Used
+FROM   (SELECT tablespace_name, SUM(bytes) / 1024 / 1024 total_space_mb
+FROM dba_data_files
+GROUP BY tablespace_name) df,
+(SELECT tablespace_name, SUM(bytes) / 1024 / 1024 free_space_mb
+FROM dba_free_space
+GROUP BY tablespace_name) fs
+WHERE  df.tablespace_name = fs.tablespace_name
+ORDER BY Pct_Used DESC;
+
+TABLESPACE\_NAME 		 TOTAL\_MB    USED\_MB   PCT\_USED
+------------------------------ ---------- ---------- ----------
+SYSTEM				      890      889.5	  99.94
+SYSAUX				      550     515.94	  93.81
+USERS					5	2.69	  53.75
+UNDOTBS1			      295      13.25	   4.49
+
+(Monitor space usage to prevent outages. Example finding: Detected SYSTEM tablespace at 99% usage.)
+
+
+
+Check 7: RMAN Backup Status
+
+SQL> SELECT OPERATION, STATUS, START_TIME, END_TIME,
+ROUND(input_bytes/1024/1024/1024,2) "INPUT_GB",
+ROUND(output_bytes/1024/1024/1024,2) "OUTPUT_GB"
+FROM V$RMAN_STATUS
+WHERE START_TIME > SYSDATE - 1
+ORDER BY START_TIME DESC;
+
+no rows selected
+
+(Ensure backups are running and no sessions are stuck. NO backup has run in the last 24 hours.)
+
+
+Check 8: Blocking Sessions
+
+SQL> SELECT s1.username || '@' || s1.machine || ' (SID=' || s1.sid || ') is blocking ' ||
+s2.username || '@' || s2.machine || ' (SID=' || s2.sid || ')' AS blocking_status
+FROM v$lock l1, v$session s1, v$lock l2, v$session s2
+WHERE s1.sid = l1.sid
+AND s2.sid = l2.sid
+AND l1.BLOCK = 1
+AND l2.request > 0
+AND l1.id1 = l2.id1
+AND l1.id2 = l2.id2;
+
+no rows selected
+
+
+
+
+
+
+
+***Note on Incident Management:*** 
+
+***The queries above are strictly for Monitoring and Detection.***
+
+***If all checks pass: The status is marked as "Green" in the daily report.***
+
+***If an anomaly is found (e.g., Backup 'FAILED' or Tablespace > 90%): A P1/P2 Incident Ticket is immediately raised, and the issue is resolved following the specific remediation SOP (e.g., Adding a Datafile or Re-triggering the Backup).***
