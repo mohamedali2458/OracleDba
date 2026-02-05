@@ -1,5 +1,6 @@
 -- Find which logs were applied in the last day
- SELECT SEQUENCE#, to_char(FIRST_TIME,'hh24:mi:ss dd/mm/yyyy'), to_char(NEXT_TIME,'hh24:mi:ss dd/mm/yyyy'), APPLIED 
+ SELECT SEQUENCE#, to_char(FIRST_TIME,'hh24:mi:ss dd/mm/yyyy'), 
+ to_char(NEXT_TIME,'hh24:mi:ss dd/mm/yyyy'), APPLIED 
  FROM V$ARCHIVED_LOG 
  where next_time > sysdate-1 
  ORDER BY SEQUENCE# ;
@@ -11,7 +12,8 @@
   SELECT PROCESS, STATUS, THREAD#, SEQUENCE#, BLOCK#, BLOCKS FROM V$MANAGED_STANDBY;
  
 -- Are we on production or standby?
- SELECT DATABASE_ROLE, DB_UNIQUE_NAME INSTANCE, OPEN_MODE, PROTECTION_MODE, PROTECTION_LEVEL, SWITCHOVER_STATUS FROM V$DATABASE;
+ SELECT DATABASE_ROLE, DB_UNIQUE_NAME INSTANCE, OPEN_MODE, PROTECTION_MODE, PROTECTION_LEVEL, 
+ SWITCHOVER_STATUS FROM V$DATABASE;
  
 -- Check for errors
  SELECT MESSAGE FROM V$DATAGUARD_STATUS;
@@ -21,7 +23,6 @@
 
 -- important lag statistics
  select * from v$dataguard_stats;
-
 
  -- configure log shipping on primary
 alter system set log_archive_dest_3='SERVICE=DEVPCOMB LGWR ASYNC VALID_FOR=(ONLINE_LOGFILES, PRIMARY_ROLE) DB_UNIQUE_NAME=DEVPCOMB';
@@ -40,13 +41,9 @@ alter database register physical logfile '<fullpath/filename>';
 -- Check if standby logs are configured right
 set lines 100 pages 999
 col member format a70
-select	st.group#
-,	st.sequence#
-,	ceil(st.bytes / 1048576) mb
-,	lf.member
-from	v$standby_log	st
-,	v$logfile	lf
-where	st.group# = lf.group#
-/
-where	st.group# = lf.group#
-/
+select	st.group#,	
+        st.sequence#,	
+        ceil(st.bytes / 1048576) mb,
+        lf.member
+from	v$standby_log	st,	v$logfile	lf
+where	st.group# = lf.group#;

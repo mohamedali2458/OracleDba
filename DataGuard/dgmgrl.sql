@@ -35,21 +35,25 @@ SQL> alter database archivelog;
 SQL> alter database open;
 SQL> archive log list;
 
-Enable force logging on primary: In oracle, users can restrict redo generation for SQL by using NOLOGGING clause. 
-This NOLOGGING transaction will be a problem for physical standby. Hence, we force logging so even user uses NOLOGGING clause, 
-every SQL will be logged on to redo.
+Enable force logging on primary: In oracle, users can restrict redo 
+generation for SQL by using NOLOGGING clause. This NOLOGGING transaction 
+will be a problem for physical standby. Hence, we force logging so even 
+user uses NOLOGGING clause, every SQL will be logged on to redo.
 
 SQL> alter database force logging;
 SQL> select name, force_logging from v$database;
 
-Standby file management: We need to make sure whenever we add/drop datafile in primary database, those files are also added / dropped on standby
+Standby file management: We need to make sure whenever we add/drop datafile 
+in primary database, those files are also added / dropped on standby.
 
 SQL> alter system set standby_file_management = 'AUTO';
 
-Create standby log files: You must create standby log files on primary. These files are used by a standby database to store redo it receives from primary database.
+Create standby log files: You must create standby log files on primary. These 
+files are used by a standby database to store redo it receives from primary database.
 
 
-Our primary may become standby later and we would need them, so better to create it. First check the current log groups:
+Our primary may become standby later and we would need them, so better to create it. 
+First check the current log groups:
 
 SQL> select GROUP#, THREAD#, bytes/1024/1024, MEMBERS, STATUS from v$log;
     GROUP#    THREAD# BYTES/1024/1024    MEMBERS STATUS

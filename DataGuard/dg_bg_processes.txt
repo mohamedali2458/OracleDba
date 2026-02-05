@@ -1,26 +1,36 @@
 Oracle Data Guard Background Processes
-
-When you query v$managed_standby on physical standby database, you will observe three main data guard background processes
+======================================
+When you query v$managed_standby on physical standby database, you will 
+observe three main data guard background processes:
     Data Guard Archive Process 
     Data Guard RFS Processes 
     Data Guard MRP Process 
 
 Data Guard Archive Process
+==========================
+We have seen 4 numbers ARCH processes when you query v$managed_standby. 
+That’s alright, because of 4 is the default value of LOG_ARCHIVE_MAX_PROCESSES.
 
-We have seen 4 numbers ARCH processes when you query v$managed_standby. That’s alright, because of 4 is the default value of LOG_ARCHIVE_MAX_PROCESSES.
+The LOG_ARCHIVE_MAX_PROCESSES initialization parameter specifies the number 
+of ARCn processes that the database initially starts. The default is four 
+processes. There is usually no need to specify this initialization parameter 
+or to change its default value, because the database starts additional 
+archiver processes (ARCn) as needed to ensure that the automatic processing 
+of filled redo log files does not fall behind.
 
-The LOG_ARCHIVE_MAX_PROCESSES initialization parameter specifies the number of ARCn processes that the database initially starts. The default is four 
-processes. There is usually no need to specify this initialization parameter or to change its default value, because the database starts additional 
-archiver processes (ARCn) as needed to ensure that the automatic processing of filled redo log files does not fall behind.
-
-However, to avoid any run-time overhead of starting additional ARCn processes, you can set the LOG_ARCHIVE_MAX_PROCESSES initialization parameter 
-to specify that up to 30 ARCn processes be started at instance startup. The LOG_ARCHIVE_MAX_PROCESSES parameter is dynamic, so you can change it 
+However, to avoid any run-time overhead of starting additional ARCn processes, 
+you can set the LOG_ARCHIVE_MAX_PROCESSES initialization parameter 
+to specify that up to 30 ARCn processes be started at instance startup. 
+The LOG_ARCHIVE_MAX_PROCESSES parameter is dynamic, so you can change it 
 using the ALTER SYSTEM statement.
 
-In most cases the default for LOG_ARCHIVE_MAX_PROCESSES is sufficient. However, in a Data Guard configurations that have multiple standby databases 
-it may be necessary to increase the number of archive processes. The value of the LOG_ARCHIVE_MAX_PROCESSES initialization parameter must be at least 
-one greater than the total number of all remote destinations. Use the following equation when setting the LOG_ARCHIVE_MAX_PROCESSES parameter for 
-highly available environments
+In most cases the default for LOG_ARCHIVE_MAX_PROCESSES is sufficient. 
+However, in a Data Guard configurations that have multiple standby databases 
+it may be necessary to increase the number of archive processes. The value 
+of the LOG_ARCHIVE_MAX_PROCESSES initialization parameter must be at least 
+one greater than the total number of all remote destinations. Use the following 
+equation when setting the LOG_ARCHIVE_MAX_PROCESSES parameter for 
+highly available environments.
 
 LOG_ARCHIVE_MAX_PROCESSES = sum(remote_destinations) + count(threads)
 
@@ -29,21 +39,25 @@ Source: Set the LOG_ARCHIVE_MAX_PROCESSES Parameter
 
 
 Data Guard RFS Processes
-
+========================
 3 Numbers of RFS processes
 
-RFS processes are spawned regarding the amount of remote archiver connections (due to ARC in your DG configuration). One ARC process is related to 
-local archiving on primary database and so 3 are left for DG transmission, this can be parallelised as well, but needs additional parameter setting 
-MAX_CONNECTIONS.
+RFS processes are spawned regarding the amount of remote archiver connections 
+(due to ARC in your DG configuration). One ARC process is related to local 
+archiving on primary database and so 3 are left for DG transmission, 
+this can be parallelised as well, but needs additional parameter setting MAX_CONNECTIONS.
 
 
 
 Data Guard MRP Process
-
+======================
 1 number of MRP0 process
 
-How many Managed Standby Recovery Processes do you expect? It is the coordinator – and like in real life only one guy is the boss.
+How many Managed Standby Recovery Processes do you expect? 
+It is the coordinator – and like in real life only one guy is the boss.
 
-The ARCH redo transport mode has been deprecated and will be de-supported in a future release. Oracle recommends that you switch to 
-the ASYNC transport mode if you are currently using the ARCH transport mode. The ASYNC transport mode is superior to the ARCH transport 
-mode in all respects, and is the new default transport mode.
+The ARCH redo transport mode has been deprecated and will be de-supported 
+in a future release. Oracle recommends that you switch to the ASYNC transport 
+mode if you are currently using the ARCH transport mode. The ASYNC transport 
+mode is superior to the ARCH transport mode in all respects, and is the new 
+default transport mode.

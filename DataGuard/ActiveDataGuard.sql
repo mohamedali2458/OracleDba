@@ -29,7 +29,7 @@ Test Active Data Guard
 
 As our active data guard is open for read only queries and background 
 recover is active, let us create a table on primary and see if it is 
-reflected on standby
+reflected on standby:
 
 On primary:
 ===========
@@ -44,7 +44,7 @@ SQL> select * from test;
 
 Revert back to physical standby
 
-If you want to convert active data guard back to physical standby, follow below commands
+If you want to convert active data guard back to physical standby, follow below commands:
 
 On standby:
 ===========

@@ -1,11 +1,12 @@
 Configuring Oracle Data Guard Broker for High Availability
+==========================================================
+Oracle Data Guard is one of the finest technology that is developed 
+by Oracle. It is created in order to have high availability of database 
+even when your production system crashes due to natural disaster or server crash.
 
-Oracle Data Guard is one of the finest technology that is developed by Oracle. It is created in order to have high 
-availability of database even when your production system crashes due to natural disaster or server crash.
-
-When you setup Data Guard, you will have to manually monitor the log shipping, log apply and resolve any gaps. 
-Even for switchover and failover, you need to perform the activities manually.
-
+When you setup Data Guard, you will have to manually monitor the log shipping, 
+log apply and resolve any gaps. Even for switchover and failover, you need 
+to perform the activities manually.
 
 In a data guard configuration, you will observe
     One primary database and combination of standby databases
@@ -13,23 +14,24 @@ In a data guard configuration, you will observe
     Primary & standby may reside in different geographic locations
     Standby stays in sync with primary by applying redo
 
-
 Oracle Data Guard Broker
-
+------------------------
 Let us understand the literal meaning of Broker first
 
 A mediator between two or more person (things)
 
-In a data guard configuration, we know that there are minimum two servers that take part: one is primary and another one is standby.
+In a data guard configuration, we know that there are minimum two servers 
+that take part: one is primary and another one is standby.
 
-A data guard broker logically groups these primary and standby databases into a Broker Configuration. This allows Data Guard broker 
-to manage and monitor (primary and standby) as one single unit.
+A data guard broker logically groups these primary and standby databases 
+into a Broker Configuration. This allows Data Guard broker to manage and 
+monitor (primary and standby) as one single unit.
 
 
 Benefits of Data Guard Broker
-
-One of the biggest benefits of Data Guard broker is that it centralizes the configuration, 
-management and monitoring of Oracle Data Guard configurations.
+-----------------------------
+One of the biggest benefits of Data Guard broker is that it centralizes 
+the configuration, management and monitoring of Oracle Data Guard configurations.
 
 Some of the operations that Data Guard broker simplifies are
     Create Data Guard configuration between primary and standby databases
@@ -41,14 +43,15 @@ Some of the operations that Data Guard broker simplifies are
     Perform all above operations locally or remotely !
 
 Configure Data Guard Broker
-
+---------------------------
 Follow below steps to configure Data Guard broker.
 
 Edit listeners
 
-If you look at the listener configuration file, there is a dedicated service we have to create for DGMGRL. This is required in order 
-enable Data Guard Broker. If this is not set, add below entry (proddb_DGMGRL and it has to be exactly in the same format <SID>_DGMGRL) 
-and restart listener on both primary and standby
+If you look at the listener configuration file, there is a dedicated service 
+we have to create for DGMGRL. This is required in order enable Data Guard Broker. 
+If this is not set, add below entry (proddb_DGMGRL and it has to be exactly in 
+the same format <SID>_DGMGRL) and restart listener on both primary and standby.
 
 su - grid
 cd $ORACLE_HOME/network/admin
@@ -78,8 +81,9 @@ SID_LIST_LISTENER=
 
 
 Stop MRP on standby
-
-We would like to manage our data guard configuration using Data Guard Broker. Stop MRP and clear Log_Archive_dest_2 parameter.
+-------------------
+We would like to manage our data guard configuration using Data Guard Broker. 
+Stop MRP and clear Log_Archive_dest_2 parameter.
 
 On standby:
 ===========
@@ -92,7 +96,7 @@ SQL> alter system set LOG_ARCHIVE_DEST_2='' SCOPE=BOTH sid='*';
 
 
 Enable broker
-
+-------------
 We need to start the broker by enabling it on both primary and standby
 
 On primary:
@@ -158,7 +162,8 @@ DGMGRL> show database oradb_s2;
 
 Start/stop log shipping via Broker
 
-How we can manually enable log shipping from primary to standby, the same way we can use broker to enable log shipping
+How we can manually enable log shipping from primary to standby, the same way we 
+can use broker to enable log shipping
 
 Disable log shipping/transport:
 ===============================

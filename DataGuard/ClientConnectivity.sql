@@ -1,4 +1,5 @@
 Client Connectivity in Data Guard Configuration
+
 Configure seamless client connectivity for Oracle Data Guard.
 
 When you have a physical standby, you must make sure client connectivity is set properly 

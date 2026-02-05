@@ -70,7 +70,7 @@ SHOW FAST_START FAILOVER;
 Displays FSFO status and protection details.
 
 17. Edit Database Properties
-EDIT DATABASE standby_db SET PROPERTY LogXptMode=’ASYNC’;
+EDIT DATABASE standby_db SET PROPERTY LogXptMode='ASYNC';
 
 Used to modify transport or apply behavior.
 
