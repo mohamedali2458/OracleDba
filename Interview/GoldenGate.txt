@@ -1,0 +1,96 @@
+GoldenGate Interview Questions
+
+Basic-Level Interview Questions
+
+1. What is Oracle GoldenGate?
+Oracle GoldenGate is a real-time data replication and integration 
+solution that enables transactional data to be moved across 
+heterogeneous systems with minimal latency. It supports 
+high-availability, zero-downtime migration, reporting offloading, 
+and active-active database configurations.
+
+2. What are the key components of Oracle GoldenGate architecture?
+The core components of Oracle GoldenGate architecture are:
+
+Extract: Captures committed changes from the source database redo or transaction logs.
+Data Pump (optional): Secondary extract that transfers data across networks to the target.
+Trail Files: Intermediate files that store captured changes in a platform-independent format.
+Replicat: Applies the captured data changes to the target database.
+Checkpoint Files: Maintain the read/write position for Extract and Replicat for recovery.
+Manager: Controls, starts, stops, and monitors all GoldenGate processes.
+GGSCI (GoldenGate Software Command Interface): Command-line interface for administration.
+
+3. What is the difference between Classic Capture and Integrated Capture?
+
+Feature	            Classic Capture	                    Integrated Capture
+Architecture        GoldenGate-native process	        Integrated with Oracle LogMiner infrastructure
+Performance	        Moderate, log parsing is external	High performance, uses Oracle Streams APIs
+Supported Features	Limited support for newer features	Supports CDB/PDB, compressed data, XML, etc.
+Database Dependency	Less tightly coupled	            Requires Oracle 11.2.0.4 or higher
+
+4. What is the difference between Classic Replicat and Integrated Replicat?
+
+Feature	            Classic Replicat	                Integrated Replicat
+Execution	        Single-threaded	                    Multi-threaded (parallel apply)
+Parallelism	        Limited	                            Built-in parallelism and dependency awareness
+Performance	        Lower for high-volume environments	Suitable for high-throughput and scalability
+Use Cases	        Simple DML replication	            High-volume OLTP systems
+
+5. Explain the role of the Extract, Data Pump, and Replicat processes.
+
+Extract: Captures committed DML and DDL changes from the source database’s redo or transaction logs.
+Data Pump: Transfers trail files from source to target over the network; allows compression and encryption.
+Replicat: Reads the trail files on the target side and applies the changes to the target database in the 
+same transactional order.
+
+6. What are trail files? Where are they stored and what is their purpose?
+
+Trail files are platform-independent files used to store the transactional changes extracted from the source database. They act as a staging area between Extract/Data Pump and Replicat processes. These files are:
+
+Local Trail: Between Extract and Data Pump
+Remote Trail: Between Data Pump and Replicat (on target server)
+
+They are stored in GoldenGate’s dirdat directory by default.
+
+7. Can GoldenGate replicate between different versions of Oracle?
+
+Yes, GoldenGate supports heterogeneous version replication (e.g., Oracle 11g to 19c), provided that:
+
+The versions are compatible per Oracle’s documented interoperability matrix.
+Feature differences (like data types, features, etc.) are handled explicitly during configuration.
+
+8. What types of replication does GoldenGate support?
+
+GoldenGate supports various replication models:
+
+Unidirectional: One-way replication from source to target.
+Bidirectional: Two-way replication for active-active environments.
+Peer-to-peer: Multi-master replication across multiple nodes.
+Broadcast: One source to multiple targets.
+Consolidation: Multiple sources to one target.
+
+9. What are the minimum privileges required for GoldenGate user in Oracle?
+
+For Classic Capture:
+
+SELECT ANY TRANSACTION
+ALTER SESSION
+CONNECT
+RESOURCE
+EXECUTE_CATALOG_ROLE
+FLASHBACK ANY TABLE
+
+For Integrated Capture/Replicat (Oracle 12c and above), the user needs:
+
+DBA privileges or specific GRANTs to use DBMS_CAPTURE_ADM, DBMS_STREAMS_ADM, 
+and execute procedures related to Streams, Redo mining, and Replication.
+
+10. What is the purpose of checkpoint files in GoldenGate?
+
+Checkpoint files record the last successfully processed data position 
+(Log Sequence Number or Relative Byte Address) for Extract and Replicat processes. 
+This ensures:
+
+Data consistency in case of process restarts or failures.
+Fast recovery, allowing processes to resume from the last good point.
+Minimizes risk of data loss or duplication.
