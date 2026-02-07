@@ -30,8 +30,14 @@ V$CONTROLFILE displays the names of the control files.
 
 Redolog file management
 =======================
-select * from v$log;
-select * from v$logfile;
+set linesize 300
+set pagesize 50
+select * from v$log order by group#;
+
+set linesize 300
+set pagesize 50
+col member for a60
+select * from v$logfile order by group#;
 
 Adding redo log group to the database
 alter database add logfile 
@@ -45,8 +51,8 @@ to group 4;
 
 Drop  redo log member from the database
 
-column member format a30
-select group#, member from v$logfile;
+column member format a60
+select group#, member from v$logfile order by group#;
 
 alter database drop logfile 
 member '/u01/prod/redo04b.log';
@@ -243,6 +249,8 @@ MAXLOGHISTORY 400
 MAXDATAFILES 200
 MAXINSTANCES 6
 ARCHIVELOG;
+
+'
 
 Note: The CREATE CONTROLFILE statement can potentially damage specified datafiles and redo log files.  
 Omitting a filename can cause loss of the data in that file, or loss of access to the entire database.  
