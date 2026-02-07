@@ -377,43 +377,75 @@ fsck /dev/sda2 - To repair a corrupted file system.
 My Notes
 Storage Management
 Very first part of a hard disk is called MBR.
+
 MBR=Master Boot Record
+
 This contains partition table and boot loader program.
 After MBR the second thing is our first partition.
-Another is 2nd partition. These are primary partitions. We can create maximum 4 primary partitions. After 4 we can’t create any more primary partitions, so the entire remaining space is empty. We create there as an extended partition, which is a container for remaining additional partitions. Inside this extended partition(whole remaining empty space) we can add additional partitions(upto 16). These extended partitions are called as logical partitions.
-We cannot have extended and primary partitions beyond 4. Total cant exceed 4. We can have 2 primary and 1 extended. 3 primary and 1 extended.
+
+Another is 2nd partition. These are primary partitions. We can 
+create maximum 4 primary partitions. After 4 we can’t create any 
+more primary partitions, so the entire remaining space is empty. 
+We create there as an extended partition, which is a container for 
+remaining additional partitions. Inside this extended partition 
+(whole remaining empty space) we can add additional partitions (upto 16). 
+These extended partitions are called as logical partitions.
+
+We cannot have extended and primary partitions beyond 4. Total can't exceed 4. 
+We can have 2 primary and 1 extended. 3 primary and 1 extended.
+
 A single harddisk cannot have more than 4 partitions.
+
 Storage scenario #1
 ------------------------
-You have been given a task by your manager to plan for the future disk space requirement of your server.  As a first step towards this task, you are required to find out the following information about your server.  Please run appropriate commands to gather the information.
-1.	Names of the disks attached to your server.(fdisk)
-2.	What are their sizes?(parted)
-3.	How much of free space is left on each disk?(df)
+You have been given a task by your manager to plan for the future disk 
+space requirement of your server.  As a first step towards this task, 
+you are required to find out the following information about your server.  
+Please run appropriate commands to gather the information.
+
+1.	Names of the disks attached to your server. (fdisk)
+2.	What are their sizes? (parted)
+3.	How much of free space is left on each disk? (df)
 
 
-1.fdisk –l
+1.fdisk - l
 2.parted
 This will take us into the parted command tool.
+
 If we have one disk only sda we can directly enter the commands
 q<enter>
+
 3.df –h
 here h for human readable format
 
-MBR
+MBR (Master Boot Record)
 1st	/boot
 2nd	pv (physical volume)(logical)
 Volume manager concept
-There are 2 partitions, both are initialized by a command. Each one will be a physical volume of 10g and 20g each. Here an administrator creates a combined 30g single piece combining both is called a vg(volume group).
+There are 2 partitions, both are initialized by a command. Each one will 
+be a physical volume of 10g and 20g each. Here an administrator creates 
+a combined 30g single piece combining both is called a vg (volume group).
+
 All the pv and vg are given names.
+
 PE = physical extents
+
 Within vg we create small sections called pe.
+
 Pv1=10g
 Pv2=20g
 Vg=pv1+pv2=30g
-This entire 30g can be devided into smaller units called physical extents. Each can be say 4M. means total 30g is divided into 4m each physical extents.
-From pe we can create the next step is lv (logical volume)
-From this 30g we can have logical volumes like 100 physical extents together become 100*4=400mb logical volume.
-The advantage of doing this is on each LV we can mount a directory. Suppose we used almost the space of the current lv in a vg, we can come to this vg and add some more space to our lv. My first lv can become from 100m to 200m or more depending on the requirement.
+
+This entire 30g can be devided into smaller units called physical extents. 
+Each can be say 4M. Means total 30g is divided into 4m each physical extents.
+From pe we can create the next step is lv (logical volume).
+From this 30g we can have logical volumes like 100 physical extents 
+together become 100*4=400mb logical volume.
+The advantage of doing this is on each LV we can mount a directory. Suppose we 
+used almost the space of the current lv in a vg, we can come to this vg and add 
+some more space to our lv. My first lv can become from 100m to 200m or more 
+depending on the requirement.
+
 Scenario
 Is LVM implemented for any of the partitions. If yes, find out the following information:
 Physical Volumes
@@ -430,6 +462,7 @@ Logical Volume
 	Names of all LVs and the VG that they belong to
 	Sizes of all logical volumes
 	Mount points for each Logical volume, if mounted
+
 To display how many physical volumes:
 #pvdisplay
 To know about volume groups:
@@ -439,14 +472,22 @@ Now logical volumes information:
 #lvdisplay
 Will show all the available lv’s one by one.
 Lvname, vgname, lv uuid, lvsize, 
-In this we cant see mount points of lv. To see the mount points of lv we have a command called 
+In this we cant see mount points of lv. To see the mount points of lv we 
+have a command called 
 #df –h
 To see the last lv of swap the command is :
 #swapon –s
 
 Scenario #5
-A new project has been started in your organization.  The developers of this project need additional disk space for the source code programs related to this project to be stored in their respective home directories.  Increase the size of /home to 650mb.  If for some reason you are unable to resize it to 650mb, any size between 630mb and 660mb will suffice.
-Note: While performing the above operation there should not be any data loss of existing data in the /home directory.
+A new project has been started in your organization.  The developers of this 
+project need additional disk space for the source code programs related to 
+this project to be stored in their respective home directories.  Increase 
+the size of /home to 650mb.  If for some reason you are unable to resize it 
+to 650mb, any size between 630mb and 660mb will suffice.
+
+Note: While performing the above operation there should not be any data loss 
+of existing data in the /home directory.
+
 Commands
 df –h (what kind of storage already allocated for home)
 Lvextend
@@ -472,7 +513,14 @@ Now shows the correct value
 
 
 Scenario #6
-For the above mentioned new project, there is a need to keep large data files on the server.  You need to create a seperate mount point named /sales_data for this purpose.  Create a new volume group and a logical volume for this purpose from the remaining free space on your disk/s.  The size of physical extent of the volume group should be 8MB.  The logical volume should have 50 extents.  This mount point should get automatically mounted at the boot time.
+For the above mentioned new project, there is a need to keep large 
+data files on the server.  You need to create a seperate mount point 
+named / sales_data for this purpose.  Create a new volume group and 
+a logical volume for this purpose from the remaining free space on 
+your disk/s.  The size of physical extent of the volume group should 
+be 8MB.  The logical volume should have 50 extents.  This mount point 
+should get automatically mounted at the boot time.
+
 commands:
 parted
 fdisk 
@@ -587,21 +635,3 @@ We can also fire lvdisplay to see more details
 #lvdisplay
 Now check weather we have lost the data or not:
 #ls /opt/
-
-
-
-
-
-
-
-
-
-
-
-
-
-Shell Scripting
-
-
-
-

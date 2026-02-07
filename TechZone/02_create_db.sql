@@ -1,5 +1,5 @@
 MANUAL DATABASE CREATION
-
+========================
 1. create necessary directory structure
 cd (to go into home directory)
 mkdir -p /u01/db/arch
