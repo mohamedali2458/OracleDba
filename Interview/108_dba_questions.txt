@@ -1,0 +1,249 @@
+Top 108 Interview Questions for Database Administrator
+======================================================
+1. What will happen if the database archive log destination is full 
+and what will happen to the application transactions
+
+2. How do you decommission a oracle database
+
+3. What is psu, cpu and ru patches difference
+
+4. What are the steps for upgrades from 11g to 12c and 12c to 19c
+
+5. What to do if my query or batch job is taking time
+
+6. What is database character set what is the difference between al32utf8 
+and other character set
+
+7. Checklist before installing a oracle database and creating databases
+
+8. How to make the expdp and impdp to run faster? lets say there is 5tb 
+of db, how to make it faster? what are the various parameters?
+
+9. Yesterday the query is taking 5 mins and today its taking 30 mins. why and what are the steps?
+
+10. You have completed patching on dev, test and pre-prod 
+and now think you were doing patching on production environment 
+and its taking much time so how can you handle this?
+
+11. You were doing upgrades from 11g to 19c and you were found 
+invalid objects during upgrade and how can you fix those things?
+
+12. Have you done cross platform migrations? and migration from on-premises to cloud?
+
+13. Top things you will be checking in awr report?
+
+14. Do you have any Golden gate exposure?
+
+15. What are the parameters to check while creating container database 
+and pluggable database max, how many containers databases we can create
+
+16. What is acfs, cachefusion, shared pool, scan ip, virtual ip, logical standby, physical standby db
+
+17. How many ip's we need to configure for 2node rac
+
+18. Can you please tell the steps to upgrade 2 node rac
+
+19. Steps to apply a patch on dataguard environment and command to start a mrp process
+
+20. what are the high level steps to apply a patch and how can you rollback a patch
+
+21. What if my pfile and spfile is lost and how we start the database 
+and what is the default location of pfile
+
+22. What if control file is lost and how can we recover with rman
+
+23. How the select, update, delete statement works in oracle database
+
+24. How to recover if redo log member is lost and how to add a redo member to a group?
+
+25. How to recover if datafile is lost?
+
+26. A datafile was wrongly added on file system instead of ASM disk group. 
+How to move it to the ASM disk group again?
+
+27. How to apply a patch on 2node rac with standby database?
+
+28. How to configure fast start failover?
+
+29. What is ocr, olr, crsd, cssd and voting disk
+
+30. What is cache fusion, cache coherence
+
+31. What is vip, scanip how the nodes communicates each other
+
+32. What is difference between rman and expdp
+
+33. How to resolve block corruption with rman and will it resolve thru expdp
+
+34. What is the role of pga during update statement
+
+35. What is sql profile and db profile and how it works 
+and how can you change the Plug a better plan hash value
+
+36. I have a backup taken at 12.10 AM and 12.30 AM 
+and how to restore the backup taken at 12.10 only?
+
+37. What is normal change and expedite change
+
+38. I have a 4 node rac and if node is evicted then how to resolve it 
+and how to relocate the services from one node to another node 
+command to check the services
+
+39. What is latch and how does it will occur and how to resolve it
+
+40. My application is hanging and how do you trouble shoot it quickly
+
+41. Suddenly the database performance is low after adding a disk to asm
+
+42. What is backup piece?
+
+43. How to backup control file with rman
+
+44. What is catalogue command in rman
+
+45. Can we backup a online redo log file
+
+46. What are the high level patching steps on oracle rac database
+
+47. What is asm_power_limit what is the default value in higher versions
+
+48. What is split brain syndrome
+
+49. What if my ocr is corrupted and what are the steps and how to take 
+a backup of ocr and voting disk
+
+50. What if one of my voting disk is corrupted out of 5 voting disk
+
+51. One of my table is dropped how to recover that table alone in oracle 12c
+
+52. Junior dba removed oracle home with rm -rf command. 
+what will happen to the db can we recover the db ?
+
+53. Junior dba removed the restore point from my primary database. 
+how to recover to the last restore point? 
+and is it possible to restore to the last restore point?
+
+54. You have upgraded the database from 11g to 12c or 19c 
+after some days the application team wants to restore to the older version
+
+55. How to restore if my compatible parameter is not set 
+or if you have set the compatible parameter then can we restore to older version?
+
+56. How to configure a 4 node rac what are the high level steps
+
+57. How to upgrade the rac database/primary db with standby with lesser downtime
+
+58. Orainventory is corrupted and how to recreate it
+
+59. How to convert from noncdb to cdb
+
+60. How to convert from nonasm to asm
+
+61. Do you have any basic knowledge in sqlservers
+
+62. Do you have a basic knowledge in goldengate
+
+63. How to covert from physical standby to logical standby? 
+and physical to snapshot standby database?
+
+64. What Happened to Database, Suddenly Listener Got Down. 
+and how can you troubleshoot listener issues
+
+65. What is oracle fine grained auditing?
+
+66. What will you do if you see the cpu usage is 90 or 100%
+
+67. What is in-memory, sga and pga and is sga and pga are 
+dynamic parameters and how to increase memory the sga and pga 
+and what prechecks you will do
+
+68. How can you findout that there is a shortage of memory 
+in the server and how will you increase it
+
+69. What is crsctl disable/enable crs
+
+70. What are the different types of rman backups available in 
+rman and how to speed up the rman backup
+
+71. What is cumulative and differential and what is full backup and level0 backup
+
+72. What is block change tracking in rman
+
+73. How many ip's do we need to configure for 2 node rac and 5 node rac 
+and which ip's are to be in same subnet
+
+74. What is public, private, scan ip and vip
+
+75. What is Addm, Ash, and Awr and what are the things you will check in these reports
+
+76. How can you find out if there are any vulnerabilities in oracle database
+
+77. What are the things you will run after db creation how many ways you can create the db
+
+78. What are the v$views, baseviews, dictionary views how to update these views
+
+79. What are ways you can do for oracle database migration, 
+what are the things you will check before migration
+
+80. Which migration method did you used in your earlier project
+
+81. What are the new features in oracle 19c, 21c and which feature have you used in your recent project
+
+82. How can you read the dumpfile if the logfile are not there
+
+83. How many redundancy available in asm and what are those by default 
+if we add a disk what is the redundancy
+
+84. What is password file in oracle database
+
+85. What is character set and how many types of character set in oracle
+
+86. What is proactive and reactive tunning
+
+87. What is pctfree and pctused
+
+88. What are the waitevents in oracle rac and how to resolve it
+
+89. What is haip in oracle rac
+
+90. What if the private connection fails in oracle rac what are the steps to take inorder to avoid it
+
+91. What is dB sequential and db scaterred wait events and how to resolve
+
+92. What is fragmentation how to resolve it
+
+93. What to do if there heavy bulk inserts and updates on the db level
+
+94. What is automatic and manual memory management
+
+95. What to do if there are heavy sorts in oracle database 
+    what need to check at the pga and temporary tablespace level
+
+96. What are hints and name some of the hints that we used
+
+97. How to avoid the swiping and memory issues at the Linux os level
+
+98. How can we run the rman backup job from a particular node in 
+oracle rac, how can we configure the services to run on 
+a particular node in oracle rac
+
+99. What is MGMT database in Oracle 12c?
+
+100. How to log all the dml activity of user on a table
+
+101. If we apply a patch on 12c pdb and cdb will it apply to all or only to cdb
+
+102. What does the AWR DB time represent?
+
+103. I have taken export of A,B,C and D schemas and while 
+importing if i mention remap_schema = A:B and
+
+104. what will happen if i don't mention remap_schema=C:D and how it works
+
+105. What is the difference between data guard and physical standby database
+
+106. What are the mandatory background process for a oracle database, a rac and grid
+
+107. Db is dropped but no space is released from asm disk ?
+
+108. What is the difference between crosscheck, validate, obsolete and expired

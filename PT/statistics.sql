@@ -16,8 +16,7 @@ Introduction
 
 What are statistics?
 
-Ans: Input to the Cost-Based Optimizer, Provide information on
-User Objects
+Ans: Input to the Cost-Based Optimizer, Provide information on User Objects
 	Table, Partition, Subpartition
 	Columns
 	Index, Index Partition, Index Subpartition
@@ -103,11 +102,14 @@ Identify STALE STATS:
 col TABLE_NAME for a30
 col PARTITION_NAME for a20
 col SUBPARTITION_NAME for a20
-select OWNER,TABLE_NAME,PARTITION_NAME,SUBPARTITION_NAME,NUM_ROWS,LAST_ANALYZED from DBA_TAB_STATISTICS where STALE_STATS='YES';
+select OWNER, TABLE_NAME, PARTITION_NAME, SUBPARTITION_NAME, NUM_ROWS, LAST_ANALYZED 
+from DBA_TAB_STATISTICS where STALE_STATS='YES';
 
 OR
 
-select OWNER,TABLE_NAME,LAST_ANALYZED,STALE_STATS from DBA_TAB_STATISTICS where OWNER='&OWNER' AND STALE_STATS='YES';
+select OWNER, TABLE_NAME, LAST_ANALYZED, STALE_STATS 
+from DBA_TAB_STATISTICS 
+where OWNER='&OWNER' AND STALE_STATS='YES';
 
 
 Gather STATS

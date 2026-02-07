@@ -1,6 +1,7 @@
 Maintaining RMAN Backups and the Repository
 ===========================================
-Oracle recommends that you implement the following policies as the foundation of your RMAN backup and repository maintenance strategy:
+Oracle recommends that you implement the following policies as the foundation 
+of your RMAN backup and repository maintenance strategy:
 • A fast recovery area
 • An archived redo log deletion policy
 • A backup retention policy
@@ -10,8 +11,9 @@ Adding User-Made Backups to the Repository
 RMAN> catalog datafilecopy '/u01/app/oracl/example1.bkp';
 RMAN> catalog datafilecopy '/u01/app/oracle/example01.bkp' level 0;
 
-To catalog a copy made by you in the RMAN repository, the copy must be available on disk, and it must be a complete
-image copy of a single data file, control file, archived redo log file, or backup piece.
+To catalog a copy made by you in the RMAN repository, the copy 
+must be available on disk, and it must be a complete image copy of 
+a single data file, control file, archived redo log file, or backup piece.
 
 If you copy or move an RMAN backup piece manually, you can use the catalog command to make that
 backup piece usable by RMAN. The following is an example of cataloging an RMAN backup piece on tape.
