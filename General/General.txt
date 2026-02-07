@@ -1,3 +1,22 @@
+One real truth about Oracle DBA life 👇
+
+In interviews, tablespace full sounds simple.
+In production, it’s a 2 AM panic call.
+
+Real challenge is not adding datafile —
+It’s understanding:
+✔ why it filled
+✔ which segment grew
+✔ whether it will repeat
+✔ impact on application
+
+Being a DBA is not about commands.
+It’s about thinking before typing.
+
+That 2 AM call teaches more than any certification.
+The moment you truly become a DBA is not in office hours.
+
+
 Oracle Database has 3 startup sequence
 ======================================
 startup nomount; 
