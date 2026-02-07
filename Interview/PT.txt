@@ -49,3 +49,72 @@ Top 15 Performance Tuning Interview Questions for Experienced Oracle DBAs.
  
 15. What happens internally when cursor_sharing = FORCE breaks an application?
  👉 Explain parsing behavior, plan instability, and functional side effects.
+
+
+
+
+
+
+
+
+Most important Performance Tuning Tasks
+=======================================
+Monitor CPU, Memory, Swap usage
+
+SGA size should be around 60% of physical RAM
+
+library cache hit ratio > 95 (CURSOR_SHARING)
+
+dictionary cache hit ratio > 95
+
+Buffer cache hit ratio > 90
+
+Watch for top 5 wait Events (V$SYSTEM_EVENTS, V$SESSWAIT)
+
+OLTP sorting should happen in memory (PGA)
+
+Distribute data files to avoid hot spots.
+
+separate data and indexes on separate disks
+
+tablespace striping
+
+Put Redo files on fastest disks
+
+OLTP Queries Should have fewer FTS
+
+shrink segments - HWM
+
+Use MULTI_BLOCK_READ_COUNT and/or large block size for DSS
+
+avoid row migration – reorg tables
+
+Stop archiving if not necessary – non production instances only
+
+use nologging at appropriate places (index creation, CTAS etc.)
+
+use direct path load for SQL Loaders(no triggers will be fired) and exp
+
+pin lookup tables
+
+pin frequently used stored procs
+
+setup shared server only when you are low on RAM
+
+Monitor free space & growth – pre allocate extents for large data loads
+
+schedule jobs to collect regular stats
+
+rebuild indexes
+
+use partitioning
+
+use external tables
+
+use LMT with UNIFORM size & Auto segment management
+
+use Automatic UNDO instead of manual with proper UNDO_RENTNTION
+
+backup/export during low activity hours. Use only
+RMAN(this will not generate more redo during hot
+backup)
