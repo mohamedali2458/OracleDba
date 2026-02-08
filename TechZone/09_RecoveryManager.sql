@@ -6,7 +6,7 @@ recover.bsq -> $ORACLE_HOME/admin/recover.bsq
 
 PL/SQL Packages
 dbms_backup_restore
-dbms_revcat	owned by user sys
+dbms_revcat			owned by user sys
 
 Connecting to the Target Database Without a Catalog from the Command Line
 $rman target / nocatalog
@@ -48,8 +48,9 @@ List & Report Commands
 ======================
 To get information about backups
 RMAN> list backup;
+RMAN> list backup summary;
 RMAN> list backup of database;
-RMAN> list backup of datafile 7;
+RMAN> list backup of datafile 4;
 RMAN> LIST BACKUP OF DATAFILE '/u01/app/oracle/oradata/ORADB/users01.dbf';
 RMAN> list backup of archivelog all;
 RMAN> list backup of controlfile;
@@ -75,13 +76,16 @@ Note that multiple incarnations may share the same database ID.
 
 RMAN> LIST INCARNATION;
 
-set linesize 300 pagesize 200
+set linesize 300
+set pagesize 200
 col inputbytes for a20
 col outputbytes for a20
 col timetaken for a30
 select session_key, input_type, status, start_time, end_time,
-round(elapsed_seconds) elap_sec, input_bytes_display "InputBytes", output_bytes_display "OutputBytes",
-output_device_type "Device", autobackup_count "Auto_Cnt", autobackup_done "AutoStatus", time_taken_display "TimeTaken"
+round(elapsed_seconds) elap_sec, input_bytes_display "InputBytes", 
+output_bytes_display "OutputBytes", output_device_type "Device", 
+autobackup_count "Auto_Cnt", autobackup_done "AutoStatus", 
+time_taken_display "TimeTaken"
 from v$rman_backup_job_details
 order by session_key;
 
