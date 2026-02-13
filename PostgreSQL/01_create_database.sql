@@ -11,7 +11,7 @@ select oid, datname from pg_database;
 
 select * from pg_database;
 
-How To Create New database in PostgreSQL using psql?
+#How To Create New database in PostgreSQL using psql?
 
 create database test;
 
@@ -39,6 +39,16 @@ if Linux
 mkdir -p /u01/postgres/data/test3_tbs
 chown -R postgres:postgres /u01/postgres
 chmod -R 750 /u01/postgres
+
+to view tablespaces:
+\db
+\db+
+SELECT * FROM pg_tablespace;
+
+SELECT spcname AS tablespace_name,
+       pg_catalog.pg_get_userbyid(spcowner) AS owner,
+       spclocation AS location
+FROM pg_tablespace;
 
 CREATE TABLESPACE test3_tbs LOCATION 'C:\Program Files\PostgreSQL\test3_tbs';
 
@@ -81,7 +91,7 @@ orcl=#  <---- Now we connected to database "orcl"
 
 How to Find the Version of Database in PostgreSQL using psql?
 
-select version();
+SELECT version();
 [postgres@rac1 ~]$ psql
 psql (13.2)  <-----
 Type "help" for help.
