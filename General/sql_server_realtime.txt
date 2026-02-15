@@ -1,0 +1,32 @@
+🚨 Production Down at 2 AM – A Real DBA Lesson
+
+Last month, we received a P1 alert at 2:07 AM.
+Critical banking application was completely unresponsive.
+
+As a SQL DBA, this is where theory meets reality.
+
+🔎 Initial Findings:
+	•	CPU at 95%
+	•	Blocking sessions piling up
+	•	One stored procedure running for 40+ minutes
+	•	TempDB growing rapidly
+
+Instead of restarting SQL Server (which is never the first solution), we followed a structured approach:
+
+✅ Identified the blocking chain using sp_who2 and DMVs
+✅ Found a missing index causing a massive table scan (20M+ rows)
+✅ Execution plan showed parameter sniffing issue
+✅ Applied query hint as immediate fix
+✅ Created optimized covering index after impact analysis
+
+⏱️ Within 18 minutes, application was stable.
+
+
+💡 What I learned;
+1. Restart is not a solution. Root cause analysis is.
+2. Indexing strategy can make or break production systems.
+3. Monitoring + Calm mindset > Panic.
+4. Every DBA should master execution plan reading.
+
+Being a DBA is not about running backups.
+It’s about protecting business continuity.
