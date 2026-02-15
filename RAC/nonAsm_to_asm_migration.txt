@@ -1,1 +1,340 @@
 https://support.dbagenesis.com/post/oracle-non-asm-to-asm-migration
+
+
+Oracle Non-ASM to ASM Migration
+===============================
+Simplify the migration process from non-ASM to ASM in Oracle.
+
+Moving your database from file system to ASM provides you more 
+control over disk failure, redundancy and storage management. 
+We have an orcl database which is configured on Linux filesystem. 
+We will be migrating orcl database from Linux filesystem to Oracle ASM.
+
+    Configure Disk for ASM
+    Install Oracle 19c Grid
+    Setup ASM Diskgroups
+    Move Parameter File to ASM
+    Move Control Files to ASM
+    Move Data Files to ASM
+    Migrate Temp Files to ASM
+    Migrate Redo Log Files to ASM
+
+Configure Disk for ASM
+
+First of all, we need to install ASM packages as root user
+yum -y install oracleasm*
+yum -y install kmod-oracleasm
+
+Add OS groups
+groupadd -g 54327 asmdba
+groupadd -g 54328 asmoper
+groupadd -g 54329 asmadmin
+
+Add asmdba as secondary group to Oracle user
+usermod -a -G asmdba oracle
+
+Create Grid User
+useradd -m -u 54331 -g oinstall -G dba,asmdba,asmoper,asmadmin,racdba grid
+
+Change the password for Grid user
+passwd grid
+
+Configure the Oracle ASM
+oracleasm configure -i
+
+Default user to own the driver interface []: grid
+Default group to own the driver interface []: dba
+Start Oracle ASM library driver on boot(y/n) [n]: y
+Scan for Oracle ASM disks on boot (y/n): y
+Writing Oracle ASM library driver configuration: done
+
+Now we need to initiate Oracle ASM
+
+oracleasm init
+
+Creating/dev/oracleasm
+mount point:/dev/oracleasm
+Loading module "oracleasm": oracleasm
+Configure "Oracleasm" to use device physical block size
+Mounting ASMlib driver filesystem: /dev/oracleasm
+
+Add 30 GB HDD to virtual machine which will be used to create 3 partitions of 10 GB each for ASM disks
+
+Open Virtual machine
+settings --> storage 
+controller SATA --> create new disk 
+click on next 
+give size as 30Gb --> create 
+
+done. start virtual machine, login as root user and format the disk. you can see the newly added disk as /dev/sdb
+fdisk -l 
+
+Format /dev/sdb disk and create 3 partition
+
+fdisk /dev/sdb
+
+n            --> Create 1st partition
+p
+1
+<enter>
++10g
+
+n            --> Create 2nd partition
+p
+2
+<enter>
++10g
+
+n            --> Create 3rd partitions
+p
+3
+<enter>
+<enter>
+w            --> save partitions
+
+
+Confirm if you are able to see all the partions
+
+[root@19c ~]# fdisk -l /dev/sdb
+
+Disk /dev/sdb: 32.2 GB, 32212254720 bytes, 62914560 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x6a70525e
+
+Device Boot Start End Blocks Id System
+/dev/sdb1 2048 20973567 10485760 83 Linux
+/dev/sdb2 20973568 41945087 10485760 83 Linux
+/dev/sdb3 41945088 62914559 10484736 83 Linux
+
+Create separate ASM Disk for each partition
+
+oracleasm createdisk CRS1 /dev/sdb1
+oracleasm createdisk DATA1 /dev/sdb2
+oracleasm createdisk FRA1 /dev/sdb3
+
+Check the ASM disks
+oracleasm listdisks
+
+We can also check through
+
+ls -lrt /dev/oracleasm/disks
+
+Now we are ready to move onto oracle 19c grid infrastructure standalone installation!
+
+
+Install Oracle 19c Grid
+
+Let us install the grid software as it contains the ASM binaries. Create directories for Oracle Grid installation
+
+mkdir -p /u01/app/grid
+mkdir -p /u01/app/grid/product/19.3/grid_home
+chown -R grid:oinstall /u01/app/grid
+chmod -R 775 /u01
+
+
+Edit Grid user Bash_Profile and put below contents
+
+su - grid
+vi .bash_profile
+
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+ORACLE_SID=+ASM; export ORACLE_SID
+ORACLE_BASE=/u01/app/grid; export ORACLE_BASE
+ORACLE_HOME=/u01/app/grid/product/19.3/grid_home; export ORACLE_HOME
+ORACLE_TERM=xterm; export ORACLE_TERM
+JAVA_HOME=/usr/bin/java; export JAVA_HOME
+TNS_ADMIN=$ORACLE_HOME/network/admin; export TNS_ADMIN
+
+PATH=.:${JAVA_HOME}/bin:${PATH}:$HOME/bin:$ORACLE_HOME/bin
+PATH=${PATH}:/usr/bin:/bin:/usr/local/bin
+export PATH
+
+umask 022
+
+
+Execute the bash profile and check environment variables
+
+. .bash_profile
+
+env|grep ORA
+
+
+Copy Oracle 19c grid software under grid home using WinSCP
+
+Connect as grid user and unzip the grid software
+
+cd $ORACLE_HOME
+
+unzip -qo /software/location/LINUX.X64_193000_grid_home.zip
+
+Start the gridSetup.sh which will install grid software. Make sure xming is up and running on your windows machine
+
+./gridSetup.sh
+
+
+Oracle 19c Grid installation is completed.
+
+
+
+Setup ASM Diskgroups
+
+Start asmca to configure DATA and FRA diskgroups
+
+Click on create
+
+Disk Group Name: DATA >> Redundancy: External >> Select DATA1 disk >> Click on OK
+
+Let's create FRA diskgroup. Click on create. Disk Group Name: FRA >> Redundancy: External >> Select FRA1 disk >> Click on OK
+
+Exit from asmca.
+
+
+Move Parameter File to ASM
+
+First check the locations of Parameter file, Control file, Data file, 
+Temp file and Redo Log files. This is important piece of information 
+as we move database files to ASM 
+
+show parameter pfile;
+select name from v$controlfile;
+select name from v$datafile;
+select name from v$tempfile;
+select member from v$logfile;
+
+Take backup of spfile and restore it to ASM
+
+rman target /
+backup as backupset spfile;
+restore spfile to '+DATA/spfileorcl.ora';
+
+
+Rename old spfile as it no longer required
+
+mv $ORACLE_HOME/dbs/spfileorcl.ora $ORACLE_HOME/dbs/spfileorcl.ora_old
+
+Create new pfile which points to the spfile on ASM
+
+vi $ORACLE_HOME/dbs/initorcl.ora
+
+spfile='+DATA/spfileorcl.ora'
+
+Bounce the database and check if it’s showing new location for spfile
+
+shut immediate
+
+startup nomount;
+show Parameter pfile;
+
+Parameter file migration to ASM is done!
+
+Move Control Files to ASM
+
+As our database is already in no-mount mode, we shall connect 
+to RMAN to copy controlfiles from filesystem to ASM
+
+rman target/
+restore controlfile to '+DATA' from '/u01/app/oracle/oradata/ORCL/control01.ctl';
+restore controlfile to '+FRA' from '/u01/app/oracle/FRA/ORCL/control02.ctl';
+
+
+Find new controlfiles locations from asmcmd and update inside database
+
+alter system set control_files='+DATA/CDB1/CONTROL/control01.ctl',
+'+FRA/CDB1/CONTROL/control02.ctl' scope=spfile;
+
+Bounce the database and put in mount mode. Check if database is showing new location for control files
+
+shut immediate;
+
+startup mount;
+show parameter control_files
+Controlfile migration to ASM done!
+
+
+Move Data Files to ASM
+
+Let us move datafiles from filesystem to ASM. As our database is in 
+mount mode, we can go ahead and use RMAN to copy datafiles to ASM
+
+rman target/
+
+backup as copy database format '+DATA';
+
+
+Switch the database to the data files on ASM
+
+switch database to copy;
+
+
+Migrate Temp File to ASM
+
+Use below run code to migrate temp file to ASM
+
+RMAN>run
+{
+set newname for tempfile '/u01/app/oracle/oradata/ORCL/temp01.dbf' to '+DATA';
+switch tempfile all;
+}
+
+
+Open the database and check new locations for datafiles and tempfile
+
+alter database open;
+
+select name from v$datafile;
+select name from v$tempfile;
+
+
+Migrate Redo Log Files to ASM
+
+The simple way is to add new log members on ASM to every Redo Log 
+group and drop the log members on disk. Let’s check available 
+logfile and their path and status
+
+SELECT a.group#, b.member, a.status FROM v$log a, v$logfile b 
+WHERE a.group#=b.group#;
+
+Add log members at new location, in ASM
+
+alter database add logfile member '+data' to group 1;
+alter database add logfile member '+data' to group 2;
+alter database add logfile member '+data' to group 3;
+alter database add logfile member '+fra' to group 1;
+alter database add logfile member '+fra' to group 2;
+alter database add logfile member '+fra' to group 3;
+
+
+Check if logfile are added to new location
+
+SELECT a.group#, b.member, a.status FROM v$log a, V$logfile b WHERE a. group#=b.group#;
+
+
+Let’s drop old logfiles from file system. To drop logfile member, 
+Status should not be in current mode
+
+SQL> ALTER DATABASE DROP LOGFILE MEMBER /u01/app/oracle/ORCL/redo03.log';
+
+SQL> alter system switch logfile;
+
+SQL> ALTER DATABASE DROP LOGFILE MEMBER '/u01/app/oracle/ORCL/redo01.log';
+
+SQL> alter system switch logfile;
+
+SQL> ALTER DATABASE DROP LOGFILE MEMBER '/u01/app/oracle/ORCL/redo02.log';
+
+Verify if redo log members are migrated to ASM
+
+SQL> SELECT a.group#,b. member, a.status FROM v$log a , V$logfile b 
+WHERE a.group#=b.group#;
+
+Redo log file are migrated to ASM!

@@ -1,5 +1,0 @@
-What are the ways to identify master node in the Oracle RAC?
-
-1. From occsd and crsd log files.
-2. Query the view v$ges_resource
-3. The node that store the OCR backup is the master node. (ocrconfig –showbackup)

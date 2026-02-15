@@ -1,4 +1,5 @@
-
+Startup Sequence 
+================
 Short summary of the startup sequence: INIT spawns init.ohasd (with respawn) 
 which in turn starts the OHASD process (Oracle High Availability Services Daemon).  
 This daemon spawns 4 processes.

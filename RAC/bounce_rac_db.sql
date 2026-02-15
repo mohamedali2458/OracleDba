@@ -1,8 +1,10 @@
 Bounce RAC database?
 ====================
 Generally asked question on RAC database: 
-How to bounce my RAC database and How to configure my RAC database cluster setting. 
-We more often perform bounce RAC database for patching or any configuration change or any maintenance activity. 
+How to bounce my RAC database and 
+How to configure my RAC database cluster setting. 
+We more often perform bounce RAC database for 
+patching or any configuration change or any maintenance activity. 
 
 Here are the basic RAC database maintenance & administration commands:
 

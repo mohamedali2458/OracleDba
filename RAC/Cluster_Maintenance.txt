@@ -6,16 +6,22 @@ How to bounce RAC cluster?
 CRSCTL = Cluster Ready Service Control Utility
 
 Why we need to bounce RAC cluster? 
-- We bound RAC cluster for many reasons like patching, any planned maintance, for any configuration changes, for any cluster administration. etc...
+- We bound RAC cluster for many reasons like patching, 
+  any planned maintance, 
+  for any configuration changes, 
+  for any cluster administration. etc...
 
 What is the impact on bouncing the cluster? 
-- Bouncing the cluster will impact the running ASM instacne, Database Inatance, Services. 
+- Bouncing the cluster will impact the running ASM instacne, 
+  Database Inatance, 
+  Services. 
 
 Which user is autherised to bounce the cluster? 
-- Oracle Databases owner does not have previlages to bounce clusters services 
-- GI/ASM owner does not have previlages to bounce clusters services 
+- Oracle Database owner does not have previleges to bounce cluster services 
+- GI/ASM owner does not have previlleges to bounce cluster services 
 - Only root user can perform this activity 
-- IN realtime world all the DBA will be having sudo su access to root user so that DBA can login to root and perfrom this activity
+- IN realtime world all the DBA will be having sudo su access 
+  to root user so that DBA can login to root and perfrom this activity
 
 Cluster Status Check and Cluster resource/deamons:
 ==================================================

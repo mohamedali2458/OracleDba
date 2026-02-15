@@ -20,7 +20,16 @@ srvctl status database -d DEVDB
 
 4. using gv$ views  
 SELECT inst_id, dbid, name FROM gv$database;
+
 select INST_ID,INSTANCE_NAME,HOST_NAME from gv$instance;
 
 5. using crsctl commands
 crsctl stat res -t
+
+
+
+What are the ways to identify master node in the Oracle RAC?
+
+1. From occsd and crsd log files.
+2. Query the view v$ges_resource
+3. The node that store the OCR backup is the master node. (ocrconfig –showbackup)
