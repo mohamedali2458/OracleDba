@@ -3,13 +3,542 @@ Top 108 Interview Questions for Database Administrator
 1. What will happen if the database archive log destination is full 
 and what will happen to the application transactions
 
+🔴 Database Behavior
+When the archive log destination runs out of space, Oracle cannot archive the online redo logs. This triggers a cascade of events:
+
+1. Redo Log Archiving Halts
+Oracle continuously writes to online redo log groups in a circular fashion
+Before Oracle can reuse/overwrite a redo log group, it must be archived
+If the archive destination is full → archiving fails → Oracle cannot switch to the next redo log
+
+2. Log Switch Becomes Impossible
+Oracle attempts a log switch but the current log group cannot be marked as archived
+The database enters a waiting state
+
+3. Database Hangs / Freezes
+All sessions requiring redo log space will hang
+You'll see waits like:
+    log file switch (archiving needed)
+    log file switch (checkpoint incomplete)
+    arch wait on SENDREQ
+
+🔴 Impact on Application Transactions
+Impact	                Description
+New DML Freezes	        INSERT, UPDATE, DELETE statements hang and do not complete
+Commits Hang	        Active transactions attempting to commit will freeze
+No Rollbacks Affected   Read-only SELECT queries may still work temporarily
+Connection Timeouts	    Application connection pools begin to time out
+Application Errors	    Eventually users see errors like "ORA-00257: archiver error"
+Business Impact	        Complete application outage for all write operations
+
+Key Oracle Error:
+
+ORA-00257: archiver error. Connect internal only, until freed
+
+Immediate Resolution Steps
+
+-- 1. Check archive log destination usage
+SELECT dest_name, status, target, archiver, schedule, destination
+FROM v$archive_dest
+WHERE status = 'VALID';
+
+-- 2. Check what's consuming space (OS level)
+-- Then free up space by moving/deleting old archive logs
+
+-- 3. After freeing space, force archiver to retry
+ALTER SYSTEM ARCHIVE LOG ALL;
+
+-- 4. Verify archiver is running again
+SELECT * FROM v$archive_processes;
+
+Never delete archive logs directly from the OS if RMAN is your backup tool — always use RMAN to delete them so the catalog stays in sync.
+
+# Safe deletion via RMAN
+RMAN> CROSSCHECK ARCHIVELOG ALL;
+RMAN> DELETE EXPIRED ARCHIVELOG ALL;
+RMAN> DELETE ARCHIVELOG ALL COMPLETED BEFORE 'SYSDATE-2'; -- keep last 2 days
+
+Prevention Best Practices
+Practice	            Action
+Monitor regularly	    Alert when archive dest > 80% full
+Use FRA	                Set DB_RECOVERY_FILE_DEST_SIZE with adequate size
+Regular RMAN backups	Backup and delete old archive logs on schedule
+Multiplex destinations	Use multiple archive log destinations (LOG_ARCHIVE_DEST_1, _2)
+Set alerts	            Use Oracle Enterprise Manager or custom scripts
+
+-- Check Fast Recovery Area usage
+SELECT space_limit/1024/1024/1024 AS limit_GB,
+       space_used/1024/1024/1024  AS used_GB,
+       space_reclaimable/1024/1024/1024 AS reclaimable_GB,
+       number_of_files
+FROM v$recovery_file_dest;
+
+Bottom line: A full archive log destination = complete write outage for your application. It's one of the most impactful database storage issues and requires immediate attention.
+
+
+
+
+
+
+
 2. How do you decommission a oracle database
+
+Decommissioning an Oracle database is a structured process that requires careful planning to avoid data loss and ensure compliance. Here's a complete guide:
+
+Phase 1: Pre-Decommission Planning
+Before touching anything, complete these steps:
+
+✅ Checklist
+ Get formal sign-off from application owners and management
+ Confirm no active users or applications depend on this DB
+ Identify all dependent applications, jobs, and interfaces
+ Determine data retention requirements (legal/compliance)
+ Schedule a maintenance window
+
+
+ Phase 2: Final Backup
+⚠️ Always take a final backup before decommissioning — even if the data isn't needed.
+
+bash
+# Full RMAN backup before anything else
+rman target /
+
+RMAN> BACKUP DATABASE PLUS ARCHIVELOG;
+RMAN> BACKUP CURRENT CONTROLFILE;
+
+Also export data if needed for archival:
+
+# Full Data Pump export (for archival purposes)
+expdp system/password \
+  FULL=Y \
+  DUMPFILE=final_archive_%U.dmp \
+  LOGFILE=final_archive.log \
+  DIRECTORY=DATA_PUMP_DIR \
+  COMPRESSION=ALL
+
+Phase 3: Notify and Disconnect
+
+-- Check for active sessions
+SELECT username, sid, serial#, status, program, machine
+FROM v$session
+WHERE type = 'USER';
+
+-- Kill active sessions if needed
+ALTER SYSTEM KILL SESSION 'sid,serial#' IMMEDIATE;
+
+-- Restrict access to prevent new connections
+ALTER SYSTEM ENABLE RESTRICTED SESSION;
+
+
+Phase 4: Remove Database Jobs and Links
+
+-- Disable all DBMS scheduler jobs
+BEGIN
+  FOR j IN (SELECT job_name, owner FROM dba_scheduler_jobs) LOOP
+    DBMS_SCHEDULER.DISABLE(j.owner || '.' || j.job_name);
+  END LOOP;
+END;
+/
+
+-- Drop all database links
+SELECT 'DROP DATABASE LINK ' || db_link || ';'
+FROM dba_db_links;
+
+-- Remove external references (Oracle Streams, GoldenGate, etc.)
+
+
+Phase 5: Unregister from Supporting Infrastructure
+
+Component	            Action
+OEM / Cloud Control	    Remove target from Enterprise Manager
+Listener	            Remove service from listener.ora
+tnsnames	            Remove entry from tnsnames.ora on all clients
+Load Balancer	        Remove DB service from LB rules
+Monitoring Tools	    Remove from Nagios/Zabbix/custom monitors
+Backup Tools	        Remove from RMAN catalog / backup policies
+
+
+# Unregister from RMAN catalog (if using catalog)
+rman target / catalog rmancat/password@catalog_db
+
+RMAN> UNREGISTER DATABASE;
+
+
+Phase 6: Shut Down and Delete the Database
+Option A — Using DBCA (Recommended)
+bash
+
+dbca -silent -deleteDatabase \
+  -sourceDB <DB_SID> \
+  -sysDBAUserName sys \
+  -sysDBAPassword <password>
+
+Option B — Manual Deletion
+sql
+
+-- Step 1: Startup mount and drop the database
+STARTUP MOUNT EXCLUSIVE RESTRICT;
+
+-- Step 2: Drop the database (removes all datafiles, logs, controlfiles)
+DROP DATABASE;
+
+This single command removes:
+
+All datafiles
+All redo log files
+All control files
+The SPFILE (if on default location)
+
+Phase 7: OS-Level Cleanup
+bash
+# Remove Oracle files (if any remain)
+rm -rf $ORACLE_BASE/oradata/<DBNAME>/
+rm -rf $ORACLE_BASE/admin/<DBNAME>/
+rm -rf $ORACLE_BASE/diag/rdbms/<dbname>/
+rm -rf $ORACLE_BASE/fast_recovery_area/<DBNAME>/
+
+# Remove init/password files
+rm $ORACLE_HOME/dbs/init<SID>.ora
+rm $ORACLE_HOME/dbs/orapw<SID>
+rm $ORACLE_HOME/dbs/spfile<SID>.ora
+
+
+Update OS Configuration Files
+
+# Remove from /etc/oratab (Linux)
+vi /etc/oratab
+# Delete the line: DBNAME:/oracle/product/19c:Y
+
+# Remove from srvctl (if RAC or Oracle Restart)
+srvctl remove database -db <DBNAME>
+
+
+Phase 8: Final Verification & Documentation
+
+# Confirm no Oracle processes remain for this SID
+ps -ef | grep <SID>
+
+# Confirm listener no longer shows the service
+lsnrctl status
+
+
+Document the decommission:
+ Date of decommission
+ Who approved it
+ Where the final backup/export is stored
+ Retention period for the backup
+ Ticket/change request number
+
+
+Summary Flow
+Plan & Approval
+     ↓
+Final Backup (RMAN + Data Pump)
+     ↓
+Notify Users & Kill Sessions
+     ↓
+Remove Jobs, Links, Schedules
+     ↓
+Unregister from OEM, Listeners, Monitoring
+     ↓
+DROP DATABASE (DBCA or Manual)
+     ↓
+OS Cleanup (/etc/oratab, files, dirs)
+     ↓
+Document Everything
+💡 Tip: For RAC databases, you must also remove the database from the cluster registry using srvctl and handle ASM diskgroups separately before dropping.
+
+
+
+
+
+
+
+
 
 3. What is psu, cpu and ru patches difference
 
+Oracle has evolved its patching terminology over the years. Here's a clear breakdown:
+
+Quick Comparison Table
+
+Feature	                CPU	                        PSU	                RU
+Full Name	            Critical Patch Update	    Patch Set Update	Release Update
+Era	                    Pre-2017	                Pre-2017	        2017–Present
+Contains Security Fixes	✅ Yes	                ✅ Yes	            ✅ Yes
+Contains Bug Fixes	    ❌ No	                ✅ Yes	            ✅ Yes
+Release Frequency	    Quarterly	                Quarterly	        Quarterly
+Current Status	        ❌ Retired	            ❌ Retired	        ✅ Active
+
+Detailed Explanation
+🔵 CPU — Critical Patch Update (Retired)
+Released quarterly by Oracle (Jan, Apr, Jul, Oct)
+Contained only security fixes — nothing else
+Very minimal footprint — low risk to apply
+Did not fix functional bugs or performance issues
+Retired with Oracle 12.2 and earlier patch strategies
+
+🟡 PSU — Patch Set Update (Retired)
+Also released quarterly
+A superset of CPU — included all security fixes plus important bug fixes
+Larger in size than CPU
+Recommended over CPU because it was more comprehensive
+Could be applied on top of a base release (e.g., 12.1.0.2)
+Retired when Oracle moved to the new RU model in 2017
+📌 If you were on PSU, you couldn't directly apply CPU — they had different patch lineages
+
+🟢 RU — Release Update (Current Standard)
+Introduced with Oracle 18c and backported to 12.2
+Replaces both CPU and PSU
+Released quarterly — same Oracle patch cycle
+Contains:
+Security fixes (what CPU had)
+Bug fixes (what PSU added)
+Additional stability and functional improvements
+Companion patch: RUR (Release Update Revision) for critical fixes between RU cycles
+
+Oracle Patching Timeline
+Before 2017:          CPU → Security only
+                      PSU → Security + Bugs
+                      
+2017 Onwards:         RU  → Security + Bugs + Improvements  ✅ (Current)
+                      RUR → Critical fixes between RU cycles ✅ (Current)
+
+
+Current Patch Structure (12.2 onwards)
+Base Release (e.g., 19.3.0)
+        ↓
+   RU 19.X.0.0.0  ← Quarterly, contains security + bug fixes
+        ↓
+   RUR 19.X.X.X   ← Between-quarter critical fixes (optional)
+        ↓
+   One-off Patch   ← Specific single bug fix
+
+
+Related Patches You Should Know
+Patch	                    Description
+OJVM RU	                    Separate RU specifically for Oracle JVM component
+GI RU	                    Grid Infrastructure Release Update (for RAC/Exadata)
+RUR	                        Release Update Revision — smaller fix between quarters
+One-off Patch	            Single bug fix, applied on top of RU
+Combo Patch	                Bundled DB RU + OJVM RU together for convenience
+
+Practical Tip
+💡 If someone mentions "applying a PSU" today, they likely mean RU — just different terminology from the old days. Always apply the latest RU for your Oracle version to stay current on security and stability.
+
+
+# Check current patch level applied on your DB
+SELECT patch_id, patch_uid, version, action, status, description, action_time
+FROM sys.dba_registry_sqlpatch
+ORDER BY action_time;
+
+
+
+
+
+
+
+
+
+
 4. What are the steps for upgrades from 11g to 12c and 12c to 19c
 
+
+
+
+
+
+
+
+
+
 5. What to do if my query or batch job is taking time
+
+Troubleshooting Slow Queries & Batch Jobs in Oracle
+Here's a systematic approach to diagnose and fix performance issues:
+
+Step 1: Identify the Problem Session
+
+-- Find currently running slow sessions
+SELECT s.sid, s.serial#, s.username, s.status, s.program,
+       s.sql_id, s.event, s.wait_class,
+       s.seconds_in_wait, s.last_call_et AS elapsed_secs
+FROM v$session s
+WHERE s.status = 'ACTIVE'
+  AND s.username IS NOT NULL
+ORDER BY s.last_call_et DESC;
+
+
+Step 2: Get the SQL Being Executed
+sql
+
+-- Get the actual SQL text of the slow query
+SELECT sql_id, sql_text, executions, elapsed_time/1000000 AS elapsed_secs,
+       cpu_time/1000000 AS cpu_secs,
+       disk_reads, buffer_gets, rows_processed
+FROM v$sql
+WHERE sql_id = '&sql_id';
+
+-- Or get SQL from the session directly
+SELECT sq.sql_text
+FROM v$session s, v$sql sq
+WHERE s.sql_id = sq.sql_id
+  AND s.sid = &sid;
+
+
+Step 3: Check the Execution Plan
+
+-- Check the current/actual execution plan
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR('&sql_id', NULL, 'ALLSTATS LAST'));
+
+-- Or explain plan for your query
+EXPLAIN PLAN FOR
+<your query here>;
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
+
+
+🔴 Warning Signs in Execution Plans
+Bad Sign	                        Meaning
+FULL TABLE SCAN on large table	    Missing index
+High Rows estimate vs Actual	    Stale statistics
+NESTED LOOPS on millions of rows	Bad join method
+CARTESIAN JOIN	                    Missing join condition
+Buffer Gets very high	            Inefficient access path
+Temp space usage	                Sort/hash spilling to disk
+
+
+Step 4: Check Wait Events
+
+-- What is the session waiting for?
+SELECT sid, event, wait_class, state, seconds_in_wait, p1, p2, p3
+FROM v$session_wait
+WHERE sid = &sid;
+
+Common Wait Events & Meaning
+Wait Event	                        What It Means
+db file sequential read	            Single block I/O — index reads
+db file scattered read	            Multi-block I/O — full table scan
+log file sync	                    Waiting for LGWR — commit bottleneck
+enq: TX - row lock contention	    Row-level locking — blocked by another session
+library cache lock	                Hard parsing — missing bind variables
+direct path read temp	            Sorting to TEMP — insufficient PGA/sort area
+CPU	                                High CPU — possibly bad execution plan
+
+
+Step 5: Gather AWR / ASH Report (Best for Batch Jobs)
+
+-- ASH report for a specific time window (last 30 mins)
+SELECT sql_id, event, COUNT(*) AS sample_count
+FROM v$active_session_history
+WHERE sample_time > SYSDATE - 30/1440
+  AND session_type = 'FOREGROUND'
+GROUP BY sql_id, event
+ORDER BY sample_count DESC;
+
+# Generate full AWR report (HTML)
+@$ORACLE_HOME/rdbms/admin/awrrpt.sql
+
+
+Step 6: Common Fixes
+🔧 Fix 1 — Gather Fresh Statistics
+
+-- Stale stats cause bad execution plans
+EXEC DBMS_STATS.GATHER_TABLE_STATS('SCHEMA_NAME', 'TABLE_NAME', CASCADE => TRUE);
+EXEC DBMS_STATS.GATHER_SCHEMA_STATS('SCHEMA_NAME');
+
+Fix 2 — Create or Rebuild Index
+
+-- Create a new index
+CREATE INDEX idx_name ON table_name(column_name);
+
+-- Rebuild fragmented index
+ALTER INDEX idx_name REBUILD;
+
+-- Check index usage
+SELECT * FROM v$object_usage WHERE index_name = 'IDX_NAME';
+
+
+Fix 3 — Use SQL Hints (Temporary)
+
+-- Force index usage
+SELECT /*+ INDEX(t idx_name) */ * FROM table_name t WHERE ...;
+
+-- Force full table scan
+SELECT /*+ FULL(t) */ * FROM table_name t WHERE ...;
+
+-- Force parallel execution
+SELECT /*+ PARALLEL(t, 4) */ * FROM table_name t WHERE ...;
+
+Fix 4 — Use SQL Plan Baseline (Pin a Good Plan)
+
+-- Capture a good plan and pin it
+DECLARE
+  l_plans NUMBER;
+BEGIN
+  l_plans := DBMS_SPM.LOAD_PLANS_FROM_CURSOR_CACHE(sql_id => '&sql_id');
+END;
+/
+
+
+Fix 5 — Check for Locking/Blocking
+
+-- Find blocked sessions
+SELECT l.sid, l.type, l.block, l.request,
+       s.username, s.program, s.sql_id
+FROM v$lock l
+JOIN v$session s ON l.sid = s.sid
+WHERE l.block > 0 OR l.request > 0
+ORDER BY l.block DESC;
+
+
+Step 7: For Batch Jobs Specifically
+
+-- Check if parallel query is being used
+SELECT degree FROM dba_tables WHERE table_name = 'YOUR_TABLE';
+
+-- Enable parallel for a session
+ALTER SESSION ENABLE PARALLEL DML;
+ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8;
+
+-- Check TEMP tablespace usage (batch jobs often sort)
+SELECT tablespace_name, total_blocks, used_blocks, free_blocks
+FROM v$sort_segment;
+
+-- Increase PGA for sort operations
+ALTER SYSTEM SET PGA_AGGREGATE_TARGET = 2G;
+
+
+Diagnostic Flow Summary
+
+Slow Query/Batch Job
+       ↓
+Identify Session (v$session)
+       ↓
+Get SQL Text (v$sql)
+       ↓
+Check Execution Plan → Bad Plan? → Fix Stats / Add Index / Hint
+       ↓
+Check Wait Events → I/O Wait? → Index | Lock? → Kill Blocker | Temp? → PGA
+       ↓
+AWR/ASH Report (for historical analysis)
+       ↓
+Apply Fix → Monitor → Baseline Good Plan
+
+
+ Golden Rule: Always check the execution plan first — 80% of Oracle performance issues are caused by a bad execution plan due to stale statistics or missing indexes.
+
+
+
+
+
+
+
+
+
+
+
+
 
 6. What is database character set what is the difference between al32utf8 
 and other character set

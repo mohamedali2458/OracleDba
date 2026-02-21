@@ -1,4 +1,5 @@
 How to resolve the Blocking Session issue in Oracle
+===================================================
 
 How to identify the blocking and waiting sessions
 
@@ -556,3 +557,62 @@ There are several reasons why of query takes too long to execute.
 3) We need to try to avoid a Full table scan for a table.
 4) We need to check the CPU and MEMORY utilization.
 5) Check if there is any plan flipped for a query.
+
+
+
+
+
+
+
+blocking sessions
+-----------------
+Understanding Blocking Sessions in Oracle Database
+
+As an Oracle DBA, one common real-time production issue is Blocking Sessions.
+
+A blocking session occurs when one database session holds a lock on a resource (row/table), and another session is waiting for that resource to be released.
+
+Simple Example:
+
+Session A:
+
+UPDATE employees 
+SET salary = 50000 
+WHERE employee_id = 101;
+(No COMMIT)
+
+Session B tries to update the same row — it will wait.
+
+How to Identify Blocking Sessions
+
+SELECT blocking_session, sid, serial#, seconds_in_wait
+FROM v$session
+WHERE blocking_session IS NOT NULL;
+
+You can also check:
+
+v$lock
+
+dba_blockers
+
+dba_waiters
+
+Common Causes
+
+Long running transactions
+Missing COMMIT/ROLLBACK
+Bulk DML operations
+Poor application design
+Missing indexes
+
+How to Resolve
+
+Ask user/application to commit
+Analyze running SQL
+Kill session (only if necessary)
+ALTER SYSTEM KILL SESSION 'SID,SERIAL#' IMMEDIATE;
+
+DBA Insight
+
+In production environments, never kill a session without impact analysis.
+Understanding locking behavior helps maintain database stability and performance.

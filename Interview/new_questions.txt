@@ -1,0 +1,147 @@
+Oracle DBA interview Questions:
+===============================
+1: What happens if database patch session disconnected in between
+
+2: How to Recover courpted Central inventory without backup 
+
+3: Still yesterday db patching will take 1 hours to complete but today it is running more than 2 hours what is the reason 
+
+4:How we will improve the speed of database Patching activity 
+
+5: What happened in the background when we run datapatch -verbose
+
+6: Is it possible to apply datapatch -verbose after 1 month of binary patch
+
+7: What are the different status in dba_registry_sqlpatch
+
+8: How to restore control file without backup 
+
+9: where we can see datafile is corrupted.
+
+10: How to restore drop table with flashback or without flashback.
+
+11: What are the drawbacks of block change tracking.
+
+12: How we will recover courpted block of primary database from standby database
+
+13: Can we restore datafile from archivelog backup 
+
+14: what is the difference between Mview and view.
+
+15: What is the difference between traditional exp/imp and Datapump 
+
+16: What are the values of Compression parameter in datapump 
+
+17: How to take the backup of table partition in datapump 
+
+18: Can we drop table partition from database
+
+19: what is Granularity in dbms_stats
+
+20: How to do stat gather for table partition only
+
+21: what are the prerequisites before adding disk to diskgroup 
+
+22: What are the different header status in oracle asm
+
+23: After OS patching activity ASM is not coming up , what are the reason.
+
+24: What are the different ways to change the database name in oracle
+
+25: What happened if anyone missed to + symbol while adding datafile
+
+26: Temp tablespace is highly utilising, how you will check what is the reason 
+
+27 : How you will set undo retention to avoid snapshot too old error
+
+28: How you will change the default undo tablespace 
+
+29: What are the ways to make the standby database is in sync with primary database.
+
+30 : What is roll forward recovery in oracle.
+
+31: What are prerequisites to configure DR setup
+
+32: What happened if we set standby file management= manual in standby and how you will correct 
+
+33: What are prerequisites to dr drill activity 
+
+34: What are different switchover status in oracle
+
+35 : What happened if switchover is failed in between.
+
+36: From long time switchover command is triggered but still not completed what are the reason 
+
+37: What are the prerequisites before import a schema from source database to target database
+
+38: What is the difference between Guaranteed and normal restore point 
+
+39: what are the parameters of asm spfile
+
+40: How to read disk header of asm disk
+
+41: What are the privileges required to take export and import 
+
+42: What are the use of standby redo log file 
+
+43: What are the different types of Database
+
+44: What happens internally when we trigger convert to snapshot command 
+
+45: what is the difference between public and private database link and can we create database link without copying tns entry of target.
+
+
+
+
+
+
+
+
+Some more questions
+===================
+
+What are flashback logs
+
+How you will restart the upgradation if we face any issue
+
+When 2 nodes lost connection with each other and but is connected with database which node will be evicted and why?
+
+What is the diff between data pump and rman and why you will choose rman over datapump
+
+Why consistency is imp in export and how will execute that in data pump
+
+What is the risk of using flashback time stamp and flash back scn in the data pump
+
+Why ora 01555 snapshot too old error will occur and how you will fix that
+
+What is undo tablespace
+
+What is undo retention and why it is needed
+
+User is created by one of your colleague and now user is not able to connect to database what you will check
+
+What are the types of privileges oracle have
+
+What is role in oracle DBA and what are its advantages 
+
+What is standby_file_managament parameters and what are the values we can set
+
+What is force logging and how we will enable that how to check force logging status
+
+What are the common issues we will get while upgrading from 12c to 19c 
+
+Suppose if 6Tb database want to back up and export using rman and Data pump how much time it will take
+
+How to check the Rman status 
+
+What is the target in Rman Target
+
+How you will restore a lost control file
+
+Why we will alter database open reset logs and what it will do and why we need to do that
+
+What is incomplete recovery
+
+What is recovery catalog of recovery catalog not exist where the backups will be stored
+
+What are archive logs

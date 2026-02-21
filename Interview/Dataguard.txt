@@ -1,4 +1,5 @@
 Oracle dataguard – Interview Questions
+======================================
 
 1. What is the use of standby redolog?
 --------------------------------------

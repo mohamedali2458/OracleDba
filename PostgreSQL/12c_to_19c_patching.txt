@@ -1,0 +1,194 @@
+Production-Safe Upgrade from Oracle 12c to 19c Using AutoUpgrade Tool
+=====================================================================
+
+Upgrading a standalone Oracle database from 12c to 19c requires careful planning, backups, prechecks, and validation. We perform a complete upgrade using Oracle AutoUpgrade utility while maintaining rollback capability and compatibility control.
+
+We will upgrade:
+    Source Version: 12c
+    Target Version: 19c
+    Standalone Database Upgrade
+    Using AutoUpgrade Tool
+
+Step 1: Install Oracle 12c and Create Database in /u01
+Install 12c Oracle and create database inside directory:
+/u01
+
+Step 2: Install Oracle 19c Binary in /u02 (No Database Creation)
+Install 19c Oracle application till the step:
+./runInstaller
+
+Inside directory:
+/u02
+
+Do NOT create database. Only install 19c binary.
+
+Step 3: Create Test Table in 12c Database
+Login to HR schema:
+
+SQL> conn hr/oracle
+Connected.
+
+SQL> show user
+USER is "HR"
+Create test table:
+
+SQL> CREATE TABLE hr_test        
+  2  (
+  3  id NUMBER,
+  4  description VARCHAR2(50)
+  5  );
+Insert 10,000 rows:
+
+SQL> SET DEFINE OFF;
+SQL> INSERT /*+ APPEND */ INTO hr_test
+SELECT level, 'Description for ' || level
+FROM dual
+CONNECT BY level <= 10000;
+Commit:
+
+SQL> SET DEFINE ON;
+SQL> commit;
+Verify data:
+
+SQL> select count(id) from hr_test;
+Output:
+
+COUNT(ID)
+----------
+10000
+
+Step 4: Take Full Database Backup (Mandatory)
+Using RMAN:
+
+RMAN> BACKUP DATABASE;
+RMAN> BACKUP DATABASE PLUS ARCHIVELOG;
+
+Step 5: Pre-Upgrade Cleanup
+Check invalid objects:
+SQL> SELECT count(*) FROM DBA_OBJECTS WHERE STATUS='INVALID';
+Gather dictionary stats:
+SQL> EXEC DBMS_STATS.GATHER_DICTIONARY_STATS;
+Purge recyclebin:
+SQL> PURGE DBA_RECYCLEBIN;
+SQL> SELECT COUNT(*) FROM DBA_RECYCLEBIN;
+
+Step 6: Create Upgrade Directory
+cd /u02
+mkdir upgrade_to_19c
+cd upgrade_to_19c
+
+Step 7: Verify JDK Installation
+Check Java:
+
+java -version
+If not installed, install JDK 8 RPM.
+
+Step 8: Generate AutoUpgrade Configuration File
+java -jar /u02/app/oracle/product/19.0.0/dbhome_1/rdbms/admin/autoupgrade.jar -create_sample_file config
+Rename file:
+
+mv sample_config.cfg orcl_config.cfg
+
+Step 9: Edit Configuration File
+Edit using vi:
+
+vi orcl_config.cfg
+Add:
+
+global.autoupg_log_dir=/u02/upgrade_to_19c/global_logs
+upg1.dbname=orcl
+upg1.start_time=NOW
+upg1.source_home=/u01/app/oracle/product/12.0.0/dbhome_1
+upg1.target_home=/u02/app/oracle/product/19.0.0/dbhome_1
+upg1.sid=orcl
+upg1.log_dir=/u02/upgrade_to_19c/log
+upg1.upgrade_node=vbox
+upg1.target_version=19
+
+Step 10: Run ANALYZE Mode
+java -jar /u02/app/oracle/product/19.0.0/dbhome_1/rdbms/admin/autoupgrade.jar -config orcl_config.cfg -mode ANALYZE
+Check job status:
+
+upg> lsj
+Wait until:
+
+Job 100 for ORCL FINISHED
+
+Step 11: Run FIXUPS Mode
+If FRA size error occurs:
+
+alter system set db_recovery_file_dest_size = 16000m;
+Then run:
+
+java -jar /u02/app/oracle/product/19.0.0/dbhome_1/rdbms/admin/autoupgrade.jar -config orcl_config.cfg -mode FIXUPS
+Wait until:
+
+Job 103 for ORCL FINISHED
+
+Step 12: Set ORACLE_HOME to 19c
+export ORACLE_HOME=/u02/app/oracle/product/19.0.0/dbhome_1
+export PATH=/u02/app/oracle/product/19.0.0/dbhome_1/bin:$PATH
+
+Step 13: Run DEPLOY Mode
+java -jar /u02/app/oracle/product/19.0.0/dbhome_1/rdbms/admin/autoupgrade.jar -config orcl_config.cfg -mode DEPLOY
+Monitor:
+
+upg> lsj
+
+Step 14: Post Upgrade Tasks
+Login to 19c:
+
+sqlplus / as sysdba
+Recompile invalid objects:
+
+@$ORACLE_HOME/rdbms/admin/utlrp.sql
+Gather stats:
+EXEC DBMS_STATS.GATHER_DICTIONARY_STATS;
+
+Step 15: Verify Timezone
+SELECT VERSION FROM V$TIMEZONE_FILE;
+SELECT DBMS_DST.get_latest_timezone_version FROM DUAL;
+
+Step 16: Verify Database Version
+SELECT NAME,HOST_NAME,VERSION,OPEN_MODE FROM V$DATABASE,V$INSTANCE;
+
+Step 17: Check Compatibility
+show parameter compatible;
+Initially:
+
+compatible = 12.2.0
+
+Step 18: Drop Restore Point and Set Compatibility to 19c
+SELECT NAME FROM V$RESTORE_POINT;
+DROP RESTORE POINT AUTOUPGRADE_221145114461854_PROD;
+alter system set compatible='19.0.0' scope=spfile;
+Restart database.
+
+Step 19: Final Verification
+select banner from v$version;
+Output:
+
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+
+Step 20: Validate Data After Upgrade
+conn hr/oracle
+select count(id) from hr_test;
+Output:
+
+10000
+Data successfully retained after upgrade.
+
+Key Takeaways
+-------------
+The standalone 12c database was successfully upgraded to Oracle Database 19c using the AutoUpgrade utility.
+
+Pre-upgrade tasks such as dictionary statistics gathering and recyclebin cleanup ensured a smooth transition.
+
+A guaranteed restore point provided rollback capability, reducing upgrade risk.
+
+Compatibility was intentionally retained at 12.2.0 until application validation was completed.
+
+Post-upgrade validation confirmed data integrity and system stability
+
+This structured approach makes the upgrade safe for production environments
+

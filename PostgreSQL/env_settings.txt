@@ -1,0 +1,5 @@
+SET PGDATA=C:\Program Files\PostgreSQL\13\bin
+echo %PGDATA%
+
+after this setting we can use psql or any other postgresql command from anywhere in the system.
+
