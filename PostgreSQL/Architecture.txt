@@ -1,0 +1,31 @@
+PostgreSQL Memory Architecture: The Backbone of Performance
+
+Here’s a simple way to look at it.
+
+🧠 PostgreSQL Memory = Shared + Process‑Local
+PostgreSQL uses a process‑based architecture, and each backend 
+process has its own local memory. But the real coordination 
+happens in Shared Memory, where critical components live:
+
+🔹 Key Shared Memory Components
+- Shared Buffers – The heart of caching. Most read/write operations hit this layer before touching disk.  
+- WAL Buffers – Temporary space for Write‑Ahead Log records before they’re flushed.  
+- Process Array – Tracks active sessions and their states.
+
+🔹 Background Processes That Keep the Engine Healthy
+- BGWriter – Smooths out buffer writes to avoid sudden I/O spikes.  
+- Checkpointer – Ensures dirty pages are safely written to disk.  
+- WAL Writer – Flushes WAL records efficiently.  
+- Autovacuum – Cleans dead tuples to maintain table health.  
+- Logger, Archiver, Logical Replication – Each plays a role in durability, 
+    observability, and data distribution.
+
+💡 Why This Matters
+Understanding this architecture helps you:  
+- Tune memory parameters with confidence  
+- Reduce I/O bottlenecks  
+- Improve throughput and latency  
+- Design more predictable, scalable systems
+
+PostgreSQL isn’t just a database—it’s a beautifully engineered ecosystem.  
+Master its memory architecture, and you unlock performance most teams never reach.

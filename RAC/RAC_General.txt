@@ -1,0 +1,20 @@
+Instance Eviction
+=================
+Instance eviction occurs when Oracle RAC forcibly removes a problematic 
+node from the cluster to protect data consistency.
+
+🔹 When does eviction happen?
+    * Private interconnect failure
+    * Voting disk or OCR access loss
+    * Network partition (split-brain risk)
+    * Severe I/O or OS issues
+
+🔹 What happens during eviction?
+    * Affected instance is terminated
+    * Locks are released
+    * Surviving nodes perform instance recovery
+    * Services and VIPs fail over
+
+🔹 Key takeaway:
+👉 Eviction is a safety mechanism, not a failure
+    It keeps the RAC cluster stable and data safe.

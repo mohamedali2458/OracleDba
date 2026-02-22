@@ -1,4 +1,5 @@
 Oracle ASM Queries
+==================
 
 ASM Metadata allows you to manage ASM disks and Diskgroups 
 smoothly. The fastest way to administer ASM is via sqlplus / as sysasm. 
@@ -62,7 +63,6 @@ Check rebalance status - If no output, then rebalance is completed:
 select * from v$asm_operation;
 
 Check the newly added disk in ASM Diskgroup:
-
 
 ASM Disks Header and Mount Status
 
