@@ -6,7 +6,7 @@ How to bounce RAC cluster?
 CRSCTL = Cluster Ready Service Control Utility
 
 Why we need to bounce RAC cluster? 
-- We bound RAC cluster for many reasons like patching, 
+- We bounce RAC cluster for many reasons like patching, 
   any planned maintance, 
   for any configuration changes, 
   for any cluster administration. etc...
@@ -58,7 +58,7 @@ crsctl stop cluster -all (From any nodes)
 crsctl start cluster -all (From any nodes)
 
 crsctl stop crs -f (From all the nodes)
-crsclt stop crs (From all the nodes)
+crsctl stop crs (From all the nodes)
 
 If ctssd not starting, 
 locate ctssd.trc
