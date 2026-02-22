@@ -1,0 +1,75 @@
+Recently, I worked on a performance issue where a query was taking 18+ 
+minutes to return results in production. The query was part of a 
+financial reporting module and was impacting business users during peak hours.
+
+Problem:
+➡️ Large transactional table (~12M+ records)
+➡️ Multiple joins
+➡️ Function used in WHERE clause
+➡️ No proper indexing on filter columns
+➡️ Full Table Scan in execution plan
+
+Checked the Execution Plan using EXPLAIN PLAN
+➡️Full table scan
+➡️High cost
+➡️Filter predicate using trunc(date_column)
+
+Query:
+
+select *
+from transactions t 
+where trunc(t.transaction_date) = trunc(sysdate)
+and t.status = 'success';
+
+Using trunc() on an indexed column prevented index usage.
+
+Optimized Query:
+
+select *
+from transactions t
+where t.transaction_date >= trunc(sysdate)
+and t.transaction_date < trunc(sysdate) + 1
+and t.status = 'success';
+
+Index Created:
+
+create index idx_trans_date_status 
+on transactions(transaction_date, status);
+
+Result:
+
+✅ Execution time reduced from 18 minutes → 12 seconds
+✅Execution plan switched from Full Table Scan → Index Range Scan
+✅CPU utilization reduced significantly
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5 Database Performance Tips Every DBA Should Know
+
+After years of managing enterprise databases, here are the essentials that make a real difference:
+
+1. Regular Index Maintenance
+Rebuild fragmented indexes monthly. A 30% fragmentation can slow queries by 50%.
+
+2. Monitor Wait Events
+Don't just look at CPU usage. Wait events tell you WHERE the bottleneck actually is.
+
+3. Automate Your Backups
+And test restores quarterly. A backup you can't restore is just wasted storage.
+
+4. Implement Query Timeouts
+One runaway query shouldn't bring down your entire system.
+
+5. Keep Statistics Updated
+Stale statistics = poor execution plans = frustrated users.

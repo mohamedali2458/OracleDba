@@ -27,14 +27,15 @@ Check Cluster Nodes
 
 Check cluster services in table format
 ./crsctl status resource -t
+./crsctl status res -t
 
 Checking status of clusterware nodes / services
 ./crsctl status server -f
 
 Check cluster nodes
-olsnodes -n
-oraracn1        1
-oraracn2        2
+olsnodes    -n
+oraracn1    1
+oraracn2    2
 
 
 Stop Grid Cluster

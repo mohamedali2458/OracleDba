@@ -7,29 +7,29 @@ and what will happen to the application transactions
 When the archive log destination runs out of space, Oracle cannot archive the online redo logs. This triggers a cascade of events:
 
 1. Redo Log Archiving Halts
-Oracle continuously writes to online redo log groups in a circular fashion
-Before Oracle can reuse/overwrite a redo log group, it must be archived
-If the archive destination is full → archiving fails → Oracle cannot switch to the next redo log
+Oracle continuously writes to online redo log groups in a circular fashion.
+Before Oracle can reuse/overwrite a redo log group, it must be archived.
+If the archive destination is full → archiving fails → Oracle cannot switch to the next redo log.
 
 2. Log Switch Becomes Impossible
-Oracle attempts a log switch but the current log group cannot be marked as archived
-The database enters a waiting state
+Oracle attempts a log switch but the current log group cannot be marked as archived.
+The database enters a waiting state.
 
 3. Database Hangs / Freezes
 All sessions requiring redo log space will hang
-You'll see waits like:
+Youll see waits like:
     log file switch (archiving needed)
     log file switch (checkpoint incomplete)
     arch wait on SENDREQ
 
 🔴 Impact on Application Transactions
 Impact	                Description
-New DML Freezes	        INSERT, UPDATE, DELETE statements hang and do not complete
-Commits Hang	        Active transactions attempting to commit will freeze
-No Rollbacks Affected   Read-only SELECT queries may still work temporarily
-Connection Timeouts	    Application connection pools begin to time out
-Application Errors	    Eventually users see errors like "ORA-00257: archiver error"
-Business Impact	        Complete application outage for all write operations
+New DML Freezes	      INSERT, UPDATE, DELETE statements hang and do not complete
+Commits Hang	           Active transactions attempting to commit will freeze
+No Rollbacks Affected     Read-only SELECT queries may still work temporarily
+Connection Timeouts	      Application connection pools begin to time out
+Application Errors	      Eventually users see errors like "ORA-00257: archiver error"
+Business Impact	      Complete application outage for all write operations
 
 Key Oracle Error:
 
@@ -51,20 +51,20 @@ ALTER SYSTEM ARCHIVE LOG ALL;
 -- 4. Verify archiver is running again
 SELECT * FROM v$archive_processes;
 
-Never delete archive logs directly from the OS if RMAN is your backup tool — always use RMAN to delete them so the catalog stays in sync.
+--Never delete archive logs directly from the OS if RMAN is your backup tool — always use RMAN to delete them so the catalog stays in sync.
 
-# Safe deletion via RMAN
+-- Safe deletion via RMAN
 RMAN> CROSSCHECK ARCHIVELOG ALL;
 RMAN> DELETE EXPIRED ARCHIVELOG ALL;
 RMAN> DELETE ARCHIVELOG ALL COMPLETED BEFORE 'SYSDATE-2'; -- keep last 2 days
 
-Prevention Best Practices
-Practice	            Action
-Monitor regularly	    Alert when archive dest > 80% full
-Use FRA	                Set DB_RECOVERY_FILE_DEST_SIZE with adequate size
+--Prevention Best Practices
+Practice	               Action
+Monitor regularly	     Alert when archive dest > 80% full
+Use FRA	               Set DB_RECOVERY_FILE_DEST_SIZE with adequate size
 Regular RMAN backups	Backup and delete old archive logs on schedule
 Multiplex destinations	Use multiple archive log destinations (LOG_ARCHIVE_DEST_1, _2)
-Set alerts	            Use Oracle Enterprise Manager or custom scripts
+Set alerts	          Use Oracle Enterprise Manager or custom scripts
 
 -- Check Fast Recovery Area usage
 SELECT space_limit/1024/1024/1024 AS limit_GB,
@@ -73,7 +73,7 @@ SELECT space_limit/1024/1024/1024 AS limit_GB,
        number_of_files
 FROM v$recovery_file_dest;
 
-Bottom line: A full archive log destination = complete write outage for your application. It's one of the most impactful database storage issues and requires immediate attention.
+Bottom line: A full archive log destination = complete write outage for your application. Its one of the most impactful database storage issues and requires immediate attention.
 
 
 
@@ -83,7 +83,7 @@ Bottom line: A full archive log destination = complete write outage for your app
 
 2. How do you decommission a oracle database
 
-Decommissioning an Oracle database is a structured process that requires careful planning to avoid data loss and ensure compliance. Here's a complete guide:
+Decommissioning an Oracle database is a structured process that requires careful planning to avoid data loss and ensure compliance. Heres a complete guide:
 
 Phase 1: Pre-Decommission Planning
 Before touching anything, complete these steps:
@@ -97,18 +97,17 @@ Before touching anything, complete these steps:
 
 
  Phase 2: Final Backup
-⚠️ Always take a final backup before decommissioning — even if the data isn't needed.
+⚠️ Always take a final backup before decommissioning — even if the data isnt needed.
 
-bash
-# Full RMAN backup before anything else
+--bash
+--# Full RMAN backup before anything else
 rman target /
-
 RMAN> BACKUP DATABASE PLUS ARCHIVELOG;
 RMAN> BACKUP CURRENT CONTROLFILE;
 
-Also export data if needed for archival:
+--Also export data if needed for archival:
 
-# Full Data Pump export (for archival purposes)
+--# Full Data Pump export (for archival purposes)
 expdp system/password \
   FULL=Y \
   DUMPFILE=final_archive_%U.dmp \
@@ -150,15 +149,15 @@ FROM dba_db_links;
 Phase 5: Unregister from Supporting Infrastructure
 
 Component	            Action
-OEM / Cloud Control	    Remove target from Enterprise Manager
+OEM / Cloud Control	  Remove target from Enterprise Manager
 Listener	            Remove service from listener.ora
 tnsnames	            Remove entry from tnsnames.ora on all clients
-Load Balancer	        Remove DB service from LB rules
-Monitoring Tools	    Remove from Nagios/Zabbix/custom monitors
-Backup Tools	        Remove from RMAN catalog / backup policies
+Load Balancer	       Remove DB service from LB rules
+Monitoring Tools	  Remove from Nagios/Zabbix/custom monitors
+Backup Tools	       Remove from RMAN catalog / backup policies
 
 
-# Unregister from RMAN catalog (if using catalog)
+--# Unregister from RMAN catalog (if using catalog)
 rman target / catalog rmancat/password@catalog_db
 
 RMAN> UNREGISTER DATABASE;
@@ -166,7 +165,7 @@ RMAN> UNREGISTER DATABASE;
 
 Phase 6: Shut Down and Delete the Database
 Option A — Using DBCA (Recommended)
-bash
+--bash
 
 dbca -silent -deleteDatabase \
   -sourceDB <DB_SID> \
@@ -174,7 +173,7 @@ dbca -silent -deleteDatabase \
   -sysDBAPassword <password>
 
 Option B — Manual Deletion
-sql
+--sql
 
 -- Step 1: Startup mount and drop the database
 STARTUP MOUNT EXCLUSIVE RESTRICT;
@@ -182,7 +181,7 @@ STARTUP MOUNT EXCLUSIVE RESTRICT;
 -- Step 2: Drop the database (removes all datafiles, logs, controlfiles)
 DROP DATABASE;
 
-This single command removes:
+--This single command removes:
 
 All datafiles
 All redo log files
@@ -190,39 +189,39 @@ All control files
 The SPFILE (if on default location)
 
 Phase 7: OS-Level Cleanup
-bash
-# Remove Oracle files (if any remain)
+--bash
+--# Remove Oracle files (if any remain)
 rm -rf $ORACLE_BASE/oradata/<DBNAME>/
 rm -rf $ORACLE_BASE/admin/<DBNAME>/
 rm -rf $ORACLE_BASE/diag/rdbms/<dbname>/
 rm -rf $ORACLE_BASE/fast_recovery_area/<DBNAME>/
 
-# Remove init/password files
+--# Remove init/password files
 rm $ORACLE_HOME/dbs/init<SID>.ora
 rm $ORACLE_HOME/dbs/orapw<SID>
 rm $ORACLE_HOME/dbs/spfile<SID>.ora
 
 
-Update OS Configuration Files
+--Update OS Configuration Files
 
-# Remove from /etc/oratab (Linux)
+--# Remove from /etc/oratab (Linux)
 vi /etc/oratab
-# Delete the line: DBNAME:/oracle/product/19c:Y
+--# Delete the line: DBNAME:/oracle/product/19c:Y
 
-# Remove from srvctl (if RAC or Oracle Restart)
+--# Remove from srvctl (if RAC or Oracle Restart)
 srvctl remove database -db <DBNAME>
 
 
 Phase 8: Final Verification & Documentation
 
-# Confirm no Oracle processes remain for this SID
+--# Confirm no Oracle processes remain for this SID
 ps -ef | grep <SID>
 
-# Confirm listener no longer shows the service
+--# Confirm listener no longer shows the service
 lsnrctl status
 
 
-Document the decommission:
+--Document the decommission:
  Date of decommission
  Who approved it
  Where the final backup/export is stored
@@ -230,7 +229,7 @@ Document the decommission:
  Ticket/change request number
 
 
-Summary Flow
+--Summary Flow
 Plan & Approval
      ↓
 Final Backup (RMAN + Data Pump)
@@ -262,13 +261,13 @@ Oracle has evolved its patching terminology over the years. Here's a clear break
 
 Quick Comparison Table
 
-Feature	                CPU	                        PSU	                RU
-Full Name	            Critical Patch Update	    Patch Set Update	Release Update
-Era	                    Pre-2017	                Pre-2017	        2017–Present
-Contains Security Fixes	✅ Yes	                ✅ Yes	            ✅ Yes
-Contains Bug Fixes	    ❌ No	                ✅ Yes	            ✅ Yes
-Release Frequency	    Quarterly	                Quarterly	        Quarterly
-Current Status	        ❌ Retired	            ❌ Retired	        ✅ Active
+Feature	               CPU	                         PSU	               RU
+Full Name	               Critical Patch Update	     Patch Set Update	Release Update
+Era	                    Pre-2017	                    Pre-2017	          2017–Present
+Contains Security Fixes	✅ Yes	                  ✅ Yes	            ✅ Yes
+Contains Bug Fixes	     ❌ No	                       ✅ Yes	            ✅ Yes
+Release Frequency	     Quarterly	                    Quarterly	          Quarterly
+Current Status	          ❌ Retired	                  ❌ Retired	       ✅ Active
 
 Detailed Explanation
 🔵 CPU — Critical Patch Update (Retired)
@@ -355,7 +354,7 @@ ORDER BY action_time;
 5. What to do if my query or batch job is taking time
 
 Troubleshooting Slow Queries & Batch Jobs in Oracle
-Here's a systematic approach to diagnose and fix performance issues:
+Heres a systematic approach to diagnose and fix performance issues:
 
 Step 1: Identify the Problem Session
 
@@ -370,7 +369,7 @@ ORDER BY s.last_call_et DESC;
 
 
 Step 2: Get the SQL Being Executed
-sql
+--sql
 
 -- Get the actual SQL text of the slow query
 SELECT sql_id, sql_text, executions, elapsed_time/1000000 AS elapsed_secs,
@@ -399,13 +398,13 @@ SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
 
 
 🔴 Warning Signs in Execution Plans
-Bad Sign	                        Meaning
-FULL TABLE SCAN on large table	    Missing index
-High Rows estimate vs Actual	    Stale statistics
+Bad Sign	                         Meaning
+FULL TABLE SCAN on large table	Missing index
+High Rows estimate vs Actual	     Stale statistics
 NESTED LOOPS on millions of rows	Bad join method
 CARTESIAN JOIN	                    Missing join condition
-Buffer Gets very high	            Inefficient access path
-Temp space usage	                Sort/hash spilling to disk
+Buffer Gets very high	          Inefficient access path
+Temp space usage	               Sort/hash spilling to disk
 
 
 Step 4: Check Wait Events
@@ -420,7 +419,7 @@ Wait Event	                        What It Means
 db file sequential read	            Single block I/O — index reads
 db file scattered read	            Multi-block I/O — full table scan
 log file sync	                    Waiting for LGWR — commit bottleneck
-enq: TX - row lock contention	    Row-level locking — blocked by another session
+enq: TX - row lock contention	     Row-level locking — blocked by another session
 library cache lock	                Hard parsing — missing bind variables
 direct path read temp	            Sorting to TEMP — insufficient PGA/sort area
 CPU	                                High CPU — possibly bad execution plan
