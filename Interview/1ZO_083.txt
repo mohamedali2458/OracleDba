@@ -1,0 +1,640 @@
+NO.1 A database is configured in ARCHIVELOG mode. A full RMAN backup exists but no control file backup to trace has been taken. A media failure has occurred. In which two scenarios is incomplete recovery required? (Choose two.)
+A.	after losing a SYSAUX tablespace data file 
+B.	after losing all members of an INACTIVE online redo log group 
+C.	after losing all members of the CURRENT online redo log group 
+D.	after losing all copies of the control file 
+E.	after losing an UNDO tablespace that is in use
+
+NO.3 Which three are true about Optimizer Statistics Advisor? (Choose three.) 
+
+A.	It can be run only manually.
+B.	It is part of the DBMS_ADVISOR package. 
+C.	It can recommend changes to improve the statistics gathering process. 
+D.	It always analyzes all schemas in the database. 
+E.	It runs automatically every night by default. 
+F.	It is part of the DBMS_STATS package.
+
+NO. 4 Which two are true about automatic block repair? (Choose two.)
+
+A.	Automatic block repair can repair blocks with no standby database if DB_BLOCK_CHECKING = TRUE. 
+B.	Real-Time Query must be enabled on a physical standby database for automatic block repair to be done on that physical standby database. 
+C.	Real-Time Query must be enabled on a primary database for automatic block repair to be done on any of its physical standby databases. 
+D.	It is not possible for media corrupt blocks. 
+E.	Real-Time Query must be enabled on a physical standby database for automatic block repair to be done on its primary database.
+
+NO.5 The USERS tablespace consists of data files 3 and 4 and must always be online in read/write mode. Which two are true about using RMAN to perform an open database back up of this tablespace? (Choose two.)
+
+A.	Backups must be done incrementally. 
+B.	Backups must be contained in backup sets. 
+C.	Backups can be taken only if the database is in ARCHIVELOG mode. 
+D.	Backups can be done incrementally. 
+E.	The database must be registered in an RMAN catalog. 
+F.	Only consistent backups can be created.
+
+NO.6 You are managing this configuration:
+1. CDB1 is a container database.
+2. PDB1 and PDB2 are two pluggable databases in CDB1.
+3. USER1.EMP is a table in PDB1 and USER2.DEPT is a table in PDB2.
+CDB1 user SYS executes these commands after connecting successfully to PDB2:
+Which two are true? (Choose two.) 
+A.	The inserts on USER1.EMP remain uncommitted when the session connected to PDB2. 
+B.	The inserts on USER1.EMP were committed when the session inserted a row into USER2.DEPT. 
+C.	The insert on USER2.DEPT fails because of the active transaction in the parent container. 
+D.	The insert on USER2.DEPT is a recursive autonomous transaction by the child session and is committed. 
+E.	The inserts on USER1.EMP were rolled back when the session connected to PDB2.
+F.	The insert on USER2.DEPT is uncommitted. 
+G.	The inserts on USER1.EMP were committed when the session connected to PDB2.
+
+NO.7 Which three are true in Oracle 19c and later releases? (Choose three.) 
+A.	If the password file location changes, then the new location is used automatically by the Oracle Server. 
+B.	Schema Only accounts can be granted administrator privileges. 
+C.	All the Oracle-supplied accounts are Schema Only accounts. 
+D.	Privilege Analysis is included in Oracle Enterprise Edition and no longer requires Database Vault. 
+E.	Unified Auditing can be configured to audit only events that are issued indirectly by an audited user. 
+F.	Unified Auditing can be configured to audit only events that are issued directly by an audited user.
+ 
+NO.8 Which two are true about creating pluggable databases (PDBs) using snapshots in Oracle 19c and later releases? (Choose two.) 
+A.	A PDB snapshot is always a full copy of the source PDB. 
+B.	A PDB snapshot is always a sparse copy of the source PDB. 
+C.	A snapshot copy PDB depends on a storage snapshot which can only be stored on specific file systems. 
+D.	A PDB snapshot depends on a storage snapshot which can be stored on any file system. 
+E.	A PDB snapshot depends on a storage snapshot which can only be stored on specific file systems. 
+F.	A snapshot copy PDB depends on a storage snapshot which can be stored on any file system. 
+G.	A snapshot copy PDB can be created from a stand-alone clone PDB.
+
+NO.9 On the 10th of August, you implement an incremental database backup strategy and configure a recovery window of five days. Level 0 backups are taken on the 10th, 17th, and 24th of August. Differential level 1 incremental backups are taken daily between the level 0 backups. Today is the 26th of August. Which backups will be obsolete? 
+A.	all backups prior to 10th of August 
+B.	all backups prior to 22nd of August 
+C.	all backups prior to 24th of August 
+D.	all backups prior to 20th of August 
+E.	all backups prior to 17th of August
+
+NO.12 Which two are true about SQL Performance Analyzer (SPA)? (Choose two.) 
+A.	It is integrated with the SQL Access Advisor. 
+B.	It predicts the impact of system changes on SQL workload response time. 
+C.	It provides before and after execution statistics for each SQL statement in the analysis task 
+D.	It offers fine-grained analysis of all the SQL statements in the analysis task as a group. 
+E.	SQL statements that were originally run concurrently are run concurrently by SPA.
+
+NO.13 Which two are true about diagnosing Oracle Database failure situations using Data Recovery Advisor? (Choose two.) 
+A.	Using the Data Recovery Advisor LIST FAILURE command always requires that the database for which failures are to be listed is in MOUNT state. 
+B.	A failure can be closed only when it has been repaired. 
+C.	Data Recovery Advisor can be used if a database is closed. 
+D.	The Data Recovery Advisor CHANGE FAILURE command can be used only to change failure priorities.
+E.	Data Recovery Advisor can proactively check for failures.
+ 
+NO.14 Which two are true about creating RMAN backups for an Oracle container database? (Choose two.) 
+A.	Tablespaces from different PDBs with identical names must be backed up by connecting RMAN separately to each PDB to back up the tablespaces. 
+B.	The BACKUP DATABASE command will create a pluggable database (PDB) backup when RMAN is connected to a PDB. 
+C.	SPFILE backups can be created while connected to an application root PDB. 
+D.	The BACKUP DATABASE PLUS ARCHIVELOG command will back up archive logs when RMAN is connected to a PDB. 
+E.	The BACKUP PLUGGABLE DATABASE command can be used to back up CDB$ROOT.
+
+NO.15 Which three are true In Oracle 19c and later releases? 
+A.	Tablespaces always remain in read/write mode during transportable tablespace operations. 
+B.	Simultaneous data pump jobs can be limited at the pluggable database (PDB) level. 
+C.	Tablespaces never remain in read/write mode during transportable tablespace operations. 
+D.	An ordinary data pump export of a table with encrypted columns will always encrypt the same columns when imported. 
+E.	A transportable data pump import can leave a plugged-in tablespace in read-only mode. 
+F.	A transportable data pump import can leave a plugged-in tablespace in read/write mode.
+
+NO.17 Examine these queries and their output:
+After a system crash, an instance restart and an attempted opening of the PDBs result in:
+Which two are true? (Choose two.)
+A.	Data file 24 can be recovered while PDB2 is opened. 
+B.	Data file 24 must be recovered while the CDB is opened. 
+C.	Data file 24 can be recovered while CDB$ROOT and PDB$SEED are opened. 
+D.	Data file 24 cannot be recovered while the CDB is opened. 
+E.	Data file 24 must be recovered while PDB2 is closed.
+
+NO.18 Which two are true about RMAN encryption? (Choose two.) 
+A.	RMAN encryption keys are stored in a database keystore. 
+B.	RMAN can encrypt the Oracle Database password file. 
+C.	Dual-mode encrypted backups can be restored only if both the password and the keystore used for encryption are available. 
+D.	The SET ENCRYPTION command overrides encryption settings specified by the CONFIGURE ENCRYPTION command. 
+E.	Password encryption can be persistently configured using the CONFIGURE ENCRYPTION command.
+
+NO.20 Which two are true about RMAN duplexed backup sets? (Choose two.) 
+A.	A duplexed backup set uses the same number of SBT channels as a non-duplexed backup set for the same number of files. 
+B.	A non-duplexed backup set written to disk can be duplexed to disk by backing up the backup set that is already on disk. 
+C.	A non-duplexed backup set written to SBT can be duplexed to tape by backing up the backup set that is already on tape. 
+D.	A non-duplexed backup set written to disk can be duplexed to tape by backing up the backup set that is already on disk. 
+E.	A non-duplexed backup set written to SBT can be duplexed to disk by backing up the backup set that is already on tape. 
+F.	A duplexed backup set always uses twice as many SBT channels as a non-duplexed backup set for the same number of files.
+
+NO.22 Which two are true about Rapid Home Provisioning (RHP), which has been available since Oracle 18c? (Choose two.) 
+A.	It is an Oracle Database service 
+B.	It cannot be used to upgrade Oracle Database homes. 
+C.	It can be used to provision applications. 
+D.	It can be used to patch Grid Infrastructure homes containing Oracle Restart. 
+E.	It can be used to provision middleware.
+
+NO.26 Which three are true about an application seed pluggable database (PDB)? (Choose three.) 
+A.	It is automatically synchronized with its application root PDB when an application is upgraded. 
+B.	It cannot be added to an application container after the application container has already been created. 
+C.	A new application PDB created by cloning an application seed PDB can have an old version of the application installed after cloning completes. 
+D.	It is automatically synchronized with its application root PDB when an application is installed. 
+E.	It cannot be dropped from its application container. 
+F.	A new application PDB created by cloning an application seed PDB can have an up-to-date version of the application installed after cloning completes. 
+G.	It is not required in an application container.
+
+NO.27 Which two are true about RMAN backups when using a media manager to write backups to tape when there are only two tape drives? (Choose two.) 
+A.	SBT tape compression can be used even if no RMAN compression is configured. 
+B.	Any backup set written to the SBT device in this configuration can contain a maximum of two backup pieces. 
+C.	Any backup written to the SBT device in this configuration can contain a maximum of two backup sets. 
+D.	SBT tape compression and RMAN backup compression should be used in parallel. 
+E.	The SBT device should be configured to use PARALLELISM 2 to allow both tape drive to be used simultaneously.
+
+NO.28 You plan to install Oracle Grid Infrastructure for a Standalone Server and Oracle Database for the first time on a server. 
+Examine this command and its outcome: 
+Which two are true? (Choose two.) 
+A.	oracle will be an owner of the Oracle Inventory. 
+B.	oracle must be the owner of every Oracle Database installation. 
+C.	oracle can own an Oracle Database installation but not an Oracle Grid Infrastructure installation. 
+D.	oracle will be granted the SYSASM privilege when installing the Oracle Database software. 
+E.	The user account, oracle, and group, oinstall, can be used for all Oracle software installations.
+
+NO.29 Which three are true about opatchauto? (Choose three.) 
+A.	It performs a shutdown and then a restart of all processes in both Oracle Grid Infrastructure and Oracle Database home during the patching process. 
+B.	It must be invoked by a user with root user privileges. 
+C.	Patches are applied via opatchauto. 
+D.	Users must always input patch plans to opatchauto.
+E.	It requires the Oracle Grid Infrastructure and Oracle Database instances to be shut down before being invoked. 
+F.	It applies patches in non rolling mode by default. 
+G.	It is used to apply interim patches to Oracle Grid Infrastructure and Oracle Database home combinations.
+
+NO.30 Examine this configuration: 
+o	CDB1 is a container database. 
+o	PDB1 and PDB2 are pluggable databases inCDB1. 
+You execute these commands successfully: 
+Which two are true? (Choose two.) 
+A.	PDB1 and PDB2 are in MOUNT state. 
+B.	Redo logs are opened. 
+C.	PDB1 and PDB2 are in READ ONLY state. 
+D.	CDB$ROOT is in MOUNT state. 
+E.	PDB$SEED is in READ ONLY state.
+
+NO.31 Which two are true about unplugging an application container from a container database and plugging it into a different container database? 
+A.	It requires local undo mode in both container databases. 
+B.	It requires only local undo mode in the database where the application container will be unplugged. 
+C.	Plugging the application root into a different CDB plugs in all its application PDBs. 
+D.	Application PDBs in the application container must be unplugged before the application root is unplugged. 
+E.	Unplugging the application root from a CDB unplugs all its application PDBs. 
+F.	The application root of an application container should be plugged into the other CDB before its application PDBs are plugged in.
+
+NO.33 You have configured RMAN SBT channels to write backups to media. 
+You then take an RMAN backup by using this command: 
+Which three are true? (Choose three.) 
+A.	The restore point is a label for the system change number (SCN) that will be saved two years after the archival backup was taken. 
+B.	The data file backups in the self-contained archive backup are not considered obsolete for two years regardless of the retention policy. 
+C.	All archive logs created after this backup are kept for two years. 
+D.	The SPFILE is included in the self-contained archival backup. 
+E.	The control file is included in the self-contained archival backup. 
+F.	The restore point is a label for the system change number (SCN) before the archival backup was taken.
+
+NO.35 Which three are true about performing an Oracle Database install on Linux? (Choose three.) 
+A.	The runfixup.sh script can install missing RPMs. 
+B.	The Oracle Preinstallation RPM must be used to configure the Oracle database installation owner, the Oracle inventory group, and an Oracle administrative privileges group. 
+C.	It allows you to select the languages supported by the Oracle database server. 
+D.	It can be done before installing Grid Infrastructure for a Standalone Server. 
+E.	The Oracle Preinstallation RPM can be used to configure the Oracle database installation owner, the Oracle inventory group, and an Oracle administrative privileges group. 
+F.	It can be done after installing Grid Infrastructure for a Standalone Server. 
+G.	The Oracle database administrator must be granted access to the root operating system account to run root privileged scripts.
+
+NO.36 Which three are true about transporting databases across platforms using Recovery Manager (RMAN) image copies? (Choose three.) 
+A.	By default, the transported database will use Oracle Managed Files (OMF) 
+B.	Data files can be converted on the destination system. 
+C.	Data files can be converted on the source system. 
+D.	A new DBID is automatically created for the transported database. 
+E.	Databases can be transported between systems with different endian formats. 
+F.	The password file is automatically converted by RMAN.
+
+NO.38 Which two are true about gathering optimizer statistics? (Choose two.) 
+A.	Executing DBMS_STATS.GATHER_DATABASE_STATS while connected to CDB$ROOT gathers object statistics in all open PDBs except PDB$SEED. 
+B.	Executing DBMS_STATS.GATHER_DATABASE_STATS while connected to a PDB opened in read/write mode gathers object statistics for that PDB. 
+C.	Executing DBMS_STATS.GATHER_DATABASE_STATS while connected to CDB$ROOT gathers object statistics only in CDB$ROOT. 
+D.	System statistics can be gathered only while connected to CDB$ROOT. 
+E.	Executing DBMS_STATS.GATHER_DATABASE_STATS while connected to CDB$ROOT gathers object statistics in all open pluggable databases (PDBs).
+
+NO.39 Which three are true about audit policies in container databases (CDBs)? 
+A.	All audit records are written to the audit trail in CDB$ROOT 
+B.	A common unified audit policy can be created at the application root level. 
+C.	A common unified audit policy can be created at the CDB level. 
+D.	An application PDB cannot have a local audit policy. 
+E.	Fine-grained auditing policies defined in an application root must be manually synchronized by each application PDB contained in the application root. 
+F.	Application-common unified audit policies defined in an application root must be manually synchronized by each application PDB contained in the application root.
+
+NO.40 Which two are true about changing the LOCAL_UNDO_ENABLED property to false in a CDB? (Choose two.) 
+A.	After the change, only a common user with the required privilege can create an undo tablespace in CDB&ROOT. 
+B.	Any new PDB and existing PDBs are automatically configured to use the default undo tablespace in CDB$ROOT. 
+C.	After the change, only one undo tablespace can exist in CDB$ROOT. 
+D.	After the change, any user with the required privilege can create an undo tablespace in the PDBs. 
+E.	Undo tablespaces existing in PDBs must be dropped before the change. 
+F.	After the change, each existing PDB has to be reopened for the new undo mode to take effect.
+ 
+NO.41 Examine this configuration: 
+1. CDB1 is a container database running in archivelog mode. 
+2. Multiple uncommitted transactions are running in CDB1. 
+3. Redo log groups 1 and 2 are inactive. 
+4. Redo log group 3 is the current group. 
+All members of redo log group 3 are lost before it is archived. 
+Examine these possible steps: 
+1. SHUTDOWN ABORT 
+2. STARTUP NOMOUNT 
+3. STARTUP MOUNT 
+4. ALTER DATABASE MOUNT 
+5. RESTORE DATABASE 
+6. RECOVER DATABASE NOREDO 
+7. RECOVER DATABASE UNTIL AVAILABLE 
+8. RESTORE ARCHIVELOG ALL 
+9. ALTER DATABASE OPEN 
+10. ALTER DATABASE OPEN RESETLOGS 
+Choose the minimum required steps in the correct order to recover the database. 
+A.	1, 3, 5, 6, 10 
+B.	1, 3, 5, 8, 6, 10 
+C.	1, 3, 5, 6, 9 
+D.	1, 3, 5, 6, 10 
+E.	1, 2, 5, 7, 4, 10 
+F.	1, 3, 5, 7, 10
+
+NO.42 Examine this configuration:
+o	CDB1 is a container database.
+o	COMMON_USER_PREFIX is C##.
+o	PDB1 is a pluggable database contained in CDB1.
+o	APP1_ROOT is an application container contained in CDB1.
+o	APP1_PDB1 is an application PDB contained in APP1_ROOT.
+ 
+You execute these commands successfully: 
+Which two are true? (Choose two.) 
+A.	APP1_USER1 can be created in PDB1. 
+B.	APP1_USER1 can be created in CDB1. 
+C.	APP1_USER1 can have different privileges in each application PDB contained in APP1_ROOT. 
+D.	C##_APP_USER1 can be created in CDB1. 
+E.	P1_USER1 can be created in CDB1. 
+F.	C##_USER1 will have the same privileges and roles granted in all PDBs in CDB1.
+
+NO.43 Which two are true about Oracle instance recovery? (Choose three.) 
+A.	Recovery begins from the beginning of the CURRENT redo log group. 
+B.	Recovery begins from the last checkpoint position that was calculated by the Database Writer before instance failure. 
+C.	Recovery begins from the start of any ACTIVE redo log group or the start of the CURRENT log group if no other group is ACTIVE. 
+D.	Recovery reads redo until the end of the redo thread. SMON rolls back any dead transactions, and then the database is opened. 
+E.	Recovery begins from the last checkpoint position that was recorded in the control file by the checkpoint process (CKPT). 
+F.	Recovery reads redo until the end of the redo thread, and then opens the database. SMON then rolls back any dead transactions.
+ 
+NO.44 Your SALES_ROOT application container has two application PDBs. The SALES_APP application has a common table, FIN.REVENUE, in the two PDBs. Examine this query and its output: 
+Which two are true? (Choose two.) 
+A.	The CONTAINERS clause cannot be used in queries on the REVENUE table. 
+B.	The REVENUE table must be a list-partitioned table. 
+C.	The MAPTABLE tables defines a logical partition key on a commonly used column for the REVENUE table.
+D.	The MAPTABLE table is a metadata-linked table. 
+E.	A container map exists for the REVENUE table, but is not enabled. 
+F.	The REVENUE table partitions are not pruned across the PDBs automatically.
+
+NO.45 Which two are true about data movement between a non-CDB and a PDB using Data Pump? (Choose two.) 
+A.	Tablespaces are automatically created as needed while importing full exports in either a non-CDB or a PDB. 
+B.	Oracle attempts to convert conventional database users to local users when moving schemas from a non-CDB to a PDB. 
+C.	A new PDB is automatically created when importing a non-CDB into a CDB. 
+D.	Oracle attempts to convert common users to conventional users when moving schemas from a PDB to a non-CDB. 
+E.	Moving data from a PDB to a non-CDB is only possible by using transportable tablespace export and import. 
+F.	Moving data from a non-CDB to a PDB is only possible by using conventional export and import.
+
+NO.46 Your CDB has two regular PDBs as well as one application container with two application PDBs and an application seed. 
+No changes have been made to the standard PDB$SEED. 
+How many default temporary tablespaces can be assigned in the CDB? 
+A.	three 
+B.	eight 
+C.	seven
+D.	six 
+E.	five
+ 
+NO.48 Examine this configuration: 
+1. The ORCL database data files are in Automatic Storage Management (Oracle ASM) disk group +DATA. 
+2. ORCL uses disk group +FRA for the Fast Recovery Area. 
+3. LISTENER is the listener for ORCL.
+4. The database, listener, ASM instance, and ASM disk groups are managed by Oracle Restart. 
+5. All components are currently shut down. 
+
+You execute this command: 
+What is the outcome? 
+A.	The ORCL database, the Oracle ASM instances, the +DATA and +FRA disk groups, and the LISTENER are started. 
+B.	Only the ORCL database instance is started. 
+C.	Only the ORCL database and the ASM instances are started. 
+D.	Only the ORCL database instance, the Oracle ASM instance, and the +DATA and +FRA disk groups are started. 
+E.	Only the ORCL database instance and the +DATA and +FRA disk groups are started.
+
+NO.50 Which two are true about Oracle Optimizer Statistics, their use, and their collection? (Choose two.) 
+A.	The number of table rows is considered when evaluating the cost of accessing a table using an index. 
+B.	Index balanced B*Tree height is considered when evaluating the cost of using an index. 
+C.	The Statistics Advisor can help recommend the best way to gather statistics. 
+D.	Statistics collected using DBMS_STATS always yield the best optimizer result. 
+E.	The Statistics Advisor generates actions for all recommendations.
+
+NO.51 A container database called CDB1 is OMF-enabled. PDB_FILE_NAME_CONVERT is not configured in CDB1. PDB1 was unplugged from CDB1 earlier in the week. Examine this command, which will be executed in CDB1: 
+CREATE PLUGGABLE DATABASE pdb1 USING ‘/u01/app/oracle/oradata/pdb1.xml’ SOURCE_FILE_NAME_CONVERT = (‘/u01/app/oracle/oradata/’, ‘/u02/app/oracle/oradata/’); 
+Which two are true? (Choose two.) 
+A.	PDB1 data files already exist in the correct location. 
+B.	DBMS_PDB.CHECK_PLUG_COMPATIBILITY must be run in CDB1 before executing the command. 
+C.	PDB_FILE_NAME_CONVERT must be set before executing the command. 
+D.	/u01/app/oracle/oradata/pdb1.xml does not contain the current locations of data files for PDB1. 
+E.	PDB1 must be dropped from CDB1.
+
+NO.52 Which three are true about RMAN persistent configuration settings, administration, and their effects? (Choose three.) 
+A.	A target database’s persistent RMAN configuration settings are always stored in the target’s control file. 
+B.	Backup older than the recovery window retention policy are always deleted automatically if the backup location has insufficient space. 
+C.	Backups written to the fast recovery area (FRA) that are obsolete based on the redundancy retention policy can be deleted automatically to free space. 
+D.	The RMAN SHOW ALL command displays only settings with nondefault values. 
+E.	A target database’s persistent RMAN configuration settings are always synchronized automatically with the RMAN catalog. 
+F.	The V$RMAN_CONFIGURATION view displays only settings with values that have been modified. 
+G.	A DBA must specify either a redundancy retention policy or a recovery window retention policy.
+
+NO.53 Which two are true about the Oracle database methodology? (Choose two.) 
+A.	The Oracle Database time model should be used to find the database and instance areas most in need of tuning. 
+B.	Tuning activities should stop once the user is satisfied with performance. 
+C.	Tuning activities should stop once agreed service levels for performance have been met. 
+D.	The database instance memory should always be tuned before tuning any file systems. 
+E.	SQL statements should always be tuned before tuning any file systems. 
+F.	The alert log should be used to find the database and instance areas most in need of tuning.
+
+NO.54 For which two requirements can you use the USER_TABLESPACE clause with the CREATE PLUGGABLE DATABASE command? (Choose two.) 
+A.	to specify a default tablespace in a PDB cloned from another PDB in the same CDB. 
+B.	to exclude all tablespaces except SYSTEM, SYSAUX, and TEMP when plugging in a PDB 
+C.	to include specific user tablespaces only when relocating a PDB 
+D.	to specify the list of user tablespaces to include when moving a non-CDB to a PDB 
+E.	to exclude a temp tablespace when plugging in a PDB 
+F.	to specify the list of tablespaces to include when creating a PDB from the CDB seed
+
+NO.55 Which three are true about an application container? 
+A.	It must have an application root PDB. 
+B.	It can contain multiple applications. 
+C.	An application PDB can belong to multiple application containers. 
+D.	Two application containers can share an application seed PDB. 
+E.	It can contain a single application. 
+F.	It must have an application seed PDB.
+
+NO.56 Which four are true about a Recovery Manager (RMAN) duplication without a TARGET connection? (Choose four.) 
+A.	The NOREDO clause must be used if the backups of the database being duplicated were taken when the database was in NOARCHIVELOG mode. 
+B.	The UNDO TABLESPACE clause is always required when no connection exists to the TARGET instance. 
+C.	RMAN “pushes” the backups of the database to be duplicated over the network to the auxiliary instance. 
+D.	The NOREDO clause can be used if the backups of the database being duplicated were taken when the database was in ARCHIVELOG mode. 
+E.	RMAN SBT-based backups of the database to be duplicated can be used by the auxiliary instance.
+F.	The UNDO TABLESPACE clause is always required when no connection exists to the recovery catalog and the TARGET database is closed. 
+G.	The UNDO TABLESPACE clause is always required when no connection exists to the recovery catalog and the TARGET database is opened. 
+H.	RMAN disk-based backups of the database to be duplicated can be used by the auxiliary instance.
+
+NO.57 Which three methods can be used for heap table data migration after upgrading a database? (Choose three.) 
+A.	using Database Replay 
+B.	using SQL Developer 
+C.	using Oracle Data Pump 
+D.	using operating system file copy utilities 
+E.	using Database Upgrade Assistant 
+F.	using the CREATE TABLE AS SELECT SQL statement
+
+NO.58 You must transport the UNIVERSITY tablespace from one database to another. 
+The UNIVERSITY tablespace is currently open read/write. 
+The source and destination platforms have different endian formats. 
+Examine this list of actions: 
+1. Make the UNIVERSITY tablespace read-only on the source system. 
+2. Export the UNIVERSITY tablespace metadata using EXPDP. 
+3. Convert the UNIVERSITY tablespace data files to the destination platform format using RMAN on the source system. 
+4. Copy the UNIVERSITY tablespace data files to the destination system. 
+5. Copy the Data Pump dump set to the destination system. 
+6. Convert the UNIVERSITY tablespace data files to the destination platform format using RMAN on the destination system. 
+7. Import the UNIVERSITY tablespace metadata using IMPDP. 
+8. Make the UNIVERSITY tablespace read/write on the destination system. 
+
+Which is the minimum number of actions required, in the correct order, to transport the UNIVERSITY tablespace? 
+A.	1, 2, 4, 5, 7, 8 
+B.	1, 2, 4, 6, 7, 8 
+C.	1, 2, 3, 4, 5, 7, 8 
+D.	1, 2, 3, 4, 5, 6, 7, 8 
+E.	2, 4, 5, 6, 7
+
+NO.60 Which two are true about duplicating pluggable databases (PDBs) with RMAN? (Choose two.) 
+A.	Two or more PDBs can be duplicated with the same RMAN DUPLICATE command. 
+B.	All tablespaces belonging to a PDB must be duplicated when duplicating the PDB. 
+C.	The auxiliary instance is automatically created with ENABLE_PLUGGABLE_DATABASE = TRUE. 
+D.	A user with SYSDBA or SYSBACKUP must be logged in with RMAN to the PDB to duplicate it. 
+E.	CDB$ROOT and PDB$SEED are automatically duplicated.
+
+NO.61 Which three are true about monitoring waits for sessions and services? (Choose three.) 
+A.	V$SESSION_EVENT displays all waits for all past and existing sessions if the wait has occurred at least once for a session. 
+B.	V$SERVICE_EVENT displays all waits for all services if the wait has occurred at least once for a service. 
+C.	V$SESSION_WAIT_CLASS displays waits broken down by wait class only for waiting sessions. 
+D.	V$SESSION_WAIT and V$SESSION both contain details of the event on which a non-waiting session last waited. 
+E.	V$SESSION_EVENT displays all waits for all past sessions if the wait has occurred at least once for a session. 
+F.	V$SESSION_WAIT and V$SESSION both contain details of the event on which a session is currently waiting.
+
+NO.63 Which two are facets of performance planning that should always be considered or implemented for an Oracle Database environment? (Choose two.) 
+A.	defining primary keys for all tables to speed up all queries 
+B.	using check constraints to speed up updates 
+C.	defining foreign keys for all tables to speed up joins 
+D.	the physical data model 
+E.	the configuration of storage arrays
+
+NO.65 Which two are true about common objects? (Choose two.) 
+A.	They can be created only in CDB$ROOT. 
+B.	They can be only metadata-linked in an application container. 
+C.	They can exist in user-defined schemas only in application containers. 
+D.	They can exist in CDB$ROOT and an application root. 
+E.	They can be extended data-linked in CDB$ROOT. 
+F.	They can be created only in an application root.
+
+NO.66 Which three are true about backup, restore, and recovery operations done without using Recovery Manager (RMAN)? (Choose three.) 
+A.	Backing up a database in NOARCHIVELOG mode using O/S utilities requires that the database instance be started and the database be in the MOUNT state. 
+B.	Backing up a database in ARCHIVELOG mode using O/S utilities requires that the database instance be started and the database be in MOUNT state. 
+C.	An Oracle database can be restored from backup files copied using O/S utilities. 
+D.	Oracle data file backups, copied using an O/S utility, can be added to the RMAN catalog as IMAGE COPIES. 
+E.	Backing up a database in NOARCHIVELOG mode using O/S utilities requires that the database instance be shut down. 
+F.	Oracle archive log backups, copied using an O/S utility, can be added to the RMAN catalog as a backup set. 
+G.	Backing up a database in ARCHIVELOG mode using O/S utilities requires that the database instance be started and the database be in OPEN state.
+
+NO.67 Examine these queries and their output: 
+An online RMAN backup of the CDB was taken an hour before Restore Point R1 was created. You want to recover PDB1 to Restore Point R1. 
+How do you achieve this? 
+A.	Execute FLASHBACK PLUGGABLE DATABASE PDB1 TO RESTORE POINT R1 by using RMAN while connected to PDB1. 
+B.	Execute FLASHBACK PLUGGABLE DATABASE PDB1 TO RESTORE POINT R1 by using SQL while connected to PDB1. 
+C.	Execute FLASHBACK PLUGGABLE DATABASE PDB1 TO RESTORE POINT R1 by using SQL while connected to CDB$ROOT. 
+D.	Execute FLASHBACK PLUGGABLE DATABASE PDB1 TO RESTORE POINT R1 by using RMAN while connected to CDB$ROOT. 
+E.	This cannot be done due to the lack of a clean restore point.
+ 
+NO.68 Which three actions are performed by Database Upgrade Assistant (DBUA)? (Choose three.) 
+A.	It recompiles all stored PL/SQL code by using utlrp.sql. 
+B.	It empties the RECYCLE BIN. 
+C.	It performs prerequisite checks to verify if the Oracle database is ready for upgrade.
+D.	It sets all user tablespaces to „read-only” before starting the upgrade. 
+E.	It removes the AUDSYS schema and the AUDIT_ADMIN and AUDIT_VIEWER roles 
+F.	It increases tablespace size, if required, to meet upgrade requirements.
+
+NO.70 Which three are true about managing memory components in an Oracle database instance? (Choose three.) 
+A.	With Automatic Shared Memory Management, the database instance can increase the Large Pool size by reducing the Shared Pool size. 
+B.	With Automatic Memory Management, the database instance can increase the System Global Area size by reducing the Program Global Area size. 
+C.	Automatically tuned and resized System Global Area components will always revert to their initial sizes after an instance restart. 
+D.	Automatic Memory Management must be used together with locking the System Global Area into physical memory.
+E.	With Automatic Shared Memory Management, the database instance can increase the Program Global Area size by reducing the System Global Area size. 
+F.	On Line Transaction Processing systems often use less Program Global Area than Decision Support Systems.
+
+NO.71 Which two are true about Recovery Manager (RMAN) diagnostic message output? (Choose two.) 
+A.	Media Management messages for SBT devices are always written to sbtio.log. 
+B.	RMAN error stacks should be read from the bottom up as that is the order in which errors are generated. 
+C.	RMAN error stacks should be read from the top down as that is the order in which errors are generated. 
+D.	The RMAN LOG command line clause causes output issued during RMAN command compilation to be written to a log file and to standard output. 
+E.	The RMAN LOG command line clause causes output issued during RMAN command compilation to be written to a log file only. 
+F.	Media Management messages for SBT devices are written to an Oracle trace file.
+ 
+NO.72 You issued this command: 
+RMAN> BACKUP RECOVERY FILES; 
+Which two are true? (Choose two.) 
+A.	All Oracle recovery files not in the current FRA that have not been backed up already, are backed up. 
+B.	All non-Oracle files in the current FRA that have not been backed up already, are backed up. 
+C.	All Oracle recovery files in the current FRA that have not been backed up already, are backed up. 
+D.	All Oracle recovery files in the current fast recovery area (FRA) are backed up. 
+E.	These backups can be written to disk or SBT.
+
+NO.73 Which three are true about upgrading Oracle Grid Infrastructure? (Choose three.) 
+A.	A direct upgrade can be performed only from the immediately preceding Oracle Grid Infrastructure version. 
+B.	The newer version is installed in a separate Oracle Grid Infrastructure home on the same server as the existing version. 
+C.	An existing Oracle base can be used. 
+D.	The upgrade process will automatically install all mandatory patches for the current version of Oracle Grid Infrastructure. 
+E.	Existing Oracle Database instances must be shut down before starting the upgrade. 
+F.	Only the grid user can perform the upgrade.
+
+NO.74 Oracle Managed Files (OMF) is enabled in a CDB and this command is successfully executed: 
+Which three are true? (Choose three.) 
+A.	Application PDBs that are subsequently created in the APP1 application container will be cloned from APP1$SEED. 
+B.	An application seed PDB is created for APP1. 
+C.	An application root PDB is created for APP1. 
+D.	A default service is created for the application root APP1. 
+E.	Application PDBs that are subsequently created in the APP1 application container will be cloned from PDB$SEED.
+F.	APP1 can never be unplugged.
+ 
+NO.75 Which two are true about flashback features in Oracle Database 19c and later releases? (Choose two.) 
+A.	Flashback logs are automatically purged when DB_FLASHBACK_RETENTION_TARGET is set lower than the time they have already been retained. 
+B.	Flashback logs are monitored and proactively deleted when beyond the retention period defined in DB_FLASHBACK_RETENTION_TARGET only after there is space pressure. 
+C.	Flashback logs are monitored and proactively deleted when beyond the retention period defined in DB_FLASHBACK_RETENTION_TARGET before there is space pressure. 
+D.	Flashback logs are monitored for being older than the retention period defined in DB_FLASHBACK_RETENTION_TARGET and can be deleted by an administrator written event trigger. 
+E.	Flashback logs are automatically purged whenever the value of DB_FLASHBACK_RETENTION_TARGET is changed.
+
+NO.79 Which four are true about RMAN backup sets? (Choose four.) 
+A.	A backup piece can belong to only one backup set. 
+B.	A data file can be split into multiple sections stored in different backup sets. 
+C.	A data file can be split into multiple sections stored in different backup pieces in the same backup set.
+D.	Blocks from multiple data files can be contained in one backup piece.
+E.	A backup set can contain only one backup piece. 
+F.	A backup set must be written to media. 
+G.	A backup set must be written to disk. 
+H.	Blocks from multiple data files can be contained in one backup set.
+
+NO.80 Your container database, CDB1, has an application container, HR_ROOT, with an application PDB, HR_PDB1. 
+You have the required privilege to clone HR_PDB1 to container database CDB2, which does not contain HR_ROOT. 
+Which two are always true? (Choose two.) 
+A.	CDB1 and CDB2 must be in shared undo mode. 
+B.	A common user must exist in CDB2 with the CREATE PLUGGABLE DATABASE privilege. 
+C.	All transactions in HR_PDB1 of CDB1 must commit before the cloning process starts. 
+D.	Cloning HR_ROOT automatically clones HR_PDB1. 
+E.	The HR_PDB1 clone created in CDB2 will be in mount state when cloning ends.
+ 
+NO.81 Which two are true about instance recovery? (Choose two.) 
+A.	It is not possible if an archived log is missing. 
+B.	It is performed automatically after the database is opened; however, blocks requiring recovery are not available until they are recovered. 
+C.	Setting FAST_START_MTTR_TARGET to a lower value reduces instance recovery time by causing dirty buffers to be written to disk more frequently, thereby reducing the number of I/Os needed during instance recovery. 
+D.	It is performed by the Recovery Writer (RVWR) background process. 
+E.	Setting FAST_START_MTTR_TARGET to a higher value reduces instance recovery time by causing the log writer to write more frequently, thereby reducing the number of I/Os needed during instance recovery. 
+F.	It is performed automatically while the database remains in MOUNT state. Then the database is opened.
+
+NO.82 Which three are true about Oracle Grid Infrastructure for a Standalone Server? 
+A.	It includes both Oracle Restart and Oracle Automatic Storage Management (ASM) software. 
+B.	It creates one disk group during installation. 
+C.	It requires the operating system oracle_base environment variable to be predefined before installation. 
+D.	It requires Oracle ASM Filter Driver (ASMFD) to manage Automatic Storage Management (ASM) disks 
+E.	It requires Oracle ASMLib to manage Automatic Storage Management (ASM) disks. 
+F.	Automatic Storage Management (ASM) requires that O/S groups OSASM and OSDBA be assigned as secondary groups for its installation owner.
+
+NO.83 Which three are true? (Choose three.) 
+A.	Virtual Private Database (VPD) policies on objects in an application root are automatically synchronized with all application PDBs contained in the application container. 
+B.	Application-common TSDP policies are always container specific. 
+C.	Application-common Transparent Security Data Protection (TSDP) policies can be created only within an application install/patch BEGIN-END block. 
+D.	Application-common Oracle Label Security (OLS) policies cannot be created in an application root outside an install/patch BEGIN-END block.
+E.	Fine-grained auditing (FGA) policies in an application root are automatically synchronized to all application PDBs contained in the application container. 
+F.	Application-common OLS policies can be created in an application root inside an install/patch BEGIN-END block. 
+G.	Unified auditing can be automatically synchronized to all application PDBs in an application container.
+ 
+NO.84 A container database (CDB) contains two pluggable databases PDB1 and PDB2. 
+The LOCAL_UNDO_ENABLED database property is set to FALSE in the CDB. Data file 24 of PDB2 was deleted and you need to restore and recover it. 
+The only RMAN backup that exists was created with the BACKUP DATABASE command while connected to CDB$ROOT. 
+Which three are true? (Choose three.) 
+A.	Data file 24 can be recovered only while connected to PDB2. 
+B.	Data file 24 can be restored and recovered while connected to CDB$ROOT. 
+C.	Data file 24 can be restored only while connected to CDB$ROOT. 
+D.	Data file 24 can be restored only while connected to PDB2. 
+E.	Data file 24 can be recovered while connected to PDB2. 
+F.	Data file 24 can be recovered while connected to CDB$ROOT.
+
+NO.85 Examine this output: 
+Which two are true? (Choose two.) 
+A.	Any PDB not specified in the plan will be unable to execute statements in parallel. 
+B.	PDB3 can use all available parallel execution processes at times. 
+C.	PDB1 is always limited to 40% of the available system resources regardless of demand. 
+D.	Any PDB not specified in the plan will be able to use a maximum of 16.5% of the available system resources. 
+E.	PDB3 is guaranteed to receive at least 20% of the available system resources if there is enough demand. 
+F.	PDB2 is guaranteed at least 25% of the available parallel execution processes if there is enough demand.
+ 
+NO.86 Examine the command for creating pluggable database PDB2 in container database CDB2.
+
+Select three options, any one of which is required for it to execute successfully. (Choose three.)
+A.	Add the FILE_NAME_CONVERT clause to the statement and set the PDB_FILE_NAME_CONVERT parameter. 
+B.	Add only the CREATE_FILE_DEST clause to the statement. 
+C.	Set only the PDB_FILE_NAME_CONVERT parameter. 
+D.	Set the PDB_FILE_NAME_CONVERT parameter and enable OMF. 
+E.	Enable only OMF.
+F.	Add the FILE_NAME_CONVERT clause to the statement and enable Oracle Managed Files (OMF).
+
+NO.87 How do you configure a CDB for local undo mode? 
+A.	Open the CDB instance in upgrade mode. In cdb$root, execute alter database local undo on, and then restart the CDB instance. 
+B.	Open the CDB in read-only mode. In cdb$root, execute alter database local undo on, and then change the CDB to read/write mode. 
+C.	Open the CDB instance in restricted mode. In cdb$root, execute alter database local undo on. create an undo tablespace in each PDB, and then restart the CDB instance. 
+D.	Open the CDB instance in restricted mode. In cdb$root, drop the undo tablespace. Execute alter database local undo on in each PDB, and then restart the CDB instance. 
+E.	Open the CDB instance in upgrade mode. In each PDB, execute alter database local undo on, create an undo tablespace, and then restart the CDB instance.
+
+NO.91 Which three are true about the SQL Tuning Advisor? (Choose three.)
+A.	It checks each query being analyzed for stale statistics. 
+B.	It checks each query being analyzed for missing statistics. 
+C.	It only recommends syntactic changes to SQL statements. 
+D.	It can recommend semantic changes to SQL statements. 
+E.	It considers all SQL statements being analyzed by the advisor task as a group. 
+F.	It builds SQL profiles for each poorly performing SQL statement to prevent regressions.
+
+NO.92 While backing up to the Oracle Fast Recovery Area (FRA), you determined the backup is taking too long and suspect a performance bottleneck. 
+Which three are true about diagnosing and tuning these problems? (Choose three.) 
+A.	If an RMAN BACKUP VALIDATE command takes roughly the same time as an actual backup, then both read and write I/O are likely bottlenecks. 
+B.	Setting DBWR_IO_SLAVES to a non zero value can improve backup performance when using synchronous I/O. 
+C.	If an RMAN BACKUP VALIDATE command takes noticeably less than an actual backup, then write I/O is a likely bottleneck. 
+D.	If an RMAN BACKUP VALIDATE command takes roughly the same time as an actual backup, then read I/O is a likely bottleneck. 
+E.	Data files with a high value in V$BACKUP_SYNC_IO.DISCRETE_BYTES_PER_SECOND are a potential performance bottleneck when synchronous I/O is used. 
+F.	Setting DBWR_IO_SLAVES to a non zero value can improve backup performance when using asynchronous I/O. 
+G.	Data files with a high value in V$BACKUP_ASYNC_IO.SHORT_WAITS are a potential performance bottleneck when asynchronous I/O is used.
+
+NO.93 Which four are true about performing Tablespace Point -In-Time Recovery (TSPITR) using Recovery Manager (RMAN)?
+A.	It can be performed using an auxiliary instance managed by a DBA. 
+B.	It can be used to recover a truncated table. 
+C.	RMAN automatically adds any required tablespaces to the recovery set to make it self-contained. 
+D.	RMAN always includes tablespaces containing undo segments in the recovery set. 
+E.	It can be performed repeatedly until the correct time is found without using an RMAN catalog. 
+F.	flashback database must be enabled for it to work. 
+G.	It can be used to recover a dropped tablespace. 
+H.	It can be performed using an auxiliary instance managed by RMAN.
+
+NO.95 Which two are true about OS groups and users for Oracle Grid Infrastructure and the Oracle Relational Database Management System (RDBMS)? (Choose two.) 
+A.	By default, members of the OSASM group can access Automatic Storage Management and RDBMS instances. 
+B.	The primary group for the Oracle Grid Infrastructure and Oracle Database owners must be the Oracle Inventory group.
+C.	The Oracle Grid Infrastructure installation must be owned by the grid user. 
+D.	The Oracle Grid Infrastructure owner owns Oracle Restart and Oracle Automatic Storage Management binaries. 
+E.	The Oracle Grid Infrastructure owner must have OSOPER, OSBACKUPDBA and OSKMDBA as secondary groups. 
+F.	The same OSDBA group must be used for Automatic Storage Management and the Oracle Database.
+
+NO.96 Which three are true about Automatic Workload Repository (AWR), Automatic Database Diagnostic Monitor (ADDM), and the Manageability Monitor (MMON) background process? (Choose three.) 
+A.	ADDM can recommend shrinking the buffer cache. 
+B.	ADDM can recommend extending the buffer cache. 
+C.	By default, MMON creates an AWR snapshot every 30 minutes. 
+D.	ADDM performs its analysis only when a DBA requests it. 
+E.	By default, AWR snapshots are automatically purged after eight days. 
+F.	AWR snapshots must be deleted when no longer required by ADDM.
