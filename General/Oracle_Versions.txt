@@ -1,0 +1,41 @@
+The Evolution of the Oracle Database – From 1977 to 26AI 
+========================================================
+The journey of the Oracle Corporation is one of continuous innovation in the database world.
+
+Founded in 1977 by Larry Ellison, Bob Miner, and Ed Oates, the company started as Software Development Laboratories and officially became Oracle Corporation in 1983.
+
+Here’s a quick timeline of major Oracle Database milestones:
+🔹 1979 – Oracle Version 2
+First commercially available SQL-based RDBMS.
+🔹 1983 – Oracle Version 3
+Portable database written in C.
+🔹 1984 – Oracle Version 4
+Multi-Version Read Consistency introduced.
+🔹 1985 – Oracle Version 5
+Client-Server & Distributed Database support.
+🔹 1988 – Oracle Version 6
+PL/SQL introduced, improved backup & recovery.
+🔹 1992 – Oracle 7
+Stored Procedures, Triggers, advanced SQL.
+🔹 1997 – Oracle 8
+Object-relational features & Partitioning.
+🔹 1999 – Oracle 8i
+Internet-enabled database with Java support.
+🔹 2001 – Oracle 9i
+Real Application Clusters (RAC) & XML DB.
+🔹 2003 – Oracle 10g
+Grid Computing architecture.
+🔹 2007 – Oracle 11g
+Active Data Guard, SecureFiles, performance improvements.
+🔹 2013 – Oracle 12c
+Multitenant Architecture (CDB & PDB) – designed for Cloud.
+🔹 2018 – Oracle 18c
+Cloud-focused innovation & automation.
+🔹 2019 – Oracle 19c
+Long-Term Support (LTS) release – stability, performance, automatic indexing.
+🔹 2021 – Oracle 21c
+Innovation release – Blockchain Tables, Native JSON data type, AutoML enhancements.
+🔹 2023 – Oracle 23c
+“App Simple” database – JSON Relational Duality, improved developer features.
+🔹 2025 – Oracle 26AI
+AI-powered database – built-in AI Vector Search, automated AI workloads, next-gen intelligent data platform.
