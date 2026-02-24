@@ -22,32 +22,31 @@ ORA-00001: unique constraint (RMAN.TS_P2) violated
 
 After few researches, it seems that this error is due to a mismatch of tempfiles between Primary and Standby. Some tempfiles were missing in the standby database.
 
-How is it be possible as we have the parameter StandbyFileManagement set  to auto on both sides.
+How is it be possible as we have the parameter standby_file_management set  to auto on both sides.
 
 Primary database
 
-NAME                     TYPE    VALUE
------------------------------------- ----------- ------------------------------
-db_unique_name               string  HRVA_SITE1
+NAME                                  TYPE        VALUE
+------------------------------------  ----------- ------------------------------
+db_unique_name                        string      HRVA_SITE1
 
 SQL> show parameter standby_file
-NAME                     TYPE    VALUE
------------------------------------- ----------- ------------------------------
-standby_file_management          string  AUTO
+NAME                                  TYPE        VALUE
+------------------------------------  ----------- ------------------------------
+standby_file_management               string      AUTO
 
 SQL>
 
-
 Standby database
 
-NAME                     TYPE    VALUE
------------------------------------- ----------- ------------------------------
-db_unique_name               string  HRVA_SITE2
+NAME                                  TYPE        VALUE
+------------------------------------  ----------- ------------------------------
+db_unique_name                        string      HRVA_SITE2
 
 SQL> show parameter standby_file
-NAME                     TYPE    VALUE
------------------------------------- ----------- ------------------------------
-standby_file_management          string  AUTO
+NAME                                  TYPE        VALUE
+------------------------------------  ----------- ------------------------------
+standby_file_management               string      AUTO
 SQL>
 
 Let’s do some tests to better understand how oracle manages datafiles and tempfiles in dataguard environment.
@@ -98,9 +97,9 @@ This confirms that the new datafile was replicated as expected.
 Now let’s add a tempfile to the primary database:
 
 SQL> show parameter db_uni
-NAME                     TYPE    VALUE
------------------------------------- ----------- --------------------------
-db_unique_name               string  HRVA_SITE1
+NAME                                  TYPE        VALUE
+------------------------------------  ----------- --------------------------
+db_unique_name                        string      HRVA_SITE1
 
 SQL> select name from v$tempfile;
 NAME
@@ -252,7 +251,7 @@ Oracle Database 19c
 -------------------
 To create the TEMP file on standby, the standby must be open in read-only mode.
 
-If you have an Active Data Guard option license, then it’s straightforward. Open the PDB in read-only mode and create the TEMP file:
+If you have an Active Data Guard option license, then it’s straight forward. Open the PDB in read-only mode and create the TEMP file:
 
 SQL> alter session set container = PDB001;
 SQL> alter tablespace temp add tempfile;

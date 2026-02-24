@@ -20,7 +20,7 @@ log_archive_dest_1                   string      LOCATION=/u01/app/oracle/arch/v
 
 2. Modify the archive destination
 
-SQL> alter system set log_archive_dest_1='LOCATION=/u02/arch/vada' scope=both;
+SQL> alter system set log_archive_dest_1 = 'LOCATION=/u02/arch/vada' scope=both;
 System altered.
 
 

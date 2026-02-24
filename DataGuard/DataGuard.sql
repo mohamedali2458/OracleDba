@@ -4,7 +4,7 @@
  to_char(NEXT_TIME,'hh24:mi:ss dd/mm/yyyy'), APPLIED 
  FROM V$ARCHIVED_LOG 
  WHERE next_time > sysdate-1 
- ORDER BY SEQUENCE# ;
+ ORDER BY SEQUENCE#;
 
 
 -- Find last applied log
