@@ -62,10 +62,10 @@ Oracle databases use initialization parameter files to start the instance. These
  • Required for RAC & recommended for production
 LOCATION: PFILE and SPFILE are located in $ORACLE_HOME/dbs on Unix/Linux and %ORACLE_HOME%\database on Windows; in ASM environments, SPFILE is stored inside ASM disk groups.
 🔹 DBA Tips
- 1)Use SPFILE in production environments
+ 1) Use SPFILE in production environments
  2) Keep a PFILE backup for emergency startup
  3) Convert easily when needed
- 4)Oracle database needs the SPFILE (or PFILE) to start, as it contains all initialization parameters required to create the instance.
+ 4) Oracle database needs the SPFILE (or PFILE) to start, as it contains all initialization parameters required to create the instance.
 
 
 
@@ -102,7 +102,7 @@ Oracle uses background processes to handle routine tasks so user sessions can ru
 🚀 Day 5/100 – Oracle DBA Learning Series
  Topic: Logical VS Physical Components in Oracle Database.
 Oracle database architecture is built on logical components (how data is organized) and physical components (where and how data is stored).
-🔹 Logical Components (Design Layer)
+🔹Logical Components (Design Layer)
  • Tablespaces – Logical storage containers
  • Segments – Tables, indexes, undo, temp
  • Extents – Group of blocks
@@ -111,7 +111,7 @@ Oracle database architecture is built on logical components (how data is organiz
 🔹 How Tablespaces work
 Table → Segment → Extent → Block → Datafile
 
-🔹 Physical Components (Storage & Files)
+🔹Physical Components (Storage & Files)
  • Datafiles – Store actual database data
  • Control Files – DB structure & status info
  • Redo Log Files – Record all data changes
@@ -124,7 +124,6 @@ Table → Segment → Extent → Block → Datafile
 
 📌 DBA Tip:
  Developers work with logical objects, DBAs manage physical files.
-Continuing my hashtag#100DaysOfOracleDBA journey by sharing simple and practical Oracle DBA concepts every day.
 
 
 
@@ -181,13 +180,14 @@ Both TEMP and UNDO tablespaces are critical in Oracle, but they serve completely
 
 
 🚀 Day 8/100 – Oracle DBA Learning Series
- Topic: OLAP VS OLAP in Oracle DBA
+ Topic: OLTP VS OLAP in Oracle DBA
 Oracle databases are commonly designed for OLTP or OLAP workloads. Knowing the difference helps DBAs design and tune systems correctly.
 🔹 OLTP (Online Transaction Processing)
  • Used for day-to-day transactions
  • Handles many small INSERT/UPDATE/DELETE operations
  • Fast response time
  • Examples: Banking, e-commerce, ERP
+
 🔹 OLAP (Online Analytical Processing)
  • Used for reporting and analysis
  • Handles large SELECT queries
@@ -205,10 +205,10 @@ OLAP (Data Warehouse)
  OLTP needs indexing and undo tuning, while OLAP benefits from partitioning, parallelism, and large scans.
 
  Ever wondered where OLTP and OLAP are used in real life?
-OLTP runs the business(When customers use an e-commerce website)
+OLTP runs the business (When customers use an e-commerce website)
 ->Customer orders, payments, inventory updates — many small and fast transactions happening every second.
 
-OLAP analyzes the business(Analyzing the Business (Reports System))
+OLAP analyzes the business (Analyzing the Business (Reports System))
 ->Sales reports, trends, comparisons — large SELECT queries on historical data.
 
 
@@ -265,7 +265,7 @@ SELECT Query Flow
  6) Client displays the output to user
 
 UPDATE Query Flow
- 1)SQL is parsed (syntax + semantic checks)
+ 1) SQL is parsed (syntax + semantic checks)
  2) Undo data is generated (for rollback & consistency)
  3) Data blocks updated in Buffer Cache
  4) Redo generated and written by LGWR
