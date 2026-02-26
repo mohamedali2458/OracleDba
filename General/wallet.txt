@@ -6,8 +6,10 @@ A software keystore is a container that stores the Transparent Data Encryption m
 To configure a software Keystore follow the steps below.
 
 Step 1: Set the Keystore Location in the sqlnet.ora File
+
 You can store the software keystore (also known as wallet) in file system or in ASM Diskgroup. 
-Does not matter where you want to store the keystore you have modify the sqlnet.ora and make an entry accordingly.
+Does not matter where you want to store the keystore you have to modify the sqlnet.ora and make an entry accordingly.
+
 Make an entry as shown below in $ORACLE_HOME/network/admin/sqlnet.ora file
 
 Example1: If Storing the Wallet in ASM
@@ -29,6 +31,7 @@ ENCRYPTION_WALLET_LOCATION=
 NOTE: Ensure that the path you entered in DIRECTORY exists. If not create it.
 
 Step2: Create the Software KeyStore
+
 There are three different types of software keystores. password-based,auto-login and local auto-login
 You can read HERE about them in detail.
 
@@ -51,11 +54,11 @@ STATUS                WALLET_DIR                       WALLET_TYPE
 NOT_AVAILABLE         /u01/dbatst1/admin/wallet/TST1T/ UNKNOWN
 
 C> Create the Wallet
-SQL>  ADMINISTER KEY MANAGEMENT CREATE KEYSTORE '/u01/dbatst1/admin/wallet/TST1T/' IDENTIFIED BY xxxx;
+SQL> ADMINISTER KEY MANAGEMENT CREATE KEYSTORE '/u01/dbatst1/admin/wallet/TST1T/' IDENTIFIED BY xxxx;
 keystore altered.
 
 D> Check the Wallet Status
-SQL>select STATUS,WRL_PARAMETER WALLET_DIR,WALLET_TYPE from V$ENCRYPTION_WALLET;
+SQL> select STATUS,WRL_PARAMETER WALLET_DIR,WALLET_TYPE from V$ENCRYPTION_WALLET;
 STATUS                WALLET_DIR                       WALLET_TYPE
 --------------------- -------------------------------- --------------------
 CLOSED                /u01/dbatst1/admin/wallet/TST1T/ UNKNOWN
@@ -77,7 +80,9 @@ SQL> select STATUS,WRL_PARAMETER WALLET_DIR,WALLET_TYPE from V$ENCRYPTION_WALLET
 STATUS                WALLET_DIR                       WALLET_TYPE
 --------------------- -------------------------------- --------------------
 OPEN_NO_MASTER_KEY    /u01/dbatst1/admin/wallet/TST1T/ AUTOLOGIN
-$ ls -lrt /u01/dbatst1/admin/wallet/TST1T/-rw------- 1 dbatst1 asmadmin 2408 Nov 20 16:03 ewallet.p12
+
+$ ls -lrt /u01/dbatst1/admin/wallet/TST1T/
+-rw------- 1 dbatst1 asmadmin 2408 Nov 20 16:03 ewallet.p12
 -rw------- 1 dbatst1 asmadmin 2451 Nov 20 16:17 cwallet.sso
 
 
