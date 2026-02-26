@@ -1,4 +1,5 @@
 Step-by-Step Oracle 19c DBA Auditing Configuration
+==================================================
 
 Introduction
 In this article we will see Step-by-step Oracle 19c DBA auditing setup using 
@@ -47,8 +48,7 @@ Command : - make -f ins_rdbms.mk uniaud_on ioracle
 Output
 
 [oracle@primary ~]$ cd $ORACLE_HOME/rdbms/lib
-[oracle@primary lib]$
-[oracle@primary lib]$
+
 [oracle@primary lib]$ make -f ins_rdbms.mk uniaud_on ioracle
 /usr/bin/ar d /u01/app/oracle/product/19.0.0/dbhome_1/rdbms/lib/libknlopt.a kzanang.o
 /usr/bin/ar cr /u01/app/oracle/product/19.0.0/dbhome_1/rdbms/lib/libknlopt.a /u01/app/oracle/product/19.0.0/dbhome_1/rdbms/lib/kzaiang.o

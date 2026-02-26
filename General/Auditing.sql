@@ -3,12 +3,12 @@ Check status, enable and disable the Audit in Oracle
 SQL> show parameter audit_trail
 
 Brief of following parameter values:
-NONE- Auditing is disabled.
-DB- Auditing is enabled,(all audit records stored in table(SYS.AUD$).
-DB,EXTENDED- As DB,but the SQL_BIND and SQL_TEXT columns are also populated for SYS.AUD$ table
-XML- Auditing is enabled, records stored as XML format files.
+NONE        - Auditing is disabled.
+DB          - Auditing is enabled,(all audit records stored in table(SYS.AUD$).
+DB,EXTENDED - As DB,but the SQL_BIND and SQL_TEXT columns are also populated for SYS.AUD$ table
+XML         - Auditing is enabled, records stored as XML format files.
 XML,EXTENDED- As XML,but the SQL_BIND and SQL_TEXT columns are also populated in XML file.
-OS- Auditing is enabled, audit records to the operating system's text file.
+OS          - Auditing is enabled, audit records to the operating systems text file.
 
 For Enable or Disable the Audit at Database Level
 =================================================

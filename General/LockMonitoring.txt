@@ -1,0 +1,63 @@
+📘 Database Lock Monitoring in Oracle – A Practical DBA Guide
+=============================================================
+In a multi-user Oracle environment, locks are normal — they protect data integrity.
+But when locks become excessive or long-running, they turn into serious performance bottlenecks ⚠️
+As DBAs, our job is not just to react — but to monitor and prevent.
+
+Let’s break it down 👇
+
+🔐 What is a Lock?
+A lock controls concurrent access to data, ensuring that two sessions don’t modify the same row simultaneously.
+✅ Ensures data consistency
+✅ Prevents conflicting transactions
+✅ Maintains isolation
+
+⚠️ Common Causes of Lock Issues
+▪ Long-running uncommitted transactions
+▪ Poor application commit strategy
+▪ Concurrent updates on same data
+▪ Missing indexes on foreign keys
+
+🔍 How to Identify Locks
+📌 Locked Objects:
+SELECT lo.session_id, lo.oracle_username, lo.os_user_name,
+       ao.object_name, ao.object_type
+FROM v$locked_object lo
+JOIN all_objects ao ON lo.object_id = ao.object_id;
+
+📌 Blocking vs Blocked Sessions:
+SELECT s1.username || ' (SID=' || s1.sid || ')' AS blocker,
+       s2.username || ' (SID=' || s2.sid || ')' AS blocked
+FROM v$lock l1
+JOIN v$session s1 ON l1.sid = s1.sid
+JOIN v$lock l2 ON l1.id1 = l2.id1 AND l1.id2 = l2.id2
+JOIN v$session s2 ON l2.sid = s2.sid
+WHERE l1.block = 1 AND l2.request > 0;
+
+📌 Waiting Sessions:
+SELECT blocking_session, sid, serial#, wait_class, event, seconds_in_wait
+FROM v$session
+WHERE blocking_session IS NOT NULL;
+
+🛑 Killing a Blocking Session (Carefully!)
+ALTER SYSTEM KILL SESSION 'sid,serial#' IMMEDIATE;
+
+⚠️ Always confirm with application owners before taking action.
+
+🖥️ Using OEM
+Navigate to:
+Performance → Blocking Sessions
+✔ Visual blocking chains
+✔ Session-level insights
+✔ Faster root cause analysis
+
+🚀 Pro Tips for DBAs
+✔ Keep transactions short
+✔ Maintain consistent table access order
+✔ Monitor regularly (v$session, v$lock)
+✔ Automate alerts for long waits
+✔ Index foreign keys properly
+
+💡 Final Thought:
+Locks are not the problem — unmanaged locks are.
+Proactive monitoring = Stable system = Happy users.
