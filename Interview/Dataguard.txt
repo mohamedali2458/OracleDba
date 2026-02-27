@@ -429,3 +429,118 @@ Below are the steps.
 51. If observor is unable to connect with primary, but it can connect with standby, then what will happen?
 If the observor is unable to connect to primary, then it will check the status of primary, through standby.
 
+
+
+
+
+
+
+
+
+
+
+
+**********************************************************************************************************************************************************************
+                                                                                                                                              Dataguard Questions & Answers
+**********************************************************************************************************************************************************************
+    
+1) What is Dataguard?
+     Data Guard provides a comprehensive set of services that create, maintain, manage, and monitor one or more standby databases to enable production Oracle databases to survive disasters and data corruptions. Data Guard maintains these standby databases as copies of the production database. Data Guard can be used with traditional backup, restoration, and cluster techniques to provide a high level of data protection and data availability.
+
+2) What is DG Broker?
+     DG Broker “it is the management and monitoring tool”.
+     Oracle dataguard broker is a distributed management framework that automates and centralizes the creation , maintenance and monitoring of DG configuration.
+     All management operations can be performed either through OEM, which uses the broker (or)  broker specified command-line tool interface “DGMGRL”.
+
+3) What is the difference between Dataguard and Standby?
+     Dataguard  : 
+     Dataguard is mechanism/tool to maintain standby database.
+     The dataguard is set up between primary and standby instance .
+     Data Guard is only available on Enterprise Edition.
+     Standby Database :
+     Physical standby database provides a physically identical copy of the primary database, with on disk database structures that are identical to the primary database on a block-for-block basis.
+     Standby capability is available on Standard Edition. 
+
+4) What are the types of Oracle Data Guard?
+    Physical standby (Redo Apply technology)
+    Logical standby (SQL Apply Technology)
+
+5) What is Data Guard’s Automatic Gap Resolution?
+     Your database is using ASYNC transport method and the instance load is at the peak. The LNS is unable to keep pace and the log buffer is recycled before the redo can be transmitted to the standby, the LNS automatically transitions to reading and sending from the Online Redo logs. Once the LNS is caught up, it automatically transitions back to reading & sending directly from the log buffer.
+     Now in some cases there can be two or more log switches before the LNS has completed sending the redo information from online redo log files and in meantime if any such required online redo log files were archived then those redo information will be transmitted via Data Guard’s gap resolution process “Automatic Gap Resolution”.
+
+6) What is the difference between Physical standby and Logical standby database?
+     Physical Standby:
+     In this case standby database is an exact, block-by-block, physical replica of the primary database.
+     The change vectors received by RFS process are directly applied to the standby database by using media recovery. so here the apply process read data blocks, assemble redo changes from mappings, and then apply redo changes to data blocks directly.
+     Physical Standby is the best choice for disaster recovery (DR) based upon their simplicity, transparency, high performance, and good data protection.
+
+     Logical Standby:
+     In this case standby database uses SQL Apply method to “mine” the redo by converting it to logical change records, and then building SQL
+     transactions and applying SQL to the standby database.
+     As this process of replaying the workload is more complex than the Physical Standby’s process, so it requires more memory, CPU, and I/O.
+    One good advantage here is that a logical standby database can be opened read-write while SQL Apply is active which means you can update (create/insert/delete etc) local tables and schemas in the logical standby database.
+
+7) What is Active Data Guard Option (Oracle Database 11g Enterprise Edition)?
+     For physical standby database, prior to 11g, the database would have to be in the mount state when media recovery was active which means you were not able to query the standby database during media recovery stage as there was no read-consistent view.
+     Active Data Guard 11g features solves the read consistency problem by use of a “query” SCN. The media recovery process on the standby database will advance the query SCN after all the changes in a transaction have been applied . The query SCN will appear to user as the CURRENT_SCN column in the V$DATABASE view on the standby database. So Read-only users will only be able to see data up to the query SCN, and hence guaranteeing the same read consistency as the primary database.
+    This enables a physical standby database to be open as read-only while media recovery is active, making it useful for doing read-only workloads.
+
+8) What are different Data Guard protection modes?
+    Data Guard protection modes implement rules that controls how the configuration will respond to failures, enabling you to achieve specific objectives for data protection, availability, and performance.
+
+9) What is Switchover event?
+      Switchover is useful for minimizing downtime during planned maintenance. It is a planned event in which Data Guard reverses the roles of the primary and a standby database.
+      The primary database runs unaffected while we are making the required changes on our standby database (e.g. patchset upgrades, full Oracle version upgrades, etc).
+      Once changes are complete, production is switched over to the standby site running at the new release.
+
+10) What is Failover event?
+       The Failover process is similar to switchover event except that the primary database never has the chance to write an EOR record as this is an unplanned event.
+
+11) Which tools can be used for Data Guard Management?
+      1) SQL*Plus – traditional method, can prove most tedious to use
+      2) Data Guard broker – automates and centralizes the creation, maintenance, and monitoring of a Data Guard configuration. Simplifies and automates many administrative
+          tasks. It has its own command line (DGMGRL) and syntax.
+      3) Enterprise Manager – requires that the Data Guard broker be enabled. a GUI to the Data Guard broker, replacing the DGMGRL command line and interfacing directly with the broker’s monitor processes.
+
+12) What is Data Guard 11g snapshot standby?
+      With 11g, you can thoroughly test your changes on a true replica of your production system and database using actual production workload.
+      Data Guard 11g physical standby can now be converted to a snapshot standby, independent of the primary database, that is open read-write and able to be used for preproduction testing. It uses Flashback Database and sets a guaranteed restore point (GRP) at the SCN before the standby was open read-write.
+
+13) What are the advantages in using Oracle Data Guard?
+      High Availability.
+      Data Protection.
+      Off-loading Backup operation to standby database.
+      Automatic Gap detection and Resolution in standby database.
+      Automatic Role Transition using Data Guard Broker.
+
+14) What are the different services available in Oracle Data Guard?
+       Redo Transport Services.
+       Log Apply Services.
+       Role -Transitions.
+
+15) What are the different Protection modes available in Oracle Data Guard?
+      Maximum Protection
+      Maximum Availability
+      Maximum Performance
+
+16) How to check what protection mode of primary database in your Oracle Data Guard?
+      SELECT PROTECTION_MODE FROM V$DATABASE;
+
+17) What are the advantages of using Physical standby database in Oracle Data Guard?
+      High Availability.
+      Load balancing (Backup and Reporting).
+      Data Protection.
+      Disaster Recovery.
+
+18) How many standby databases we can create (in 10g/11g)?
+      Till Oracle 10g, 9 standby databases are supported.
+      From Oracle 11g R2, we can create 30 standby databases.
+
+19) What are the services required on primary database?
+       Primary database requires log writer to generate log information, archiver process to generate archive log files, and fetch archive log server to request the archive log files from standby database.
+
+20) What happens when stand by database is not available?
+       If standby database is not available and the changes are made in primary database, then there will be a gap in the sequence of archive logs. The information about archive logs in these gaps can be found in the v$archieve_gap view.
+ 
+========================================================================THE END===============================================================================	

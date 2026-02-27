@@ -960,3 +960,106 @@ Control file stores information about log switches, checkpoints, and modificatio
       Changes ownership & permissions of oraInventory
       Creating oratab file in the /etc directory
       In RAC, starts the clusterware stack
+
+
+
+
+
+
+
+what happens when issues a ddl statement in oracle
+
+A user runs a DDL statement such as CREATE, DROP, RENAME, or ALTER. 
+If the current transaction contains any DML statements, Oracle first 
+commits the transaction, and then runs and commits the DDL statement 
+as a new, single statement transaction. A user disconnects 
+from Oracle. The current transaction is committed.
+
+
+Is commit required for DDL statements?
+
+DDL is auto commit and you need not to issue commit statement 
+as it affects on structure or meta data in the database while 
+in DML, it affects on data. That's why, DML require commit 
+or rollback to same or revert your changes.
+
+
+What Happens to the Current Transaction If a DDL Statement Is Executed? 
+
+If a DDL statement is executed, the current transaction will be 
+committed and ended. All the database changes made in the current 
+transaction will become permanent. ... The subsequent ROLLBACK 
+statement has no effects on the closed transaction.
+
+
+How do I rollback a DDL in Oracle?
+
+The Rollback statement undoes all changes for the current session 
+up to the savepoint specified. When you execute a DDL operation, 
+there is an implied commit after the DDL. The save point is then 
+changed to the position following the DDL operation.
+
+
+Is commit required after delete in Oracle?
+
+If you want to remove all the rows from a table, the TRUNCATE 
+TABLE statement is a lot more efficient than the DELETE statement. 
+The TRUNCATE TABLE statement is a DDL command, so it includes an 
+implicit COMMIT, so there is no way to issue a ROLLBACK if you decide 
+you didn't want to remove the rows.
+
+
+Is Alter DDL or DML?
+
+DML is Data Manipulation Language which is used to manipulate data 
+itself. For example: insert, update, delete are instructions in SQL. 
+It stands for Data Definition Language. ... Basic command present in 
+DDL are CREATE, DROP, RENAME, ALTER etc.
+
+
+What is the difference between DDL and DML?
+
+The basic difference between DDL and DML is that DDL (Data Definition 
+Language) is used to Specify the database schema database structure. 
+On the other hand, DML (Data Manipulation Language) is used to access, 
+modify or retrieve the data from the database.
+
+
+Which statement is used to end a successful transaction?
+
+Explanation: COMMIT WORK marks the end of a transaction.
+
+
+How commit and rollback works in Oracle?
+
+What is a Transaction?
+COMMIT : Make changes done in transaction permanent.
+ROLLBACK : Rollbacks the state of database to the last commit point.
+SAVEPOINT : Use to specify a point in transaction to which later you can rollback.
+
+
+What are transaction and its controls?
+
+Transaction Control is an active and connected transformation which allows 
+us to commit or rollback transactions during the execution of the mapping. 
+Commit and rollback operations are of significant importance as it guarantees 
+the availability of data.
+
+
+Can we rollback DDL commands?
+
+DDL statements do roll back. If the DDL statement hits an error before 
+it completes, the operation will be rolled back. But if the DDL statement 
+was successful, it will immediately be followed by an implicit COMMIT. 
+Since the COMMIT was issued for you, you cannot issue a ROLLBACK to undo 
+the DDL statement.
+
+
+Can we combine multiple DDL statements together?
+
+Create multiple tables in a single transaction in Oracle
+As we can see in this tip SQL Server allows us to include 
+multiple DDL commands in a single transaction in contrast 
+to Oracle. The latter commits transactions when a DDL command 
+is issued, so it is not possible to combine DDL statements in 
+one transaction.
