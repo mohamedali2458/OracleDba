@@ -44,4 +44,3 @@ sudo -u postgres psql
 show data_directory;
 /postgres/data
 (1 row)
-

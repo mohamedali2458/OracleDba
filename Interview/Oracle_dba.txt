@@ -1063,3 +1063,345 @@ multiple DDL commands in a single transaction in contrast
 to Oracle. The latter commits transactions when a DDL command 
 is issued, so it is not possible to combine DDL statements in 
 one transaction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4)Oracle architecture?(Total)
+A- oracle rdbms consists of an instance and a database.
+	.The instance consists of Background processes and memory.
+	.The database consists of physical and logical files.
+	.The mandatory background procosses are pmon, smon, dbwr, lgwr, ckpt.
+	.The memory consists of SGA and PGA.
+	.The physical files include the os level files like datafiles(system,sysaux,temp,undo,users, 
+	 other datafiles,redologs,Archivelogs,controlfile,spfile/pfile)
+	.The logical files include tablespaces.
+
+5)Explain role of SMON?
+A- 	1.Upon restarting an instance that crashed, SMON determines whether the database is consistent
+   	2.SMON coalesces free extents if you use locally managed tablespaces, which enables you to
+     	  assign larger contiguous free areas on disk to your database objects.
+   	3.SMON cleans up unnecessary temporary segments.
+
+6)How you get the ticket?
+A- i book tickets(movie,bus,train) online.. internet banking(makes life easy)
+
+7)Which error you find in alert log file?
+A- The alert log captures major changes and events that occur during the running of the
+	 Oracle instance, including log switches, any Oracle-related errors, warnings, and other messages. 
+	.In addition, the alert log contains messages regarding internal errors and corruption errors.
+	.to investigate background process errors 
+	 For example, when the log writer process is unable to write to a log group,
+	 or indicating that the archiver process is stuck due to lack of disk space.
+
+8)What is the use of index, why to rebuid, pre-req for index?
+A- Oracle indexes provide speedy access to table rows by storing sorted values
+ 	of specified columns, and using those sorted values to easily look up the associated table rows,
+		
+	 why to rebuid indexes::
+	 ::Index data constantly changes due to the underlying table s DML activity. Indexes often become too large if there are many deletions, because the space used by the deleted values is not reused automatically by the index. You can use the REBUILD command on a periodic basis to reorganize indexes to make them more compact and thus more efficient.
+
+	 Prerequisites to create index::
+     	 To create an index in your own schema, at least one of the following conditions must be true:
+	 ..The table or cluster to be indexed is in your own schema.
+	 ..You have INDEX privilege on the table to be indexed.
+	 ..You have CREATE ANY INDEX system privilege.
+
+         To create an index in another schema, all of the following conditions must be true:		
+	 ..You have CREATE ANY INDEX system privilege.
+	 ..The owner of the other schema has a quota for the tablespaces to contain the index or index partitions, or UNLIMITED TABLESPACE system privilege
+
+9)If ur moving one table from one tbs to another what is pre-req, then whats the status of index?
+A- The status becomes Invalid. rebuild the index
+
+10)How to find no of user connected to ur database?
+
+11)Installation and its pre-req, kernel parameter, scripts(orainstROOT.sh,root.sh)?
+
+12)Upgradation 10.2.0.2.0 to 11.2.0.2.0 and pre-req,any other method to upgrade?
+
+13)Manual database creation and pre-req?
+
+14)How you migrate schema?
+
+16)How to import without taking export,network link?
+A- When you use network_link parameter during import,
+	we are directly connected to the target database using database link(network link)
+`	hence no need to take any export. and anyways we cannot specify dumpfile parameter if 
+	are using network_link parameter during import.
+
+17)How to clone from server A to server B?
+
+18)How will you check standby is in sync or not, if not what will you do?
+
+19)What is ASM, its use?
+A- Automatic Storage Management (ASM) is an integrated, high-performance database file system and disk manager. 
+	.ASM is based on the principle that the database should manage storage instead of requiring an administrator to do it.
+	.ASM eliminates the need for you to directly manage potentially thousands of Oracle database files.
+	USE::
+	.ASM groups the disks in your storage system into one or more disk groups.You manage a small set of disk groups and ASM automates the placement of the database files within those disk groups.
+	
+benefits::
+	.Striping ASM spreads data evenly across all disks in a disk group.
+	.Mirroring ASM can increase availability by optionally mirroring any file.
+
+	Key Value Propositions::
+	MANAGEABILITY- Simple provisioning, Storage Array migration, Self-tuning 
+	PERFORMANCE- Distribute load across all available storage, No ASM code in data path
+	AVAILABILITY- Automatic mirror rebuild, Automatic bad block correction,Rolling upgrades,online patches, RAC and clusterware support.
+
+	COST SAVINGS- Shared storage pool, No license fees,No support fees.
+
+20)Basic Unix command?
+A- cp,mv,grep,find,ls,unzip,tar,mkdir,cd,www.google.com(best command ever)
+
+21)Software cloning?
+
+22)What is role?
+A- A role is a set of privileges that you can grant and revoke with a single GRANT or REVOKE command. 
+	A role can contain both a set of privileges and other roles as well. Roles make it easy for
+	you to assign multiple privileges to a user.
+
+23)How to apply to Opatch?
+A- To apply Opatch, db, listener and all services runing from O_H both must be down as opatch will
+	 update your current ORACLE_HOME with patches.
+	.check database status(select name,open_mode,database_name,created,log_mode,platform_name
+	 from v$database;)
+	.take a backup of invalid objects if there are any(select owner,count(*) from dba_objects
+	 where status='INVALID' group by owner;) 
+	.Check Opatch version (opatch -v)
+	.Check whether or not opatch utility is pointing to you current ORACLE_HOME(cat /etc/oraInst.loc)
+	 if your server has more than 1 ORACLE HOMES then comment all other ORACLE HOMES
+	.check free space on $ORACLE_HOME(df -h $ORACLE_HOME)
+	.unzip the patch
+	.Go the patch directory
+	.now apply the patch (opatch napply -skip_subset -skip_duplicate)
+	.to apply opatch in RAC instance(opatch napply -skip_subset -skip_duplicate -local -oh)
+	 when using -local parameter and -oh $ORACLE_HOME this means this patch session will only apply
+	 patch to current ORACLE_HOME only. 
+
+WHAT happens in background during patching::
+	1.Opatch takes backup of those files from O_H which it is going to update
+	2.It takes this backup in O_H/.patch_storage directory
+	3. It then copies files from /etc and /files to O_H
+	4.After that it takes backup of Inventory in /files
+	5.Relinks all O_H binaries and update invenrtory with patch ID
+	6.Finally it displays- patch applied
+
+24) How to check disk space?
+Ans : by using df -h command at OS prompt.
+
+25)What is grep?
+Ans : The grep program searches a file or files for lines that have a certain pattern. The syntax is:
+	$ grep "pattern" file(s)
+	The name "grep" derives from the ed (a Unix line editor) command g/re/p, which means "globally search for a regular expression and print all lines containing it."
+
+26)What is explain plan?
+
+27)Types of backup?
+Ans : physical backup - , logical backup
+
+28)Difference between cold and hot backup?
+Ans : When we take cold backup, db must be down gracefully, while taking backup in hot mode there is no need to shut down the db. We can take hot backup in open state also.
+
+29)How to take hot backup, which files you take in hot backup?
+Ans : 	To take hot backup, we must fire :
+		alter database begin backup;
+	After taking db in begin backup mode, i copy all datafiles and controlfile to backup location. when copy is done we must fire
+		alter database end backup;
+	select * from v$backup;
+	by doing this, db is out of begin backup mode. At last we must switch logfile, by doing this it indicates that hot backup is done. this information is stored in control file.
+	
+30)What happen to the db when we put db is in begin backup mode?
+Ans :  	when we put db in begin backup mode, the header portion of datafile is freezed and DBWn process starts writing dirty blocks into datafiles as well as log buffer. Because of this excessive redo generation happens.
+
+31)How to check tablespace usage?
+Ans :	we can check this from dba_tablespace_usage_metrics
+
+32)Database shutdown command?
+Ans :	this command brought down the database instance. it have three type of modes to shut down the database instance.
+	shutdown normal, shutdown transactional, shutdown abort
+
+33)What is normal shutdown?
+Ans :	when sys fires shutdown normal command, it will wait till other users logged out of their session. No new user will connect to the database instance. All transaction will commit.
+
+34)Difference between 10g and 11g?
+
+35)11g features?
+Ans :	 Automatic Storage Management (ASM)
+	 Automatic Memory Management
+	 Automatic Database Diagnostic Monitor (ADDM)
+	 Automatic Workload Repository (AWR)
+	 Scheduler AutoTask automated maintenance tasks
+	 Parameter file management changes and new features
+	 Resource Manager
+	 Finer-grained dependencies
+	 DDL WAIT
+	 Add column with defaults
+
+36)How to create recovery catalog?
+Ans :	creating recovery catalog means you have to create a new database (probably on other machine). Just do DBCA or 
+	you can create manual database.
+
+37)How will you configure RMAN backup with recovery catalog?
+Ans :	there are two machines with A and B.... we have database on A... so we create one database on B and create a new
+	blank tablespace. Now create a new user and assign that tablespace with unlimited quota to the user. Now assign
+	REMOTE_CATALOG_OWNER role. The listener of machine B must be on and the database must be registered with the
+	Listener.
+	Later, go to machine A and create one tns entry that will connect machine A to B. Now, connect to rman using
+	rman target=/ catalog=rmanuser/rmanuser@tns. create catalog from machine A, will create catalog tables in the
+	user schema on machine B's database. Now register the database using register database command...
+
+38)Difference between user managed and RMAN?
+Ans : 	we can take incremental backup using RMAN, not with user managed backup.
+	automatically take backup of controlfile and spfile, user managed backup doesnt take.
+	by allocating channels we can increase the speed of backup from RMAN, it is copy tool of OS depends upon IO.
+	we can do block level recovery using RMAN, user managed backup only recover datafiles and controlfiles.
+
+39)If tablespace is getting full what will you do,resize or add a datafile and why?
+
+40)What is the pre-req for export,import?
+Ans :	first we need to have physical directory on OS. second sys will create logical directory inside the physical directory. next,
+	if needed sys will grant read and write privilege on the logical directory to other users.
+
+41)If you want to take export of 3 schemas out of which 5 tables need to be exported .What would be the command of export?
+Ans :	expdp sys/sys directory=dir dumpfile =dmp logfile=log schemas=sc1,sc2,sc3 include=tables:"schema.tbnm1,shema.tbnm2,
+	schema.tbnm3,schema.tbnm4,schema.tbnm5" 
+
+42)Contains of export log file in detail?(expdat.log)
+Ans :	specifies the file where to receive informational and error messages.
+
+43)What is difference between exp and expdp?
+Ans :	exp is client base utility while expdp is server based.
+
+44)How will you check db is in archivelog mode?
+Ans : 	by checking log_mode from v$database view.
+
+45)Output of archive log list command?
+Ans :	The archive log list command output is as follows :
+	Database log mode              Archive Mode
+	Automatic archival             Enabled
+	Archive destination            USE_DB_RECOVERY_FILE_DEST
+	Oldest online log sequence     34
+	Next log sequence to archive   36
+	Current log sequence           36
+
+46)How to check the no of transaction running on ur database?
+Ans :	Database Level :
+		to check how many transaction in database, we can fire following command...
+			-->	select count(*) from v$transaction v, v$session s
+				where v.ses_addr = s.saddr;
+	Session Level :
+		to check how many transaction in users own session, we can fire following command...
+			-->	select count(*) from v$transaction v, v$session s, v$mystat m
+				where v.ses_addr = s.saddr
+				and s.sid=m.sid
+				and rownum=1;
+
+47)How to create tablespace?(cmd)
+Ans : 	Create [smallfile/bigfile] tablespace tbsname
+	datafile 'path of datafile'
+	size ___ [autoextent ON/OFF] [next___][maxsize___]
+	[extent management local/dictionary]
+	[segment space management Auto/Manual]
+	[Parmanent/Temporary]
+	[logging/nologging]
+	[blocksize ____]
+	[online/offline];
+
+48)How to create temporary tablespace?(cmd)
+Ans : 	Create temporary tablespace tbsname
+	tempfile 'path of tempfile';
+
+49)How to create user,unlock,lock?
+Ans : 	Creating user : create user username account unlock;
+	unlock user : 
+	
+50)Difference between pfile and spfile?
+Ans :	its in notebook
+
+51)What in controlfile and its contain,what is the need of multiplexing of controlfile?
+Ans :	its in notebook
+
+52)What is db/network link and pre-req and tns-entry?
+Ans :	a link between two servers to get connected to the database for copying tables data.
+	to create a dblink user must have CREATE DATABASE LINK system privilege.
+	tns-entry file can be located on server as well as on client side. if we configure tnsnames.ora on client side, so
+	you can connect your client workstation to the database through the listener running on the server.
+
+53)How many redolog group and member mandatory for database?
+Ans :	for each group, there must be a single redolog member per group, but for security purpose each group could have two
+	redolog members.
+
+54)What happen when redolog group get full?
+Ans :	database goes into hang state... then only sys user can logged in and add members in that groupor resize the size of 
+	member. No other users can logged in the database instance.
+
+55)What is undo segment,undo retention?
+Ans :	Undo Segment : the undo segment is the space where undo data is stored which is located in the undo tablespace.
+	Undo Retention : it is a period that any new transaction will not wrap the undo extents of the other transaction, who
+	had already access that undo extent.
+
+56)How to rename tablespace/datafile?
+Ans: We can rename tablespace by using following command :
+	alter tablespace oldtbsname rename to newtbsname;
+We can also rename datafile by :
+	alter tablespace tbsname
+	rename datafile
+	'old path of datafile'
+	to
+	'new path of datafile';
+
+57)What is undo tablespace?
+Ans : 	it is a tablespace, which is useful for read consistancy, possibility of doing transaction rollback and having
+	recoverability of transaction. Using undo tablespace we can also do flashback. Undo tablespace is required in each
+	database.
+
+58)What is block corruption and how to recover it,How to find out block corruption?
+Ans :	Data block corruption can damage internal Oracle control information or application and user data, leading to crippling loss of critical data and services. Block corruptions may affect only a single block or a large portion of the database.
+	We can find out block corruption from some solutions such as..
+	Oracle Data Guard, Data Recovery Advisory, Oracle Flashback, Oracle Recovery Manager, Automatic Diagnostic Recovery,
+	Oracle Secure Backup, The MAA Advisor component of Oracle Enterprise Manager Grid Control, Exadata storage....
+	to prevention and detection block corruption is to use Oracle Data Guard  with physical standby databases and
+	configure the DB_BLOCK_CHECKING,DB_ULTRA_SAFE, DB_BLOCK_CHECKSUM and DB_LOST_WRITE_PROTECT parameters on Data Guard
+	primary and standby databases. ALSO REFER RMAN-Recovering-Block-Corruption
+ FROM M:\ORACLE\Oracle_Study_Docs\Word Docs
+
+59)How you come to know that user account is lock and what action you take?
+Ans : 	i will get the information of locked users from dba_users where account_status displays current status of users 
+	account. on the users request i will unlock that account via :
+		alter user username identified by password account unlock;
+	
+60)How/why to analyse table?
+Ans :	to analyse tables we must have recently collected statistics of the tables. we can get it by using a package :
+	DBMS_STATUS.gather_table_stats;
+	now we can analyse table via....
+	analyze table tbname validate structure;
+	we can also validate dependent object likes indexes using cascade options...
+	analyze table tbname validate structure cascade;
+	by default cascade option will don complete validation. we can increase the speed by....
+	analyze table tbname validate structure cascade fast;
+	we can also analyse table while some DML operation are performing on the table....
+	analyze table tbname validate structure cascade online;
+
+61)What will you do if your mount point usage goes beyond threshold value?
+
+62)How will you recover datafile which found missing in database?
+Ans :	it depend upon the file that is critical or non-critical, we check that datafile is in backup what we took earlier.
+	then we restore the datafile and recover it.

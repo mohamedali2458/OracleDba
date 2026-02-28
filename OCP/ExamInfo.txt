@@ -1,0 +1,23 @@
+Oracle Database Foundations Associate
+1Z0-006
+Associate
+Beginner-level: RDBMS concepts, SQL basics, intro to DB admin. Prerequisite for advanced certs.
+
+
+Oracle Database Administration I
+1Z0-082
+Professional
+Consolidated exam covering SQL + DB administration
+
+
+Oracle Database Administration II
+1Z0-083
+Professional
+Advanced DBA skills: performance tuning, backup & recovery, security
+
+
+Oracle AI Cloud Database Services 2025 Certified Professional
+(New 2025)
+Professional
+🆕 Validates OCI AI Database Cloud Services: configuration, monitoring, DB management
+

@@ -1,46 +1,46 @@
 Group Administration
 ====================
-1. To add a new group
+#1. To add a new group
 [root@localhost ~]# groupadd amerpetgrp
 grep amerpetgrp /etc/group
 
-2. adding a new group with gid 5000
+#2. adding a new group with gid 5000
 groupadd -g 5000 banjaragrp
 grep banjaragrp /etc/group
 
-3. modifying group with gid
+#3. modifying group with gid
 groupmod -g 6000 banjaragrp
 grep banjaragrp /etc/group
 
-4. Changing the name of a existing group
+#4. Changing the name of a existing group
 groupmod -n banjarahills banjaragrp
 grep banjarahills /etc/group
 
 groupdel banjarahills
 grep banjarahils /etc/group
 
-5. To add users as a Secondary users in a Group
+#5. To add users as a Secondary users in a Group
 useradd jack
 useradd shyam
 useradd wiliam
 gpasswd -M jack,shyam,wiliam salesgrp
 grep salesgrp /etc/group
 
-6. Removing user wiliam from group salesgrp
+#6. Removing user wiliam from group salesgrp
 gpasswd -d wiliam salesgrp
 grep salesgrp /etc/group
 
-7. Adding user wiliam to group salesgrp
+#7. Adding user wiliam to group salesgrp
 gpasswd -a wiliam salesgrp
 grep salesgrp /etc/group
 
 
 
-PERMISSIONS
+#PERMISSIONS
 ===========
 Pre-requisites:
 Before working on this lab, you must have 
-6. A computer with LINUX Operating System.
+#6. A computer with LINUX Operating System.
 
 Lab - 5.1 : PERMISSIONS
 -----------------------

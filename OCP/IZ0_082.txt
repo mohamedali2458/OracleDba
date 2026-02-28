@@ -1,0 +1,140 @@
+Oracle Database Administration I — Exam 1Z0-082 Syllabus
+
+Exam Code	         1Z0-082
+Exam Title	         Oracle Database Administration I
+Certification	     Oracle Database Administration 2019 Certified Professional (OCP)
+Database Version	 Oracle Database 19c
+Number of Questions	 72 Multiple Choice
+Duration	         120 Minutes
+Passing Score	     60%
+Prerequisites	     None (but DBA experience recommended)
+
+
+📋 Full Syllabus Topics
+
+1️⃣ Oracle Database Architecture
+    Identify key structural components of an Oracle Database
+    Describe the Oracle Database Server Architecture
+    Understand Memory Structures:
+        SGA (System Global Area): Buffer Cache, Shared Pool, Redo Log Buffer, Large Pool
+        PGA (Program Global Area)
+    Describe Process Structures: Background processes (SMON, PMON, LGWR, DBWR, CKPT, ARCn)
+    Understand Logical vs Physical Storage structures:
+        Logical: Tablespaces → Segments → Extents → Blocks
+        Physical: Datafiles, Control Files, Redo Log Files
+
+2️⃣ Managing Database Instances
+    Start up and shut down Oracle Database instances (STARTUP, SHUTDOWN modes)
+    Configure and manage Initialization Parameter Files (PFILE / SPFILE)
+    Use Data Dictionary Views (DBA_*, ALL_*, USER_*)
+    Use Dynamic Performance Views (V$ views)
+    Use Automatic Diagnostic Repository (ADR)
+    Read and analyze Alert Log and Trace Files
+    Monitor the database instance using Enterprise Manager and SQL*Plus
+
+3️⃣ Accessing Oracle Database with Tools
+    Navigate and use:
+        SQL*Plus (command-line)
+        SQL Developer (GUI)
+        Oracle Enterprise Manager (OEM) (web-based)
+    Execute queries and administrative commands
+    Troubleshoot connection and login issues
+
+4️⃣ Configuring Oracle Net Services
+    Configure and manage the Listener (listener.ora)
+    Configure tnsnames.ora and connection strings
+    Understand network protocols (TCP/IP)
+    Administer Naming Methods: Local naming, Easy Connect, LDAP
+    Compare Dedicated Server vs Shared Server configurations
+    Diagnose and resolve connectivity problems
+
+5️⃣ Managing Users, Roles & Privileges
+    Create, modify, drop database users
+    Assign System Privileges (CREATE SESSION, CREATE TABLE, etc.)
+    Assign Object Privileges (SELECT, INSERT, UPDATE, DELETE on objects)
+    Create and manage Roles
+    Set Quotas on tablespaces for users
+    Create and assign Profiles (password policy, resource limits)
+    Administer user authentication methods
+    Apply the Principle of Least Privilege (security best practices)
+
+6️⃣ Managing Storage
+    Understand logical storage: Tablespaces, Segments, Extents, Blocks
+    Understand physical storage: Datafiles, Tempfiles, Control Files
+    Create, alter, drop, move, rename tablespaces and datafiles
+    Manage different types of segments: Table, Index, Undo, Temp
+    Implement Oracle Managed Files (OMF)
+    Use space-saving features: table compression, deduplication
+    Manage resumable space allocation
+    Monitor storage with DBA_SEGMENTS, DBA_EXTENTS, DBA_FREE_SPACE
+
+7️⃣ Managing Undo Data
+    Understand the purpose and role of Undo/Rollback
+    Difference between Undo data vs Redo data
+    Configure Undo Tablespace and Undo Retention
+    Understand the UNDO_RETENTION parameter
+    Troubleshoot undo-related errors (ORA-01555: Snapshot too old)
+    Manage undo in Automatic Undo Management (AUM) mode
+
+8️⃣ Managing Schema Objects (SQL DDL & DML)
+    DDL (Data Definition Language):
+        Create, alter, drop: TABLE, INDEX, VIEW, SEQUENCE, SYNONYM
+        Manage constraints: PRIMARY KEY, FOREIGN KEY, UNIQUE, CHECK, NOT NULL
+        Create and manage Views (simple and complex)
+        Use Sequences for auto-increment values
+        Create Synonyms (public and private)
+    DML (Data Manipulation Language):
+        INSERT, UPDATE, DELETE, MERGE
+        Understanding Transactions: COMMIT, ROLLBACK, SAVEPOINT
+    SQL Queries:
+        SELECT with WHERE, ORDER BY, GROUP BY, HAVING
+        Single-row and multi-row SQL Functions
+        Joins: INNER, LEFT/RIGHT OUTER, FULL OUTER, CROSS
+        Subqueries: Single-row, Multi-row, Correlated
+        Conversion Functions: TO_DATE, TO_CHAR, TO_NUMBER
+        Conditional Expressions: CASE, DECODE
+        Manage data in different time zones: TIMESTAMP WITH TIME ZONE, TIMESTAMP WITH LOCAL TIME ZONE
+
+9️⃣ Moving Data
+    Use Data Pump Export/Import (expdp / impdp):
+        Full, Schema, Table-level exports/imports
+        Directory objects setup
+    Use traditional Export/Import (exp / imp)
+    Use SQL*Loader to load data from flat files
+    Understand External Tables for data loading
+    Validate data integrity during migration
+
+🔟 Oracle Database Monitoring & Maintenance
+    Use Automatic Workload Repository (AWR) for performance snapshots
+    Use Automatic Database Diagnostic Monitor (ADDM)
+    Run Advisor tools: SQL Tuning Advisor, Segment Advisor
+    Monitor and manage redo log groups and members
+    Manage archived redo logs and understand ARCHIVELOG vs NOARCHIVELOG mode
+    Use Flashback features (Flashback Query, Flashback Table)
+
+🎯 Skills Measured — Approximate Weight
+        Topic Area	                        Weight
+        Oracle Architecture & Instances	    ~15%
+        Storage & Undo Management	        ~20%
+        Users, Roles & Security	            ~15%
+        SQL (DDL, DML, Queries)	            ~25%
+        Net Services & Tools	            ~10%
+        Data Movement & Maintenance	        ~15%
+
+📖 Recommended Study Resources
+        Resource	                                Details
+        Oracle Database 19c Concepts Guide	        docs.oracle.com — Free
+        Oracle Database 19c Administrator's Guide	docs.oracle.com — Free
+        Oracle University Course	                "Oracle Database: Administration Workshop"
+        Oracle Learning Explorer	                Free foundational labs online
+        Oracle Live SQL	                            Practice SQL online free at livesql.oracle.com
+
+
+💡 Tips for Passing 1Z0-082:
+
+    The SQL section is heavily tested (~25%) — master joins, subqueries, and functions
+    Know your V$ views like V$SESSION, V$PROCESS, V$TABLESPACE, V$LOG
+    Understand startup/shutdown modes deeply: NOMOUNT, MOUNT, OPEN
+    Practice with a real Oracle 19c database — Oracle provides a free Oracle Database XE (Express Edition)
+    This exam is a combined SQL + DBA exam, so prior SQL knowledge is essential
+    

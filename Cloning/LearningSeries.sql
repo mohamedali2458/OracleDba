@@ -1214,3 +1214,109 @@ DBA Tips
 2) Keep rollback plan ready before every migration 
 3) Document every step — logs save you during issues.
 4) Use GoldenGate for near-zero downtime migration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+📌Oracle DBA Knowledge Day 148:- Checking Oracle RAC Cluster Health
+
+Monitoring the health of your Oracle RAC cluster is critical to ensure high availability and performance. As a DBA, you should regularly verify that all cluster components are running properly.
+
+🔍 1. Check Cluster Status
+crsctl check cluster -all
+✔ Verifies Clusterware status on all nodes
+
+🔍 2. Check Cluster Resources
+crsctl stat res -t
+✔ Shows status of all resources (database, ASM, listeners, services)
+
+🔍 3. Check Node Applications
+crsctl stat res -t -init
+✔ Displays node-level resources like VIP, network, and ONS
+
+🔍 4. Verify Database Status
+srvctl status database -d <db_name>
+
+🔍 5. Verify Instance Status
+srvctl status instance -d <db_name>
+
+🔍 6. Check ASM Status
+srvctl status asm
+
+🔍 7. Check Voting Disk
+crsctl query css votedisk
+
+🔍 8. Check OCR Health
+ocrcheck
+
+💡 Why This Matters?
+Regular health checks help detect issues early — preventing node eviction, service downtime, or cluster failures.
+
+🔥 Pro Tip:
+Make a daily checklist for RAC health monitoring — this is often asked in interviews and required in production support roles.
+
+
+
+
+
+
+
+
+
+
+Turning Instability into Reliability: Oracle DBA Case Study
+
+I encountered repeated database crashes and file corruption due to missing ARCHIVELOG mode and incomplete backup routines.
+By systematically addressing the issues, I:
+
+Enabled ARCHIVELOG mode to ensure consistent recovery
+
+Implemented RMAN backups (datafiles, archivelogs, controlfile, SPFILE)
+
+Configured controlfile autobackup for metadata safety
+
+Applied retention policy + delete obsolete to keep the Fast Recovery Area clean
+
+The result: a stable environment, error‑proof backups, and instant recovery capability with zero data loss.
+
+👉 Key takeaway: A disciplined backup and recovery strategy is not just technical hygiene — it is the backbone of business continuity.
+
+
+--Enable ARCHIVELOG mode
+SQL> SHUTDOWN IMMEDIATE;
+SQL> STARTUP MOUNT;
+SQL> ALTER DATABASE ARCHIVELOG;
+SQL> ALTER DATABASE OPEN;
+
+--Take full backup with archivelogs
+rman target /
+backup database plus archivelog;
+
+--Crosscheck backups
+crosscheck backup;
+
+--Report obsolete backups
+report obsolete;
+
+--Delete obsolete backups
+delete obsolete;
+
+--Show RMAN configuration
+show all;
+
+--Configure retention policy(example: keep 2 backups)
+configure retention policy to recovery window of 2 days;
+configure controlfile autobackup on;
+configure retention policy to redundancy 2;
+
