@@ -1,0 +1,55 @@
+#day6
+hashtag#oracledatabase
+
+🔷 What is PGA (Program Global Area)?
+
+The PGA (Program Global Area) is a private memory structure allocated in RAM for each Oracle server process.
+It is used by a single process to perform sorting, hashing, and session-related operations.
+
+👉 In simple words:
+
+PGA = Private Memory of Oracle Process
+
+
+🧠 Key Points to Remember:
+
+👉 PGA is temporary (exists only while the session/process is running)
+👉 Allocated when a user session or server process starts
+👉 Released when the session ends
+👉 NOT shared between users
+👉 Plays a major role in query performance
+
+
+🧩 Purpose of PGA 👉 Used to:
+
+Perform sorting and hashing operations
+Manage session-related processing
+Support query execution memory needs
+Reduce disk-based TEMP usage
+
+
+📌 Important DBA Point:
+
+👉 Proper PGA sizing is critical for:
+Database performance
+Memory utilization
+System stability
+
+Too small → Slow queries & TEMP spills
+Too large → OS memory pressure
+
+
+🔥 Simple Concept to Remember:
+
+PGA = Personal Brain of Oracle Process
+Private for each user
+Works only for that process
+
+
+🧑‍💻 As a DBA, PGA Means:
+
+👉 You monitor and tune it using:
+PGA_AGGREGATE_TARGET
+PGA_AGGREGATE_LIMIT
+
+To ensure fast query execution and stable system performance.

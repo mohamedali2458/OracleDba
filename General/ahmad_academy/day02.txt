@@ -1,0 +1,50 @@
+#day2
+
+🔷 Parts of Oracle Server
+
+Oracle Server has two main core parts that work together to store and manage data efficiently.
+
+👉 In simple words:
+Oracle Server = Oracle Instance + Oracle Database
+
+
+🚀 Quick Interview Definition-:
+Oracle Server consists of an Oracle Instance (memory and background processes) and an Oracle Database (physical files on disk) that together manage and process enterprise data.
+
+
+🚀 One Line Definition -:
+“Oracle Server has two main parts: Oracle Instance and Oracle Database.”
+
+🧩 Main Parts of Oracle Server
+
+✅ 1. Oracle Instance (Logical Part)
+
+👉 Runs in Memory (RAM)
+
+Memory Structures (SGA, PGA)
+
+Background Processes (DBWn, LGWR, SMON, PMON, CKPT, etc.)
+
+✅ 2. Oracle Database (Physical Part)
+
+👉 Stored on Disk
+
+Datafiles
+
+Control Files
+
+Redo Log Files
+
+Tempfiles
+
+Archive Log Files
+
+🔥 Simple Concept to Remember
+
+Instance = Brain (Memory + Processes)
+
+Database = Body (Physical Files)
+
+
+🧑‍💻 As a DBA, Parts of Oracle Server Mean:
+👉 What you START, STOP, BACKUP, TUNE, MONITOR, and SECURE every day.

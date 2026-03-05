@@ -1,0 +1,86 @@
+#day8
+hashtag#oracledatabase
+
+🔷 What is MGA in Oracle Database?
+
+✅ MGA = Managed Global Area
+
+👉 MGA is a semi-shared memory framework introduced in Oracle 12.2 (12cR2) that allows a group of Oracle processes to share memory in a controlled way.
+
+🧠 Simple Definition 
+
+MGA is a memory layer between SGA and PGA that allows trusted Oracle processes to share memory efficiently.
+
+🏗️ Oracle Memory Model 
+
+SGA → Fully shared by all processes MGA → Semi-shared by selected process groups PGA → Private per process 
+
+🧩 Why Oracle Introduced MGA?
+
+Before MGA:
+SGA = global shared memory (scaling problem)
+PGA = duplicated memory per process (wasteful)
+Oracle needed:
+✅ Shared memory without global contention
+✅ Less duplication than PGA
+✅ More scalable than SGA
+✅ Faster IPC than pipes/sockets
+👉 MGA solves modern scalability problems in big systems.
+
+📦 What Does MGA Do Internally?
+
+MGA provides shared memory namespaces for Oracle internal layers.
+Used for (Internal Oracle Engine)
+Parallel Execution coordination
+Multitenant internal structures
+Background process coordination
+Shared runtime metadata
+Oracle internal caches
+Distributed & scalable memory frameworks
+⚠ Oracle does not fully document all MGA consumers (engine internals).
+
+🧩 MGA Namespace Concept 
+
+✅ What is a Namespace?
+👉 MGA is divided into namespaces.
+Each namespace is owned by a specific Oracle layer.
+Each namespace defines:
+Scope (which processes can use it)
+Lifetime (session / instance / operation)
+Segment size
+Allocation policy
+👉 Think of namespaces as mini shared memory pools.
+
+📊 MGA Memory Accounting 
+
+👉 All MGA memory is counted under PGA_AGGREGATE_LIMIT
+Even though MGA is shared, Oracle charges it as PGA.
+
+🐧 MGA on Linux 
+
+✅ MGA Uses /dev/shm
+MGA uses:
+POSIX shared memory
+Memory-mapped segments
+So Oracle requires:
+tmpfs mounted on /dev/shm 
+
+📏 Size Requirement Rule
+🔹 Single Instance:
+/dev/shm ≥ PGA_AGGREGATE_LIMIT 
+🔹 Multiple Instances:
+/dev/shm ≥ SUM(PGA_AGGREGATE_LIMIT for all instances) 
+
+📌 Is MGA Configurable?
+❌ No direct parameter like:
+sga_target
+pga_aggregate_target
+👉 MGA is fully managed internally by Oracle.
+
+
+🎯 Easy Memory Trick 
+
+👉 SGA = Shared by ALL
+👉 MGA = Shared by SOME
+👉 PGA = Private to ONE
+👉 UGA = Session Memory

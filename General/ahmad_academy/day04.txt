@@ -1,0 +1,49 @@
+#day4 
+hashtag#oracledatabase
+
+🔷 What is SGA (System Global Area)?
+The SGA (System Global Area) is a shared memory structure that is allocated in RAM when an Oracle instance starts.
+It is used by all server processes and background processes to manage database operations efficiently.
+
+👉 In simple words:
+
+SGA = Shared Memory of Oracle Instance
+
+🧠 Key Points to Remember:
+
+👉 SGA is temporary (exists only while the instance is running)
+👉 Allocated automatically at instance startup
+👉 Released when the instance is shut down
+👉 Shared by all connected users
+👉 Plays a major role in performance and scalability
+
+🧩 Purpose of SGA 👉 Used to:
+
+Store frequently accessed database information
+Share SQL and execution information between users
+Reduce physical disk I/O
+Coordinate work between background processes
+
+📌 Important DBA Point:
+
+👉 Proper SGA sizing is critical for:
+Database performance
+Memory utilization
+System stability
+
+Too small → Performance issues
+Too large → OS memory pressure
+
+🔥 Simple Concept to Remember:
+
+SGA = Common Brain of Oracle
+Shared by everyone
+Works as long as the instance is alive
+
+📌 Golden Rule:
+
+Oracle Instance = SGA + Background Processes
+
+🧑‍💻 As a DBA, SGA Means:
+
+👉 You monitor, tune, and optimize it to keep the database fast and stable.

@@ -1,0 +1,89 @@
+#day7
+hashtag#oracledatabase
+
+🔷 What is UGA (User Global Area) in Oracle Database?
+
+✅ Simple Definition
+
+UGA = Private memory area for a user session in Oracle.
+
+👉 It stores session-related information and data needed while executing SQL/PLSQL.
+
+
+🧠 In Simple Words
+
+UGA = Memory used by a connected user session
+
+
+📦 What Does UGA Store?
+
+UGA contains all session-specific and runtime SQL execution data, including:
+
+👤 Session State
+
+Login information
+
+Session parameters
+
+User privileges
+
+
+🧠 SQL / PL-SQL Runtime Data
+
+Bind variables for SQL statements
+
+Private SQL Area (cursor state, execution statistics, runtime context)
+
+Sort area
+
+Hash join area
+
+PL/SQL variables and package states
+
+
+🏗️ Where is UGA Located?
+
+✅ 1️⃣ Dedicated Server Architecture
+
+👉 UGA is in PGA
+
+User Session → Server Process → PGA (UGA inside)
+
+
+✅ 2️⃣ Shared Server Architecture
+
+👉 UGA is in SGA
+
+📌 Exact Location Priority:
+
+1️⃣ Large Pool (if configured)
+2️⃣ Shared Pool (if Large Pool is NOT configured)
+
+User Session → Dispatcher → SGA (Large Pool / Shared Pool)
+
+
+🧠 Why Large Pool is Preferred for UGA?
+
+Because Shared Server environments need:
+
+Many user sessions
+
+Large UGA memory
+
+Avoid fragmentation of Shared Pool
+
+👉 Large Pool isolates session memory and protects Shared Pool.
+
+
+🧩 Final Statement 
+
+UGA stores session information, private SQL area, bind variables, and runtime execution data.
+
+In Dedicated Server mode, UGA resides in PGA.
+
+In Shared Server mode, UGA resides in SGA, preferably in the Large Pool, otherwise in the Shared Pool.
+
+🎯 Easy Memory Trick
+
+👉 PGA = Process Memory
+👉 UGA = User Session Memory

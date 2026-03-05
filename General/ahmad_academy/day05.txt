@@ -1,0 +1,103 @@
+#day5
+hashtag#oracledatabase 
+
+
+🔷 Oracle SGA Components – 
+
+🧠 MANDATORY SGA COMPONENTS (Core)
+
+1️⃣ Database Buffer Cache
+
+👉 Stores data blocks read from disk 
+👉 Reduces physical disk I/O and improves performance
+
+
+
+2️⃣ Shared Pool
+
+👉 Stores parsed SQL & PL/SQL 
+👉 Stores execution plans 
+👉 Stores data dictionary information
+
+Sub-components:
+- Library Cache
+- Data Dictionary Cache
+
+
+
+3️⃣ Redo Log Buffer
+
+👉 Stores redo entries before writing to redo log files 
+👉 Used for crash recovery and commit operations
+
+
+
+4️⃣ Fixed SGA
+
+👉 Stores instance state and background process information 
+👉 Size is fixed and cannot be tuned 
+👉 Small but mandatory memory area
+
+
+
+🚀 OPTIONAL SGA POOLS
+
+ 5️⃣ Large Pool
+
+👉 RMAN backup & recovery 
+👉 Parallel execution 
+👉 Shared servers 
+👉 Oracle GoldenGate memory
+
+
+
+6️⃣ Java Pool
+
+👉 Used for Java stored procedures inside Oracle Database
+
+
+
+7️⃣ Streams Pool (Deprecated)
+
+👉 Used for Oracle Streams replication (deprecated since 12.2) 
+👉 Modern replication uses GoldenGate (Large Pool)
+
+
+
+8️⃣ Result Cache (Introduced in 11g, Enhanced in 12c)
+
+👉 Stores query results in memory 
+👉 Avoids re-executing repeated SELECT queries
+
+
+
+9️⃣ In-Memory Column Store (Introduced in 12c)
+
+👉 Column-based in-memory storage 
+👉 Massive performance boost for analytics queries
+
+
+
+⚡ Memoptimized Rowstore (19c)
+
+👉 Ultra-fast key-value lookup for OLTP 
+👉 Uses Buffer Cache with optimized algorithms
+
+
+
+🤖 AI Vector Search (23ai / 26 AI)
+
+👉 No separate "Vector Memory Pool" exists 
+👉 Uses existing SGA components:
+- Buffer Cache → Vector data blocks
+- Shared Pool → Vector index metadata
+- In-Memory Column Store → AI analytics acceleration
+
+
+
+🧠 KEY DBA TAKEAWAYS
+
+👉 SGA = Shared memory for all Oracle processes 
+👉 Only 4 components are mandatory (Buffer Cache, Shared Pool, Redo Buffer, Fixed SGA) 
+👉 Most new Oracle versions enhance memory intelligence, not add new pools 
+👉 AI features reuse existing SGA architecture

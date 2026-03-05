@@ -1,18 +1,16 @@
 Oracle Data Guard Physical Standby Configuration With Broker
-
+============================================================
 We assume that primary server has a database (SID=ip7) up and running. The standby 
-database has Oracle 12cR2 installation done in the same oracle home location as primary
+database has Oracle 12cR2 installation done in the same oracle home location as primary.
 
 Physical Standby With Broker Overview
 
 Primary details
-
 SID: ip7
 ORACLE_HOME: /u01/app/oracle/product/12.2.0.1
 Host Name: srv1.dbagenesis.com
 
 Standby details
-
 SID: ip7
 ORACLE_HOME: /u01/app/oracle/product/12.2.0.1
 Host Name: srv2.dbagenesis.com
@@ -20,14 +18,14 @@ Host Name: srv2.dbagenesis.com
 
 Primary Database Changes
 
-Primary must run in archive log mode. Check the archive log mode
+Primary must run in archive log mode. Check the archive log mode:
 
 SQL> SELECT log_mode FROM v$database;
 LOG_MODE
 ------------
 NOARCHIVELOG
 
-If it is not running in archive log mode, then enable it
+If it is not running in archive log mode, then enable it:
 
 SQL> shutdown immediate
 SQL> startup mount
