@@ -1219,6 +1219,55 @@ DBA Tips
 
 
 
+Day 35 | Oracle DBA Learning Series
+Topic : Split Brain Syndrome in Oracle RAC 
+
+📌 What is Split Brain?
+ Split Brain happens when:
+ 👉 Node1 cannot see Node2
+ 👉 Node2 cannot see Node1
+ 👉 Both think they are the only active node
+This can cause data corruption if not handled properly.
+
+⚠️ Causes:
+1) Private interconnect / NIC failure
+2) Network switch failure between nodes 
+3) OS hang or high load on a node 
+4) Misconfigured interconnect.
+
+Basic commands every dba should know
+
+ 1) Check Cluster Status
+     crsctl check cluster -all
+     crsctl stat res -t
+ 2) Check Node Status
+     olsnodes -n
+3) Check Voting Disk
+     crsctl query css votedisk
+4)  Check Interconnect Information
+     oifcfg getif
+5) Check CRS Alerts (for eviction details)
+     cd $GRID_HOME/log/<node_name>/crsd/
+6) Check alert log:
+     tail -f alert.log
+7) Check Database Instances
+     SELECT inst_id, instance_name, status 
+      FROM gv$instance;
+
+To avoid split brain, Oracle uses a mechanism called:
+👉 Node Eviction
+The node that loses communication or voting majority is automatically removed (evicted) from the cluster.
+This protects the database from corruption.
+
+📌  How Oracle Prevents Split Brain
+ a) Voting disk majority rule(Always use ODD number of voting disks (3 or 5)). 
+ b) Clusterware heartbeat monitoring
+ c) Automatic node eviction
+ d) Fencing mechanism
+Oracle chooses safety over availability.
+
+
+
 
 
 
