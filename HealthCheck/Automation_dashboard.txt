@@ -1,0 +1,27 @@
+🚀 Built a Live Oracle DBA Automation Platform from Scratch —  No License, No Internet!
+So I built my own. 💡
+
+🔧 What I built: A real-time Oracle DBA Automation Dashboard that monitors, alerts, and automates — running live against Oracle 19c.
+
+⚙️ Tech Stack:
+=>Oracle 19c (Production DB)
+=>Python 3.6 + Flask (Backend API)
+=>Pure HTML/CSS/JS (Frontend — no frameworks!)
+=?cx_Oracle (Direct DB connection)
+
+✅ Features:
+📊 Real-time tablespace usage with critical alerts (>85%)
+💾 Add datafiles directly from GUI with one click
+👤 Create & manage DB users with roles and quotas
+🔒 Lock/Unlock users instantly
+📅 DBMS_SCHEDULER job monitoring
+⚡ Auto-refresh every 30 seconds — truly live!
+💪 The real challenge? The Oracle server had zero internet access.
+No pip install. No Google. Nothing.
+
+I manually downloaded every Python package .whl file on my Windows PC, transferred them via WinSCP, and installed offline — one dependency at a time.
+That's what real DBA work looks like. 😄
+
+🎯 Why this matters: Most organizations pay thousands for monitoring tools. This runs on zero license cost — just Python and an Oracle DB you already have.
+
+💬 Note to every DBA out there: Make AI your friend — you can do anything! The tool that took teams months to build? We built it in one day. 🔥
