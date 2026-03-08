@@ -1369,3 +1369,117 @@ configure retention policy to recovery window of 2 days;
 configure controlfile autobackup on;
 configure retention policy to redundancy 2;
 
+
+
+
+
+
+
+
+
+📌Oracle DBA Knowledge Day 156 Point-in-Time Recovery (PITR) in Oracle RAC
+
+Point-in-Time Recovery (PITR) allows DBAs to restore the database to a specific past time — useful when data is lost due to user errors, corruption, or incorrect operations.
+
+⏪ When PITR is Needed?
+✔ Accidental table drop
+✔ Wrong data update/delete
+✔ Logical corruption
+✔ Application errors
+
+🔧 Important in RAC:
+Recovery is performed at the database level, even though multiple instances exist.
+
+🔹 Types of PITR
+🟢 Database PITR — Recover entire database
+🟢 Tablespace PITR (TSPITR) — Recover specific tablespace
+🔹 High-Level Steps (Database PITR)
+
+1️⃣ Stop all RAC instances
+srvctl stop database -d <db_name>
+
+2️⃣ Start one instance in MOUNT mode
+srvctl start instance -d <db_name> -i <instance1> -o mount
+
+3️⃣ Set recovery time in RMAN
+RUN {
+  SET UNTIL TIME "TO_DATE('2026-02-21 10:00:00','YYYY-MM-DD HH24:MI:SS')";
+  RESTORE DATABASE;
+  RECOVER DATABASE;
+}
+
+4️⃣ Open database with RESETLOGS
+ALTER DATABASE OPEN RESETLOGS;
+
+5️⃣ Start remaining RAC instances
+srvctl start database -d <db_name>
+
+🔹 Key Considerations
+✅ Requires complete backups + archivelogs
+✅ RESETLOGS creates new incarnation
+✅ Take fresh backup immediately after PITR
+
+💡 Pro Tip for RAC DBAs:
+Use TSPITR when only a specific tablespace is affected — avoids full database recovery and reduces downtime 🔥
+
+PITR is a powerful recovery technique every Oracle RAC DBA must master.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Day 573 : Learning Oracle DBA
+Yesterday I talked about PMON (Process Monitor) and how it cleans up failed sessions.
+Today let’s understand another important Oracle background process: SMON (System Monitor).
+SMON plays a critical role in maintaining database consistency, especially after unexpected shutdowns.
+Here are the key responsibilities of SMON:
+🔹 Instance Recovery – If the database crashes, SMON automatically performs instance recovery when the database restarts.
+ 🔹 Coalescing Free Space – It helps combine fragmented free space in tablespaces (mainly dictionary-managed tablespaces).
+ 🔹 Cleaning Temporary Segments – Removes temporary segments that are no longer needed.
+ 🔹 Transaction Recovery – Helps recover transactions that were incomplete during a failure.
+Why this matters for DBAs:
+If a database crashes due to power failure or system issues, SMON ensures the database is brought back to a consistent state automatically.
+Without SMON, manual recovery would be required much more often.
+Understanding SMON helps DBAs better understand how Oracle protects data integrity and performs recovery operations.
+Tomorrow I’ll explore another core process: DBWR (Database Writer).
+Which Oracle background process do you find most interesting so far? 👇
+
+
+
+
+
+
+
+
+Day 572 : Learning Oracle DBA
+Yesterday I introduced some of the core Oracle background processes.
+ Today I’m starting with one of the most important ones: PMON (Process Monitor).
+When a user session crashes or disconnects unexpectedly, Oracle must clean up the resources that session was using. That’s exactly where PMON comes in.
+PMON is responsible for cleaning up failed user processes and ensuring the database remains stable.
+Here are some key tasks PMON performs:
+🔹 Cleans up failed user sessions – If a user process crashes, PMON releases the resources it was holding.
+ 🔹 Frees locks – It removes locks held by terminated sessions so other users can continue working.
+ 🔹 Releases memory and resources – Ensures memory in the SGA is properly freed.
+ 🔹 Registers the instance with the listener – PMON dynamically registers the database instance with the Oracle listener (service registration).
+Why this matters for DBAs:
+Without PMON, crashed sessions could leave locks and resources hanging in the database, causing performance issues and blocking other users.
+As a DBA, understanding PMON helps when troubleshooting issues like:
+Hanging sessions
+Locked objects
+Abnormal session termination
+Oracle handles most of this automatically, but knowing what happens behind the scenes helps you understand how Oracle maintains database stability.
+Tomorrow I’ll explore another critical background process: SMON (System Monitor).
+What’s the first Oracle internal process you learned about? 👇

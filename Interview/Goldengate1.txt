@@ -56,39 +56,29 @@ Answer: A checkpoint table is a database table used by Oracle GoldenGate to stor
 GoldenGate Architecture and Components
 ======================================
 Question 11: What is the difference between Classic Extract and Integrated Extract in Oracle GoldenGate?
-Answer:
-Classic Extract and Integrated Extract are two different capture modes used by Oracle GoldenGate to extract
-transactional data from the source database. Classic Extract operates outside the database and reads database redo logs
-directly from the operating system level. It parses the redo logs independently and captures committed transactions.
-Integrated Extract, on the other hand, is tightly integrated with the Oracle database log mining server. It uses the
-Oracle Goldengate DBA Interview Handbook: 100 Key Q&A (02/03/2026) Author - Brijesh Mehra
-database LogMiner infrastructure to capture transactions directly within the database environment. Integrated Extract
-supports better scalability and performance for high transaction volumes. It also provides improved support for complex
-data types and advanced database features. Integrated Extract automatically adapts to database changes and maintains
-better consistency with Oracle internal structures. Classic Extract is typically used for non-Oracle databases or legacy
-environments. Integrated Extract is recommended for modern Oracle database deployments.
+Answer: Classic Extract and Integrated Extract are two different capture modes used by Oracle GoldenGate to extract transactional data from the source database. Classic Extract operates outside the database and reads database redo logs directly from the operating system level. It parses the redo logs independently and captures committed transactions.
+
+Integrated Extract, on the other hand, is tightly integrated with the Oracle database log mining server. It uses the Oracle Goldengate DBA Interview Handbook: 100 Key Q&A (02/03/2026) Author - Brijesh Mehra
+database LogMiner infrastructure to capture transactions directly within the database environment. 
+
+Integrated Extract supports better scalability and performance for high transaction volumes. It also provides improved support for complex data types and advanced database features. Integrated Extract automatically adapts to database changes and maintains better consistency with Oracle internal structures.
+
+Classic Extract is typically used for non-Oracle databases or legacy environments. Integrated Extract is recommended for modern Oracle database deployments.
+
+
 Question 12: What is Integrated Replicat in Oracle GoldenGate?
-Answer:
-Integrated Replicat is an advanced apply process that integrates directly with the Oracle database engine to apply
-replicated transactions. Unlike Classic Replicat, which applies SQL statements sequentially, Integrated Replicat uses the
-database's internal parallel apply mechanisms. It leverages Oracle’s inbound server to process multiple transactions
-concurrently. This parallelism significantly improves performance in high-volume replication environments. Integrated
-Replicat ensures transactional consistency by preserving commit order while still allowing parallel processing. It is
-designed to handle complex workloads including large transactions and high concurrency. Integrated Replicat also
-provides improved support for referential integrity and constraint handling. It automatically manages dependency
-tracking between transactions to avoid conflicts. This process is highly scalable and recommended for enterprise
-environments with heavy data replication workloads. Integrated Replicat also integrates well with Oracle RAC
-environments.
+
+Answer: Integrated Replicat is an advanced apply process that integrates directly with the Oracle database engine to apply replicated transactions. Unlike Classic Replicat, which applies SQL statements sequentially, Integrated Replicat uses the database's internal parallel apply mechanisms. It leverages Oracle’s inbound server to process multiple transactions concurrently. This parallelism significantly improves performance in high-volume replication environments. Integrated Replicat ensures transactional consistency by preserving commit order while still allowing parallel processing. It is designed to handle complex workloads including large transactions and high concurrency. Integrated Replicat also provides improved support for referential integrity and constraint handling. It automatically manages dependency tracking between transactions to avoid conflicts. This process is highly scalable and recommended for enterprise environments with heavy data replication workloads. Integrated Replicat also integrates well with Oracle RAC environments.
+
+
 Question 13: What is Classic Replicat in Oracle GoldenGate?
-Answer:
-Classic Replicat is the traditional apply process used in Oracle GoldenGate to apply replicated changes to the target
-database. It reads data from trail files and converts the captured operations into SQL statements. These SQL statements
-are then executed sequentially on the target database. Classic Replicat applies transactions one at a time and maintains
-the original transaction order from the source database. While this approach ensures consistency, it may limit
-performance in high-throughput environments. Classic Replicat is commonly used for smaller replication workloads or
-heterogeneous environments. It does not utilize the internal parallel apply capabilities of the Oracle database. Classic
-Replicat also relies on checkpoint files or checkpoint tables to track replication progress. It is simpler to configure
+
+Answer: Classic Replicat is the traditional apply process used in Oracle GoldenGate to apply replicated changes to the target database. It reads data from trail files and converts the captured operations into SQL statements. These SQL statements are then executed sequentially on the target database. Classic Replicat applies transactions one at a time and maintains the original transaction order from the source database.
+
+While this approach ensures consistency, it may limit performance in high-throughput environments. Classic Replicat is commonly used for smaller replication workloads or heterogeneous environments. It does not utilize the internal parallel apply capabilities of the Oracle database. Classic Replicat also relies on checkpoint files or checkpoint tables to track replication progress. It is simpler to configure
 compared to Integrated Replicat. However, for modern high-volume systems, Integrated Replicat is generally preferred.
+
+
 Oracle Goldengate DBA Interview Handbook: 100 Key Q&A (02/03/2026) Author - Brijesh Mehra
 Question 14: What is Coordinated Replicat in Oracle GoldenGate?
 Answer:

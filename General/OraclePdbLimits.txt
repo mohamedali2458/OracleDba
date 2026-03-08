@@ -1,0 +1,24 @@
+🚀 Oracle Multitenant – PDB Limits Across Editions
+
+While reviewing Oracle documentation on Multitenant architecture and licensing, I found an important detail about the maximum number of Pluggable Databases (PDBs) allowed depending on the edition and licensing model.
+
+📌 Key Highlights
+🔹 Oracle Free Edition
+Included option – You can create up to 16 PDBs (actual number may be lower due to Free resource limits).
+
+🔹 Oracle Enterprise Edition (EE)
+Extra Cost Option – If you are licensed for Oracle Multitenant, you can create up to 252 PDBs.
+
+🔹 Enterprise Edition Extreme Performance (EE-ES)
+Extra Cost Option – If the Multitenant option is licensed, you can create up to 4096 PDBs.
+
+🔹 OCI Base Database Services (EE-HP / EE-EP) and Exadata Database Service
+With the License Included model, you can create up to 4096 PDBs.
+
+🔹 BYOL (Bring Your Own License)
+If the Oracle Multitenant option is not licensed, you are limited to 3 user-created PDBs per Container Database (CDB).
+
+💡 Important Note
+For all offerings, if the Oracle Multitenant option is not licensed, you may create only 3 user-created PDBs per CDB at any time, including in Authorized Cloud Environments.
+
+Understanding these limits is important for database consolidation, architecture planning, and license compliance when designing Oracle Multitenant environments.

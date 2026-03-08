@@ -1,0 +1,238 @@
+🕵️‍♀️ DBA Detective- Part 1： Unmasking the SQL Performance Villain
+================================================================
+
+“System is frozen! It was fine after last night’s release!”
+
+Every DBA has heard this.
+
+You log in.
+ You open AWR.
+ One core SQL is now consuming 100x more CPU.
+The SQL text hasn’t changed.
+ The app team swears nothing happened.
+
+So what changed?
+Most of the time — it’s not the SQL.
+It’s the execution plan.
+🎭 When the Optimizer Changes Its Mind
+
+Oracle’s CBO is like a GPS.
+Most days it picks the highway.
+ Some days it chooses a dirt road because it looks cheaper.
+And suddenly your dashboard turns red.
+
+The tricky part?
+ By the time you investigate, V$SQL may already be flushed.
+
+So how do you prove:
+What plan it used before?
+When it flipped?
+How bad the new plan really is?
+
+That’s where AWR becomes your time machine.
+
+🗂 Step 1 — Find the Multi-Plan SQL
+I look for SQL_IDs with multiple PLAN_HASH_VALUEs.
+Same SQL.
+ Different plans.
+Unstable SQL is dangerous SQL.
+
+⚖ Step 2 — Compare the Damage
+Using DBA_HIST_SQLSTAT, I compare:
+Avg logical reads
+Avg elapsed time
+First_seen vs Last_seen
+
+Example:
+Plan A → 500 reads
+ Plan B → 500,000 reads
+That’s not regression.
+ That’s a crime scene.
+
+When the bad plan’s first_seen matches the incident start time?
+Case closed.
+
+🔍 Step 3 — Reconstruct the Scene
+Using DBMS_XPLAN.DISPLAY_AWR, the truth appears:
+Index scan became full table scan
+Nested loops became hash join
+Cardinality estimates were wrong
+Bind peeking misled the optimizer
+The SQL wasn’t broken.
+The math was.
+
+💡 What Makes a Senior DBA Different
+A junior DBA sees:
+ “CPU is high.”
+A senior DBA asks:
+Which plan flipped?
+Why did the optimizer believe this cost model?
+Is this data skew?
+Stats refresh?
+Bind sensitivity?
+We don’t just restart services.
+We reconstruct timelines.
+
+🚀 From Firefighter to Architect
+When you understand:
+DBA_HIST_SQL_PLAN
+DBA_HIST_SQLSTAT
+Cardinality & cost behavior
+You stop reacting.
+You start predicting.
+That’s the shift from DBA to Architect.
+CPU spikes aren’t just numbers.
+ They’re angry users and executive pressure.
+But with the right tools, chaos becomes investigation.
+And investigations can be solved.
+What’s the worst plan flip you’ve ever seen?
+
+
+Whos the culprit?
+Find the suspect SQL 
+SQL_ID          xycccc
+Plans           5
+Min Cost        120
+Max Cost        56000
+
+
+Good Plan Vs Bad Plan showdown!
+
+PLAN A Speedy Fast          Avg LIO: 500 Reads 
+PLAN B Sluggish Slow        Avg LIO: 500,000 Reads
+
+
+Reconstructing the scene 
+View execution Plan 
+
+old plan phv:12345666               new plan phv: 3216546546
+index range scan                    table access full
+nested loops                        hash join 
+
+
+
+
+
+🕵️‍♀️ DBA Detective — Part 2: When Production Databases Misbehave
+
+In my previous post, I talked about execution plan flips and how a perfectly fine SQL can suddenly become a performance villain.
+
+Today let’s talk about another familiar moment for DBAs: the late-night production alert.
+You log in half asleep and the question is always the same:
+
+Where do I start?
+Over time I realized the key is having a small troubleshooting toolkit.
+
+The first thing I check is active sessions in v$session to see what SQL is running.
+
+If the application appears frozen, I look for blocking sessions.
+Sometimes a single transaction is holding locks and quietly stopping everyone else.
+
+If nothing is blocked but the system is still slow, I check v$sql_monitor to identify long-running queries and heavy resource consumers.
+
+After enough incidents you realize production troubleshooting isn’t random chaos.
+
+With the right scripts and a calm approach, it becomes something closer to detective work:
+Follow the clues.
+ Identify the SQL.
+ The story usually reveals itself.
+💬 Fellow DBAs — what’s the first query you run when production suddenly slows down?
+
+
+Identify active sessions
+========================
+SELECT * FROM v$session WHERE status = 'ACTIVE';
+
+Check for Blocking 
+==================
+SELECT * FROM v$session WHERE blocking_session IS NOT NULL;
+
+Find Slow SQL 
+=============
+SELECT * FROM v$sql_monitor ORDER BY elapsed_time DESC;
+
+Build Your Troubleshooting Tookkit
+==================================
+- Active Sessions 
+- Blocking Chains
+- Slowest SQL 
+- Top SQLs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+🚀 From 22 Minutes to Seconds — A Real Oracle Tuning Story
+
+Recently, I was handed a challenge — a critical query on Oracle that was taking 22 minutes to execute. The business was frustrated. The team was stuck.
+
+I started digging...
+
+Step 1: Analyze the query structure
+Step 2: Investigated the execution plan
+Step 3: Traced through the view definitions
+
+That's where I found it.
+
+The query was using a VIEW that internally called ANOTHER VIEW. This created a chain of nested views that completely blocked Oracle's optimizer from applying filters early.
+
+Oracle was:
+Fetching millions of rows first
+Joining the same table twice redundantly
+Applying filters at the very end
+
+I removed the nested views and rewrote the query to join the base tables directly. This gave Oracle full visibility to apply filters immediately at fetch time.
+
+Result? ✅ 22 minutes →39 Mili Seconds
+
+No new indexes. No hardware changes. No schema changes. Just a smarter query.
+
+
+
+
+
+
+
+
+
+
+🚨 Production Issue – Database Not Connecting
+
+Recently, an application team reported that they were unable to connect to the database.
+
+At first, everything looked normal:
+✔ Database was up
+✔ Listener was running
+✔ No errors in alert logs
+
+But the application was still failing to connect.
+
+🔍 Investigation Steps:
+• Checked database listener configuration
+• Verified port connectivity using telnet
+• Reviewed firewall / security group rules
+
+💡 Root Cause Found:
+The application was using the wrong database port in the connection string.
+
+📌 Fix:
+Updated the correct port and verified the connectivity.
+
+✅ Result:
+Application started connecting successfully and the issue was resolved.
+
+🎯 Lesson Learned:
+Sometimes the biggest production issues are caused by the smallest configuration mistakes.
+
+DBAs – Have you faced similar connectivity Production?
