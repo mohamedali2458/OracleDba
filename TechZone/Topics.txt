@@ -1,0 +1,26 @@
+Topics
+
+Core DBA
+
+01. Installation 
+02. db creation (silent)
+03. Parameter file management
+04. Control file 
+05. Online Redolog Files 
+06. Archivelog files 
+07. OMF - Oracle Managed Files 
+08. Tablespace
+09. Temp Tablespace
+10. UNDO Tablespace
+11. User management
+12. Oracle Network
+13. Backup and recovery (User Managed)
+14. Backup and recovery (System Managed(RMAN))
+15. DB Cloning 
+16. Datapump
+17. Flashback 
+18. SQL*Loader 
+19. Logminer 
+20. Patching 
+21. Upgrading 
+22. DataGuard
