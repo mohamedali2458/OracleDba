@@ -31,9 +31,11 @@ whenever we do switchover, we need to create the SLR.
 
 2. How many standby redo logs need to be created? What should be the size?
 --------------------------------------------------------------------------
-It is recommended to create one additional standby redo log group per thread. And its size should be same as that of primary redo log.
+It is recommended to create one additional standby redo log group per thread. 
+And its size should be same as that of primary redo log.
 
-Suppose, we have 4 number of redo log groups of 200M on primary, Then we need to create 5 standby redo logs of 200M.
+Suppose, we have 4 number of redo log groups of 200M on primary, Then we need 
+to create 5 standby redo logs of 200M.
 
 Why extra:
 During heavy DML activity on primary, this extra standby log will help as a buffer in coping with the sync up.
