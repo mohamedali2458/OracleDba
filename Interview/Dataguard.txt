@@ -10,21 +10,23 @@ Therefore, it minimizes the probability of Data Loss on the Standby Database.
 
 For real time apply, it is mandatory to have standby redologs on standby database.
 
-Without Standby Redo Logs, an Archived Redo Log is created by the RFS process and when it has completed,
-this Archived Redo Log is applied to the Standby Database by the MRP process. An incomplete ArchiveLog 
-file cannot be applied on the Standby Database and will not be used in a Failover situation. 
-This causes a certain data loss.
+Without Standby Redo Logs, an Archived Redo Log is created by the RFS process 
+and when it has completed, this Archived Redo Log is applied to the Standby Database 
+by the MRP process. An incomplete ArchiveLog file cannot be applied on the Standby 
+Database and will not be used in a Failover situation. This causes a certain data loss.
 
-If you have Standby Redo Logs whenever a record is inserted into oracle redolog, the RFS process will 
-write into the Standby Redo Log of standby and it gets applied by MRP, which ensures real time sync. 
-When a log switch occurs, the Archiver Process of the Standby Database will archive this Standby Redo 
-Log to an Archived Redo Log, while the MRP process applies the information to the Standby Database. 
-In a Failover situation, you will also have access to the information already written in the Standby 
+If you have Standby Redo Logs whenever a record is inserted into oracle redolog, 
+the RFS process will write into the Standby Redo Log of standby and it gets applied 
+by MRP, which ensures real time sync. When a log switch occurs, the Archiver Process 
+of the Standby Database will archive this Standby Redo Log to an Archived Redo Log, 
+while the MRP process applies the information to the Standby Database. In a Failover 
+situation, you will also have access to the information already written in the Standby 
 Redo Logs, so the information will not be lost.
 
-Oracle recommends to keep standby redologs on both primary and standby database. (Though SLR is not mandatory for 
-primary, it will make the switchover quick without any additional DBA activity. i.e If you don’t have standby 
-redologs on primary, whenever we do switchover, we need to create the SLR .
+Oracle recommends to keep standby redologs on both primary and standby database. 
+(Though SLR is not mandatory for primary, it will make the switchover quick without 
+any additional DBA activity. i.e If you don’t have standby redologs on primary, 
+whenever we do switchover, we need to create the SLR.
 
 
 2. How many standby redo logs need to be created? What should be the size?
