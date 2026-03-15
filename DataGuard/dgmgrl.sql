@@ -42,7 +42,7 @@ SQL> alter database force logging;
 SQL> select name, force_logging from v$database;
 
 Standby file management: We need to make sure whenever we add/drop datafile 
-in primary database, those files are also added / dropped on standby.
+in primary database, those files are also added/dropped on standby.
 
 SQL> alter system set standby_file_management = 'AUTO';
 
@@ -68,22 +68,24 @@ MEMBER
 /u01/data/db_files/ip7/redo01.log
 
 Add the standby logfiles, make sure group number should be from a different 
-series like in this case we choose to start with 11 and above. This helps in easy differentiation.
+series like in this case we choose to start with 11 and above. This helps 
+in easy differentiation.
 
-Make sure to keep the thread# and logfile size exactly same. Oracle also recommends to always 
-create n+1 standby log files. Where n is the total number of logfiles
+Make sure to keep the thread# and logfile size exactly same. Oracle 
+also recommends to always create n+1 standby log files. Where n is 
+the total number of logfiles.
 
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 11 '/u01/data/db_files/ip7/stb_redo1.log' SIZE 200M;
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 12 '/u01/data/db_files/ip7/stb_redo2.log' SIZE 200M;
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 13 '/u01/data/db_files/ip7/stb_redo3.log' SIZE 200M;
 ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 14 '/u01/data/db_files/ip7/stb_redo4.log' SIZE 200M;
 
-Check the standby log files via below query
+Check the standby log files via below query:
 
 SQL> SELECT GROUP#,THREAD#,SEQUENCE#,ARCHIVED,STATUS FROM V$STANDBY_LOG ORDER BY GROUP#;
 
 Enable flashback on primary: Flashback database is highly recommended because in 
-case of failover, you need not re-create primary database from scratch
+case of failover, you need not re-create primary database from scratch.
 
 SQL> alter system set db_recovery_file_dest_size=45g;
 SQL> alter database flashback on;
