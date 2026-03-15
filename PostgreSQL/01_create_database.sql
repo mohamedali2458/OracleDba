@@ -1,7 +1,9 @@
 How to Create Database in PostgreSQL?
 ====================================
 How to Find Create Database Syntax in PostgreSQL?
+psql -U postgres 
 \h CREATE DATABASE
+
 
 How to List All Databases in PostgreSQL using psql?
 \l
