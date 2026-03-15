@@ -42,6 +42,7 @@ Some of the operations that Data Guard broker simplifies are
     Monitor redo apply, gaps and data guard performance
     Perform all above operations locally or remotely !
 
+
 Configure Data Guard Broker
 ---------------------------
 Follow below steps to configure Data Guard broker.
@@ -88,11 +89,11 @@ Stop MRP and clear Log_Archive_dest_2 parameter.
 On standby:
 ===========
 SQL> alter database recover managed standby database cancel;
-SQL> alter system set LOG_ARCHIVE_DEST_2='' SCOPE=BOTH sid='*';
+SQL> alter system set LOG_ARCHIVE_DEST_2 = '' SCOPE = BOTH sid = '*';
 
 On primary:
 ===========
-SQL> alter system set LOG_ARCHIVE_DEST_2='' SCOPE=BOTH sid='*';
+SQL> alter system set LOG_ARCHIVE_DEST_2 = '' SCOPE = BOTH sid = '*';
 
 
 Enable broker
@@ -101,12 +102,12 @@ We need to start the broker by enabling it on both primary and standby
 
 On primary:
 ===========
-SQL> alter system set dg_broker_start=true;
+SQL> alter system set dg_broker_start = true;
 SQL> show parameter dg_broker_start;
 
 On standby:
 ===========
-SQL> alter system set dg_broker_start=true;
+SQL> alter system set dg_broker_start = true;
 SQL> show parameter dg_broker_start;
 
 
