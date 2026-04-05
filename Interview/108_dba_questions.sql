@@ -24,12 +24,13 @@ Youll see waits like:
 
 🔴 Impact on Application Transactions
 Impact	                Description
-New DML Freezes	      INSERT, UPDATE, DELETE statements hang and do not complete
-Commits Hang	           Active transactions attempting to commit will freeze
-No Rollbacks Affected     Read-only SELECT queries may still work temporarily
-Connection Timeouts	      Application connection pools begin to time out
-Application Errors	      Eventually users see errors like "ORA-00257: archiver error"
-Business Impact	      Complete application outage for all write operations
+====================================
+New DML Freezes	        INSERT, UPDATE, DELETE statements hang and do not complete
+Commits Hang	        Active transactions attempting to commit will freeze
+No Rollbacks Affected   Read-only SELECT queries may still work temporarily
+Connection Timeouts	    Application connection pools begin to time out
+Application Errors	    Eventually users see errors like "ORA-00257: archiver error"
+Business Impact	        Complete application outage for all write operations
 
 Key Oracle Error:
 
@@ -59,12 +60,12 @@ RMAN> DELETE EXPIRED ARCHIVELOG ALL;
 RMAN> DELETE ARCHIVELOG ALL COMPLETED BEFORE 'SYSDATE-2'; -- keep last 2 days
 
 --Prevention Best Practices
-Practice	               Action
+Practice	             Action
 Monitor regularly	     Alert when archive dest > 80% full
-Use FRA	               Set DB_RECOVERY_FILE_DEST_SIZE with adequate size
-Regular RMAN backups	Backup and delete old archive logs on schedule
-Multiplex destinations	Use multiple archive log destinations (LOG_ARCHIVE_DEST_1, _2)
-Set alerts	          Use Oracle Enterprise Manager or custom scripts
+Use FRA	                 Set DB_RECOVERY_FILE_DEST_SIZE with adequate size
+Regular RMAN backups	 Backup and delete old archive logs on schedule
+Multiplex destinations	 Use multiple archive log destinations (LOG_ARCHIVE_DEST_1, _2)
+Set alerts	             Use Oracle Enterprise Manager or custom scripts
 
 -- Check Fast Recovery Area usage
 SELECT space_limit/1024/1024/1024 AS limit_GB,

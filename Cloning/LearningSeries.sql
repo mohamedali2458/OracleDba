@@ -7,9 +7,11 @@ Bigfile Tablespace is designed to simplify storage management in large Oracle da
  ⚠ Backup & restore may take longer
 
 CREATE BIGFILE TABLESPACE bft_ts
-DATAFILE '+DATA' SIZE 10G AUTOEXTEND ON;
+DATAFILE '+DATA' 
+SIZE 10G 
+AUTOEXTEND ON;
 
-SELECT tablespace_name, bigfile FROM dba_tablespaces;
+SELECT tablespace_name, bigfile FROM dba_tablespaces WHERE bigfile='YES';
 
 📌 DBA Tip:
  Use Bigfile Tablespaces for large, fast-growing databases and Smallfile Tablespaces when fine control is needed.
