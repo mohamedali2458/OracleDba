@@ -8,7 +8,7 @@ Here is the syntax for each method.
 1. Add a New Datafile
 This is the most common method. You add a distinct new file to the tablespace.
 
-sql
+--sql
 
 ALTER TABLESPACE tablespace_name
 ADD DATAFILE '/path/to/new_file.dbf'
@@ -48,9 +48,9 @@ MAXSIZE 10G; -- Or use UNLIMITED
 
 Summary of Differences
 Method	        Best Used When...
-Add Datafile	You want to spread I/O across different disks or the current file is excessively large.
+Add Datafile	 You want to spread I/O across different disks or the current file is excessively large.
 Resize	        You want to manually control space allocation without adding more file handles.
-Autoextend	    You want to minimize maintenance ("set it and forget it"), but keep an eye on underlying disk space.
+Autoextend	 You want to minimize maintenance ("set it and forget it"), but keep an eye on underlying disk space.
 
 
 
