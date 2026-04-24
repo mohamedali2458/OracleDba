@@ -1,0 +1,53 @@
+Day 613 : Oracle DBA
+Oracle Partitioning — Improving Performance and Manageability
+
+As database size grows, managing large tables becomes challenging 
+and can impact performance.
+
+Oracle Partitioning is a powerful feature that divides large tables 
+into smaller, manageable pieces while keeping them logically unified.
+
+What is Partitioning?
+Partitioning splits a large table into smaller segments called partitions, 
+based on a defined rule.  Each partition is stored separately but behaves 
+as part of a single table.
+
+Why Partitioning is used
+ • Improve query performance
+ • Manage large datasets efficiently
+ • Reduce I/O operations
+ • Simplify maintenance tasks
+
+Types of Partitioning
+1️⃣ Range Partitioning
+Data is divided based on value ranges.
+Example:
+• Sales data by year (2023, 2024, 2025)
+
+2️⃣ List Partitioning
+Data is divided based on specific values.
+Example:
+• Region-wise data (India, US, UK)
+
+3️⃣ Hash Partitioning
+Data is distributed evenly using a hash function.
+Used for:
+ • Load balancing
+ • Even data distribution
+
+Key Benefits
+ • Faster query performance (partition pruning)
+ • Easier data management
+ • Faster backup and recovery
+ • Improved scalability
+
+Real-world Example
+Instead of scanning a full table with millions of rows, 
+Oracle can scan only relevant partitions, significantly 
+improving performance.
+
+DBA Insight
+Partitioning is one of the most effective techniques for 
+handling large-scale databases without changing application logic.
+
+Partitioning helps DBAs maintain performance even as data grows exponentially.

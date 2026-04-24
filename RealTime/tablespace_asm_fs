@@ -1,0 +1,99 @@
+- Goal
+
+Understand the difference between ASM and File System when creating:
+
+- Datafiles
+- Tablespaces
+- Redo Logs
+- Control Files
+
+Same tasks… different storage approach.
+
+━━━━━━━━━━━━━━━━━━━
+
+-> 1. Creating Tablespace
+
+🔹 File System:
+
+CREATE TABLESPACE app_data
+DATAFILE '/u02/oradata/app_data01.dbf'
+SIZE 500M;
+
+🔹 ASM:
+
+CREATE TABLESPACE app_data
+DATAFILE '+DATA'
+SIZE 500M;
+
+📌 Difference:
+
+- File System → you define exact file path
+- ASM → Oracle decides file location automatically
+
+━━━━━━━━━━━━━━━━━━━
+
+-> 2. Adding Datafile
+
+🔹 File System:
+
+ALTER TABLESPACE app_data
+ADD DATAFILE '/u02/oradata/app_data02.dbf'
+SIZE 500M;
+
+🔹 ASM:
+
+ALTER TABLESPACE app_data
+ADD DATAFILE '+DATA'
+SIZE 500M;
+
+━━━━━━━━━━━━━━━━━━━
+
+-> 3. Redo Log Files
+
+🔹 File System:
+
+ALTER DATABASE ADD LOGFILE
+('/u02/oradata/redo04.log') SIZE 200M;
+
+🔹 ASM:
+
+ALTER DATABASE ADD LOGFILE
+('+DATA') SIZE 200M;
+
+━━━━━━━━━━━━━━━━━━━
+
+-> 4. Control Files
+
+🔹 File System:
+
+CONTROL_FILES='/u02/oradata/control01.ctl'
+
+🔹 ASM:
+
+CONTROL_FILES='+DATA'
+
+━━━━━━━━━━━━━━━━━━━
+
+-> Key Differences (Simple)
+
+- File System:
+ 
+ - Manual file paths
+ - DBA controls everything
+ - More responsibility
+
+- ASM:
+ 
+ - No file paths
+ - Oracle manages storage
+ - Auto balancing + better performance
+
+━━━━━━━━━━━━━━━━━━━
+
+💡 DBA Insight
+
+If you see:
+- “/u02/oradata/...” → File System
+- “+DATA / +FRA” → ASM
+
+That’s the fastest way to know the storage type.

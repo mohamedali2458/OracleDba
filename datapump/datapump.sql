@@ -69,3 +69,5 @@ the backup which you copy from the 11g machine it should be at
 the directory location. For directory creation, you can check 
 the step number 1.
 
+$impdp username/password@dbname directory=expdp_bkp dumpfile=full_db_09-sep-2023.dmp logfile=imp_full_db_09-sep-2023.log
+

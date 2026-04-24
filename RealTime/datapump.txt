@@ -1,0 +1,35 @@
+Day : 41
+
+🚀 Oracle Data Pump ("expdp") – One of the Most Important Utilities for Every Oracle DBA
+
+If you work with Oracle databases, learning Data Pump is not optional—it 
+is a core skill for backup, migration, refresh, and deployment activities.
+
+In this infographic, I’ve covered some of the most frequently used "expdp" 
+parameters with practical examples:
+
+🔹 "schemas" – Export one or more schemas
+🔹 "tables" – Export selected tables only
+🔹 "full=y" – Full database export
+🔹 "tablespaces" – Export specific tablespaces
+🔹 "directory" – Oracle directory object for dump/log files
+🔹 "dumpfile" – Name of export dump file
+🔹 "logfile" – Stores execution logs and errors
+🔹 "parallel" – Speeds up export using multiple workers
+🔹 "filesize" – Splits dump files into manageable sizes
+
+💡 Why this matters in real projects:
+
+✔ Take schema backup before release deployment
+✔ Refresh UAT from Production
+✔ Migrate database to new server
+✔ Export only required tables for developers
+✔ Handle TB-level exports with parallelism
+✔ Manage storage limits using split dump files
+✔ Maintain logs for troubleshooting and audit
+
+📌 Example real-life command combines all parameters for enterprise-level 
+backup and migration tasks.
+
+Oracle Data Pump is significantly faster and more flexible than old "exp/imp", 
+making it the preferred choice for modern Oracle environments.
