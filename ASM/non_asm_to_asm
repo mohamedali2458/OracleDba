@@ -1,0 +1,34 @@
+non-asm to asm migration
+========================
+@db
+
+inst_id, db_name, inst_name, startup_time, host_name, open_mode, log_mode, control, database_r, version, protection_mode, switchover_status
+
+https://youtu.be/avz8LyUNWC8
+
+Step1: Edit pfile and start database in 
+nomount stage
+
+- Create pfile from spfile;
+- Edit the pfile/spfile of DB to point the 
+new control_file location on ASM
+- show parameter control
+- control_files='+DATA/TEST/control01.ctl'
+- shutdown immediate;
+- startup nomount;
+
+@check
+NAME
+----
+dafile name and path
+
+v$log
+-----
+group#, thread#, sequence#, bytes, blocksize,
+members, arc, status, first_change#,
+first_time, next_change#, next_time
+
+v$logfile
+---------
+group#, status, type, member, is_, con_id
+

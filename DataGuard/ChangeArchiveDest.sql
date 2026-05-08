@@ -1,6 +1,7 @@
 How to change Archive destination
   
-Use similar commands to change archive destination, to change archive destination no need to bounce the database.
+Use similar commands to change archive destination, 
+to change archive destination no need to bounce the database.
 
 1. Verify existing values
 
@@ -39,4 +40,5 @@ NAME                                 TYPE        VALUE
 ------------------------------------ ----------- ------------------------------
 log_archive_dest_1                   string      LOCATION=/u02/arch/vada
 
-Note: If you set log_archive_dest_1 and log_archive_dest_2, it will store same log file in both locations.
+Note: If you set log_archive_dest_1 and log_archive_dest_2, 
+it will store same log file in both locations.

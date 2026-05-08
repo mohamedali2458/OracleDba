@@ -2,8 +2,9 @@ Client Connectivity in Data Guard Configuration
 
 Configure seamless client connectivity for Oracle Data Guard.
 
-When you have a physical standby, you must make sure client connectivity is set properly 
-so that when you perform failover or switchover, client must smoothly connect to the new 
+When you have a physical standby, you must make sure client 
+connectivity is set properly so that when you perform failover 
+or switchover, client must smoothly connect to the new 
 primary in data guard configuration.
 
 Create New Service on Primary 

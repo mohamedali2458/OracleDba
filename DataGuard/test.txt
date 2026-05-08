@@ -1,0 +1,39 @@
+# 🛠️ Fixing VirtualBox Error: "Not in a hypervisor partition"
+
+This error (specifically VERRNEMNOTAVAILABLE and VERRVMXMSRALLVMXDISABLED) occurs because VirtualBox cannot access the hardware virtualization features of your CPU. This is usually due to settings in your computer's BIOS or conflicts with Windows features like Hyper-V.
+
+1. Enable Virtualization in BIOS/UEFI
+The error message explicitly states "VT-x is disabled in the BIOS." This is the most common cause.
+- Restart your computer and enter the BIOS/UEFI settings (usually by tapping F2, F10, F12, or Del during startup).
+- Look for a menu labeled Advanced, CPU Configuration, or Security.
+- Find a setting named Intel Virtualization Technology, VT-x, AMD-V, or SVM Mode.
+- Set it to Enabled.
+- Save your changes and exit (usually F10).
+
+2. Disable Hyper-V and Windows Features
+If virtualization is enabled in the BIOS but you still see the error, Windows might be "locking" the virtualization hardware for its own use (Hyper-V).
+- Open the Start Menu, type "Turn Windows features on or off," and open it.
+- Uncheck the following boxes if they are checked:
+  - Hyper-V
+  - Virtual Machine Platform
+  - Windows Hypervisor Platform
+  - Windows Sandbox
+- Click OK and Restart your computer.
+
+3. Use Command Prompt to Disable Hypervisor
+If the steps above don't work, you can force the Windows hypervisor to stay off at boot:
+- Right-click the Start button and select Command Prompt (Admin) or Terminal (Admin).
+- Type the following command and press Enter:
+  bash
+  bcdedit /set hypervisorlaunchtype off
+  
+- Restart your computer.
+
+4. Check Core Isolation Settings
+Sometimes Windows Security features prevent VirtualBox from running:
+- Go to Settings > Update & Security > Windows Security > Device Security.
+- Click on Core isolation details.
+- Ensure Memory integrity is turned Off. (Note: This may lower security slightly but is often required for older versions of VirtualBox).
+
+Why is this happening?
+Virtualization software (like VirtualBox) needs "Ring 0" access to the CPU to run a guest operating system at full speed. If the BIOS blocks this access, or if another service (like Hyper-V) is already using it, VirtualBox "falls back" to a mode it can't support, resulting in the HVP=0 error.

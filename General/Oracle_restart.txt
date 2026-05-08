@@ -1,0 +1,53 @@
+# 🔄 Oracle Restart Feature
+
+Oracle Restart is a high-availability component of Oracle Grid Infrastructure that automatically restarts Oracle Database components after failures or system reboots in single-instance (non-clustered) environments. It enhances availability by monitoring and managing databases, listeners, and related services.
+
+## Definition
+Oracle Restart enhances the availability of Oracle databases in a single-instance environment. It is installed as part of Oracle Grid Infrastructure for Standalone Servers and runs out of the Grid Infrastructure home (separate from the database home).
+
+- It monitors components like the database instance, Oracle Net listener, database services, Oracle Automatic Storage Management (ASM) instance, ASM disk groups, and Oracle Notification Services (ONS).
+- Periodic health checks are performed; if a component fails, Oracle Restart shuts it down and restarts it.
+- For clustered environments (Oracle RAC), Oracle Clusterware provides similar functionality instead.
+
+## Key Characteristics
+- Components Managed: Database instance, listener, services, ASM instance, disk groups, and ONS (for FAN events).
+- Startup Dependencies: Ensures components start in the correct order (e.g., ASM before database if data is in ASM disk groups). Weak dependency on the listener: database starts even if listener fails.
+- Fast Application Notification (FAN): Uses ONS and Advanced Queuing to notify clients of UP/DOWN events for failover.
+- Integration with Data Guard: Works with Oracle Data Guard for role transitions and service management.
+- Configuration: Maintained via SRVCTL and CRSCTL commands; automatically added during installation with DBCA.
+
+## Formation Process
+1. Install Oracle Grid Infrastructure for Standalone Servers.
+2. Create or register the database (via DBCA or SRVCTL).
+3. Components are added to the Oracle Restart configuration automatically (or manually via srvctl add).
+4. On failure or reboot, Oracle Restart restarts components based on dependencies and policy (AUTOMATIC by default).
+
+Note: Use SRVCTL for start/stop operations when Oracle Restart is enabled; SQL*Plus starts do not trigger dependencies.
+
+## Types and Examples
+| Component | Notes |
+|-----------|-------|
+| Database Instance | Multiple databases per host supported. |
+| Oracle Net Listener | Weak dependency; database starts if listener fails. |
+| Database Services | Excludes default services; role-based in Data Guard. |
+| ASM Instance & Disk Groups | Disk groups are mounted on restart. |
+| ONS | Used for FAN events in Data Guard setups. |
+
+Example Usage (SRVCTL):
+bash
+#Add a database to Oracle Restart
+srvctl add database -db mydb -oraclehome /u01/app/oracle/product/19.0.0/dbhome_1
+
+#Start the database (starts dependencies first)
+srvctl start database -db mydb
+
+#Check status
+srvctl status database -db mydb
+
+
+## Further Learning
+- Oracle Restart uses CRSCTL for high-availability services (crsctl start has, crsctl stop has).
+- For maintenance, use srvctl stop home and crsctl disable has to prevent automatic restarts.
+- See Oracle documentation for full SRVCTL/CRSCTL references and Data Guard integration.
+
+Sources: [Oracle Docs](https://docs.oracle.com/en/database/oracle/oracle-database/23/admin/configuring-automatic-restart-of-an-oracle-database.html)
