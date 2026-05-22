@@ -30,3 +30,78 @@ purge -age 2880 -type trace
 locate alert_sid
 cd <path>
 ls -ltr
+
+
+
+
+
+
+https://youtu.be/FxLMHtqgmcY
+
+show base 
+
+set base /u02/app/oracle
+
+show homepath
+
+set homepath diag/rdbms/oradb/oradb
+
+show homepath (will show one home)
+
+show alert 
+shift+g will take us to end of the alert log
+
+show alert -tail 10
+
+show homepath
+set homepath diag/rdbms/oradb/oradb
+show homepath 
+purge -age 600 -type ALERT 
+purge -age 600 -type TRACE
+purge -age 600 -type incident
+purge -age 10080 -type cdump
+
+long policy (365 Days)
+	-ALERT
+	-INCIDENT
+	-SWEEP
+	-STAGE
+	-HM
+
+short policy (30 Days)
+	-TRACE
+	-CDUMP
+	-UTSCDMP
+	-IPS
+
+adrci>show control
+SHORT POLICY = 720 which is 720/24=30 days
+LONG POLICY = 8760 which is 8760/24=365 days
+
+adrci>set control (SHORTP_POLICY = 240) (FOR 15 DAYS)
+
+adrci>set control (LONGP_POLICY = 600) (FOR 30 DAYS)
+
+adrci>show control
+
+show incident
+
+IPS CREATE PACKAGE INCIDENT
+
+ips means incident packages
+
+ips pack incident in /tmp
+
+show homepath
+
+set homepath <another home>
+
+show incident
+
+(to create an empty package)
+IPS CREATE PACKAGE
+IPS ADD INCIDENT 24568 PACKAGE 1
+
+(TAKE ANY LOGFILE)
+
+14:10 MIN

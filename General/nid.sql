@@ -56,7 +56,7 @@ startup mount
 4. Use the NID utility to change the name
 Note: Change db name from IC11g to ORCL
 
-SET oracle_Sid=IC11G
+SET ORACLE_SID=IC11G
 
 nid target=sys/sys123 dbname=ORCL
 

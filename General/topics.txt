@@ -1,0 +1,25 @@
+topics
+
+1. What is database and what are types of databases.
+2. Why oracle database and versions of oracle database
+3. Roles and responsibilities of oracle DBA
+4. Installation of oracle in linux platform 
+5. Architecture of oracle database 
+6. Startup and shutdown modes of oracle DBA
+7. User management in oracle database 
+8. Tablespace managament in oracle database
+9. Data pump utility in oracle Database 
+10. Data guard
+11. Rman back and recovery 
+12. Real application cluster 
+13. Performance tuning (Awr ash reports wait events, lock and blocked sessions)
+14. Asm ( Automation storage management)
+15. Exadata
+16. Golden gate
+17. OEM 
+18. OCI ( oracle cloud infra structure)
+19. Database upgradation from 12c to 19c 
+20. Patching of database both single instance and RAC by using optach utlility.
+21. Migration from rhel 7 to 8
+22. Migration from on premis to OCI
+23. CDB and PDB

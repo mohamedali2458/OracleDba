@@ -27,3 +27,10 @@ startup mount exclusive; -- unable to drop db
 startup mount restrict; --able to drop the database
 startup mount exclusive restrict;
 drop database;
+
+
+
+sqlplus / as sysdba
+shutdown immediate;
+STARTUP MOUNT EXCLUSIVE RESTRICT;
+DROP DATABASE;
