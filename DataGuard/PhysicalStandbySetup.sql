@@ -301,6 +301,10 @@ SET fal_server='ORADB'
 SET log_archive_dest_2='service=ORADB_S2 async valid_for=(online_logfiles,primary_role) db_unique_name=oradb_s2'
 NOFILENAMECHECK;
 
+rman target sys/manager@oradb auxiliary sys/manager@oradb_s2
+
+DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE NOFILENAMECHECK;
+
 Once cloning is done, you should see below at RMAN prompt
 
 Finished Duplicate Db at 07-DEC-2015

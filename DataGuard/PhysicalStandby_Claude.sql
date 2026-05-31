@@ -1,6 +1,5 @@
 give me steps to configure oracle physical standby database
 
-
 Here’s a clear, step-by-step guide to configure an Oracle Physical Standby 
 Database (Data Guard configuration). This is a high-level procedure that 
 assumes you already have a primary database configured and running in 
