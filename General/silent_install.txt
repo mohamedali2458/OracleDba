@@ -194,12 +194,13 @@ SHOW PDBS;   -- For CDB only
 
 
 cat /etc/redhat-release
+vi ~oracle/.bash_profile
 
 
 dbca -silent -deleteDatabase \
-  -sourceDB oradb1 \
+  -sourceDB oradb \
   -sysDBAUserName sys \
-  -sysDBAPassword Oracle_123
+  -sysDBAPassword manager
 
 
 
@@ -218,3 +219,22 @@ dbca -silent -createDatabase \
   -storageType FS \
   -datafileDestination /u01/app/oracle/oradata \
   -emConfiguration NONE
+
+
+dbca -silent -createDatabase \
+  -templateName /u01/app/oracle/product/19.0.0/db_1/assistants/dbca/templates/General_Purpose.dbc \
+  -gdbName oradb1 \
+  -sid oradb1 \
+  -responseFile NO_VALUE \
+  -characterSet AL32UTF8 \
+  -sysPassword Oracle_123 \
+  -systemPassword Oracle_123 \
+  -totalMemory 2048 \
+  -storageType FS \
+  -datafileDestination /u01/app/oracle/oradata \
+  -emConfiguration NONE \
+  -createAsContainerDatabase true \
+  -numberOfPDBs 1 \
+  -pdbName orapdb1 \
+  -pdbAdminUserName pdbadmin \
+  -pdbAdminPassword Oracle_123

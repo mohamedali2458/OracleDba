@@ -16,9 +16,9 @@ In a data guard configuration, you will observe
 
 Oracle Data Guard Broker
 ------------------------
-Let us understand the literal meaning of Broker first
+Let us understand the literal meaning of Broker first:
 
-A mediator between two or more person (things)
+A mediator between two or more person (things).
 
 In a data guard configuration, we know that there are minimum two servers 
 that take part: one is primary and another one is standby.
@@ -117,8 +117,8 @@ On primary, connect to DGMGRL utility and register the primary database with bro
 
 On primary:
 ===========
-dgmgrl sys/oracle@oradb
-DGMGRL> create configuration 'my_dg' as primary database is oradb connect identifier is oradb;
+dgmgrl sys/manager@oradb
+DGMGRL> create configuration 'my_dg' as primary database is HYD connect identifier is oradb;
 DGMGRL> show configuration;
 
 
@@ -126,7 +126,7 @@ Register standby with broker
 
 In the same DGMGRL utility, register standby from primary server itself
 
-DGMGRL> add database oradb_s2 as connect identifier is oradb_s2;
+DGMGRL> add database PUNE as connect identifier is oradb_s2;
 DGMGRL> show configuration;
 
 
