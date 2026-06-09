@@ -488,3 +488,105 @@ ALTER SYSTEM SET local_listener='(ADDRESS = (PROTOCOL=TCP)(HOST=192.168.1.21)(PO
 DGMGRL> EDIT DATABASE 'HYD' SET PROPERTY StaticConnectIdentifier='(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.21)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=oradb_DGMGRL)(INSTANCE_NAME=oradb)(SERVER=DEDICATED)))';
 
 EDIT DATABASE 'PUNE' SET PROPERTY StaticConnectIdentifier='(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.22)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=oradb_DGMGRL)(INSTANCE_NAME=oradb)(SERVER=DEDICATED)))';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Switchover
+==========
+
+switchover to standbydb_unique_name;
+
+switchover to pune;
+switchover to hyd;
+
+show configuration;
+
+set linesize 300
+col db_unique_name for a15
+select name,db_unique_name,database_role,open_mode,switchover_status,flashback_on from v$database;
+
+SELECT PROCESS, STATUS, THREAD#, SEQUENCE#, BLOCK# FROM V$MANAGED_STANDBY
+WHERE PROCESS = 'MRP0';
+
+
+
+
+Failover
+========
+
+on primary: as a root user reboot the server to create failover situation
+
+on standby: login to dgmgrl
+here show configuration; will not work as primary is not reachable
+
+failover to standby:
+
+DGMGRL> failover to pune;
+
+Rebuild primary after failover:
+method-1: rebuild from scratch --> RMAN duplicate
+method-2: flashback database --> only if flashback is enabled.
+
+Reinstate failed primary: When we use data guard broker, with just one command,
+the primary can be rebuilt.  Start the failed primary server, in this case
+start hyd server
+
+on current primary (which is standby):
+
+make sure old primary is in mount mode.
+
+DGMGRL> show configuration;
+
+DGMGRL> reinstate database hyd;
+
+DGMGRL> show configuration;
+
+
+
+
+
+
+Snapshot Standby 
+================
+DGMGRL> convert database 'PUNE' to snapshot standby;
+
+--this will create a guaranteed restore point
+set linesize 300
+column name for a60
+select name,time from v$restore_point;
+
+To convert it back to physical standby:
+
+DGMGRL> convert database 'PUNE' to physical standby;
+
+**Prerequisites before converting:**
+- The standby database must be mounted (not open)
+- Flashback Database must be enabled on the standby
+- The `db_recovery_file_dest` must be configured with sufficient space
+- The primary database must be in ARCHIVELOG mode
+
+**To verify the conversion:**
+
+DGMGRL> show database 'HYD';
+DGMGRL> show database 'PUNE';
+DGMGRL> show configuration;
+
+
+After conversion, the snapshot standby will open in read-write mode, 
+and redo logs from the primary will be received but not applied until 
+its converted back to physical standby.
