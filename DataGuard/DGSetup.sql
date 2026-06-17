@@ -590,3 +590,80 @@ DGMGRL> show configuration;
 After conversion, the snapshot standby will open in read-write mode, 
 and redo logs from the primary will be received but not applied until 
 its converted back to physical standby.
+
+
+
+
+--change dataguard protection mode 
+--Connect to DGMGRL
+dgmgrl sys/password@primary_db
+# or as sysdba
+dgmgrl /
+
+--Check Current Protection Mode
+DGMGRL> show configuration;
+DGMGRL> show database verbose 'hyd';
+DGMGRL> show database verbose 'pune';
+
+--Change Protection Mode
+--Oracle Data Guard has three protection modes. The commands differ based on target mode.
+--1. Maximum Performance (default)
+DGMGRL> edit configuration set protection mode as maxperformance;
+
+--2. Maximum Availability
+DGMGRL> edit configuration set protection mode as maxavailability;
+
+--3. Maximum Protection
+DGMGRL> edit configuration set protection mode as maxprotection;
+
+
+
+Prerequisites Before Changing Mode
+Redo log transport must match the target mode:
+
+Target Mode           Required Log Transport
+MaxPerformance        ASYNC
+MaxAvailability       SYNC
+MaxProtection         SYNC
+
+--Verify/Set Redo Transport on Standby
+
+DGMGRL> edit database 'standby_db' set property LogXptMode='SYNC';
+DGMGRL> edit database 'standby_db' set property LogXptMode='ASYNC';
+
+--Full Example: Switching to Maximum Availability
+-- 1. Connect
+dgmgrl sys/manager@oradb
+
+-- 2. Check current state
+DGMGRL> show configuration;
+
+-- 3. Set transport mode to SYNC on standby
+DGMGRL> show database verbose 'pune';
+DGMGRL> edit database 'pune' set property LogXptMode='SYNC';
+
+-- 4. Change protection mode
+DGMGRL> edit configuration set protection mode as maxavailability;
+
+-- 5. Verify the change
+DGMGRL> show configuration;
+
+
+--Verify the Change
+DGMGRL> show configuration;
+
+-- Expected output shows:
+-- Protection Mode: MaxAvailability
+
+-- Also verify from SQL*Plus on primary:
+SQL> SELECT db_unique_name,database_role,protection_mode, protection_level FROM v$database;
+
+
+Key Notes
+
+MaxProtection → lower mode: Can be done online without restart.
+Lower mode → MaxProtection: Primary DB must be restarted after the DGMGRL command.
+MaxAvailability ↔ MaxPerformance: Can be toggled online with no restart needed.
+Always ensure at least one SYNC standby is connected before switching to MaxAvailability or MaxProtection, or the primary will hang/shutdown.
+Run show configuration after the change and confirm SUCCESS status with no warnings.
+
