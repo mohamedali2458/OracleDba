@@ -28,12 +28,12 @@ SELECT datname FROM pg_database WHERE datistemplate = false;
 
 
 --Creating schemas
-
+/*
 A schema is a named collection of tables. A schema may also 
 contain views, indexes, sequences, data types, operators, 
 and functions. Schemas help organize database objects 
 into logical groups, which helps make these objects more manageable.
-
+*/
 
 CREATE SCHEMA employee;
 
