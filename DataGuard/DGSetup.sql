@@ -644,6 +644,11 @@ DGMGRL> edit database 'pune' set property LogXptMode='SYNC';
 
 -- 4. Change protection mode
 DGMGRL> edit configuration set protection mode as maxavailability;
+DGMGRL> edit configuration set protection mode as maxprotection;
+
+--to maxperformance
+DGMGRL> edit configuration set protection mode as maxperformance;
+DGMGRL> edit database 'pune' set property LogXptMode='ASYNC';
 
 -- 5. Verify the change
 DGMGRL> show configuration;

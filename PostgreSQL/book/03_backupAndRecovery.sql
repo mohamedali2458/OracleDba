@@ -44,4 +44,31 @@ method - 2
 using pgadmin gui tool
 
 
-page55
+pg_dump -u postgres -h 192.168.16.54 -F c -f
+dvdrental.sql.tar.gz dvdrental
+
+
+--A logical backup of all PostgreSQL databases
+
+\l --note down the db to take logical backup
+pg_dump --on each database
+pg_dumpall --single command for all databases
+
+--pg_dump doesnot dump the roles and tablespaces, so we need to use pg_dumpall to dump the roles and tablespaces.
+pg_dumpall -g
+
+pg_dumpall -U postgres > c:\pgbackup\all.sql
+
+pg_dumpall -U postgres > /home/pgbackup/all.sql
+
+pg_dumpall --schema-only > c:\pgdump\definitiononly.sql
+
+pg_dumpall --roles-only > c:\pgdump\myroles.sql
+
+pg_dumpall --tablespaces-only > c:\pgdump\mytablespaces.sql
+
+
+--A logical backup of specific objects
+pg_dump -h localhost -p 5432 -U agovil -F c -b -v -f "C:\pgbak\testdb_test.backup" -t case.test postgres
+
+page-60
