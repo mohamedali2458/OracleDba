@@ -15,6 +15,7 @@ nmcli general hostname
 change ip addresses of 2 machines, disable ip6
 
 edit and update /etc/hosts
+cat /etc/hosts
 vi /etc/hosts 
 
 192.168.1.21 primary.localdomain primary 
@@ -96,14 +97,14 @@ ALTER SYSTEM SET ARCHIVE_LAG_TARGET=1800 SCOPE=BOTH;
 --should be EXCLUSIVE
 SHOW PARAMETER REMOTE_LOGIN_PASSWORDFILE;
 
-# FAL = Fetch Archive Log 
+-- FAL = Fetch Archive Log 
 ALTER SYSTEM SET FAL_SERVER = 'ORADB_S2' SCOPE = BOTH;
 ALTER SYSTEM SET FAL_CLIENT = 'ORADB' SCOPE = BOTH;
 
-# no need to set DB_FILE_NAME_CONVERT, as the standby system has the same directory structure
+-- no need to set DB_FILE_NAME_CONVERT, as the standby system has the same directory structure
 SHOW PARAMETER DB_FILE_NAME_CONVERT;
 
-# Get list of directory-dependent parameters and create the directories in the standby server:
+-- Get list of directory-dependent parameters and create the directories in the standby server:
 COL NAME FORMAT A40
 COL VALUE FORMAT A100
 SELECT NAME, VALUE FROM V$PARAMETER WHERE UPPER(VALUE) LIKE UPPER('%/oradb/%');
@@ -114,18 +115,18 @@ SHOW PARAMETER CONTROL_FILE_RECORD_KEEP_TIME;
 ALTER SYSTEM SET CONTROL_FILE_RECORD_KEEP_TIME = 30 SCOPE = BOTH;
 
 --Create a password file, if there is not one
-ls -l /u01/app/oracle/product/19.0.0/db_1/dbs/orapworadb
+!ls -l /u01/app/oracle/product/19.0.0/db_1/dbs/orapworadb
 
-ALTER USER SYS IDENTIFIED BY manager cotainer=all;
-orapwd file=$ORACLE_HOME/dbs/orapw<SID> password=<sys_password> format=12
+alter user sys identified by manager container=all;
+--orapwd file=$ORACLE_HOME/dbs/orapw<SID> password=<sys_password> format=12
 orapwd file=$ORACLE_HOME/dbs/orapworadb password=manager format=12
 
 
-check and update local_listener parameter value with new hostname or ip address
+--check and update local_listener parameter value with new hostname or ip address
 ALTER SYSTEM SET local_listener='(ADDRESS = (PROTOCOL=TCP)(HOST=primary.localdomain)(PORT=1521))' scope=both;
+SHOW PARAMETER local_listener;
 
-
-Configure Listener 
+--Configure Listener 
 
 [oracle@primary admin]$ cat listener.ora
 # listener.ora Network Configuration File: /u01/app/oracle/product/19.0.0/db_1/network/admin/listener.ora
@@ -157,7 +158,7 @@ ADR_BASE_LISTENER = /u01/app/oracle
 
 
 
-Configure the tnsnames.ora file:
+--Configure the tnsnames.ora file:
 
 [oracle@primary admin]$ cat tnsnames.ora
 # tnsnames.ora Network Configuration File: /u01/app/oracle/product/19.0.0/db_1/network/admin/tnsnames.ora
@@ -185,7 +186,7 @@ ORADB_S2 =
 
 
 
-Configure sqlnet.ora file
+--Configure sqlnet.ora file
 
 [oracle@primary admin]$ cat sqlnet.ora
 NAMES.DIRECTORY_PATH=(TNSNAMES, EZCONNECT, LDAP)
@@ -193,21 +194,24 @@ NAMES.DIRECTORY_PATH=(TNSNAMES, EZCONNECT, LDAP)
 
 
 
-test configuration:
+--test configuration:
 tnsping oradb 
 tnsping oradb_s2
 
 
-# See which Oracle home is active
+-- See which Oracle home is active
 echo $ORACLE_HOME
 
-# Check TNS_ADMIN override
+--# Check TNS_ADMIN override
 echo $TNS_ADMIN
 
 
 --Update bash_profile 
 
 [oracle@primary ~]$ cat .bash_profile
+
+vi .bash_profile
+
 # .bash_profile
 if [ -f ~/.bashrc ]; then
 . ~/.bashrc
@@ -317,7 +321,7 @@ NAMES.DIRECTORY_PATH=(TNSNAMES, EZCONNECT, LDAP)
 
 
 
-on primary create pfile:
+--on primary create pfile:
 CREATE PFILE FROM SPFILE;
 
 --copy the password file from primary to standby 
@@ -348,7 +352,8 @@ DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE NOFILENAMECHECK;
 Login to standby server: after rman DUPLICATE this must be in mount mode:
 
 To start and stop MRP:
-For Active Data Guard, OPEN_MODE should show READ ONLY WITH APPLY, meaning the standby is open for reads while MRP is applying redo simultaneously.
+For Active Data Guard, OPEN_MODE should show READ ONLY WITH APPLY, 
+meaning the standby is open for reads while MRP is applying redo simultaneously.
 
 ALTER DATABASE RECOVER MANAGED STANDBY DATABASE USING CURRENT LOGFILE DISCONNECT FROM SESSION;
 ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
@@ -362,6 +367,9 @@ WHERE PROCESS = 'MRP0';
 
 
 -- Check apply lag
+set linesize 300
+col name for a30
+col value for a30
 SELECT NAME, VALUE, DATUM_TIME
 FROM V$DATAGUARD_STATS
 WHERE NAME IN ('apply lag','transport lag');
@@ -370,6 +378,7 @@ WHERE NAME IN ('apply lag','transport lag');
 SELECT DB_UNIQUE_NAME, DATABASE_ROLE, OPEN_MODE, PROTECTION_MODE
 FROM V$DATABASE;
 
+ALTER DATABASE OPEN READ ONLY;
 
 
 
@@ -377,7 +386,8 @@ FROM V$DATABASE;
 
 
 
-DGMGRL SETUP:
+
+--DGMGRL SETUP:
 
 make sure this entry was there in listener.ora file on both sides:
 (SID_DESC=
@@ -591,6 +601,36 @@ After conversion, the snapshot standby will open in read-write mode,
 and redo logs from the primary will be received but not applied until 
 its converted back to physical standby.
 
+--snapshot standby manual method
+-- Check current state
+SELECT FLASHBACK_ON FROM V$DATABASE;
+
+-- If it shows NO, enable it (requires DB_RECOVERY_FILE_DEST configured)
+ALTER DATABASE FLASHBACK ON;
+
+--stop managed standby recovery
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+
+--make sure database is in mount mode
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+
+--convert to snapshot standby
+ALTER DATABASE CONVERT TO SNAPSHOT STANDBY;
+
+ALTER DATABASE OPEN;
+
+--Converting back to physical standby later
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+
+ALTER DATABASE CONVERT TO PHYSICAL STANDBY;
+
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+
 
 
 
@@ -672,3 +712,9 @@ MaxAvailability ↔ MaxPerformance: Can be toggled online with no restart needed
 Always ensure at least one SYNC standby is connected before switching to MaxAvailability or MaxProtection, or the primary will hang/shutdown.
 Run show configuration after the change and confirm SUCCESS status with no warnings.
 
+
+
+
+
+
+--Recover from service 
