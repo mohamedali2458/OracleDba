@@ -37,7 +37,7 @@ method - 1
 
 pg_dump -U postgres -W -F t dvdrental > /home/abcd/dvdrental.tar
 
-pg_dump -U postgres -W -F t dvdrental > e:\dvdrental.tar
+pg_dump -U postgres -W -F t dvdrental > C:\Program Files\PostgreSQL\backup\dvdrental.tar
 
 method - 2
 
