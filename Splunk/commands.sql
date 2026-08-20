@@ -235,9 +235,35 @@ output idea: top senders by email volume.
 
 
 
+source=final_auth_log.json process=sshd | table _time username source_ip result
+
+source=final_auth_log.json process=sshd
+| fields _time username source_ip
+(gives all events with these 2 fields and the time of the event)
+
+source=final_auth_log.json process=sshd
+| dedup source_ip
+| table source_ip
+
+source=final_auth_log.json process=sshd
+| stats count by source_ip
+| sort -count
 
 
+Statistics and Aggregation
+==========================
+stats count 
 
-https://youtu.be/tfA8shtJ8ew
+count events and group them by fields.
 
-18:30
+for top talkers, failures, alerts, or categories.
+
+example: web status logs
+
+index=web
+| stats count by status
+
+output idea: count per HTTP status code.
+
+
+dc()
