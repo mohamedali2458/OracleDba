@@ -1,4 +1,5 @@
-Every time DBA a login to server as oracle user then each time he must set the environmental variables and connect to database. 
+Every time DBA a login to server as oracle user then each time he must set the 
+environmental variables and connect to database. 
 
 su - oracle
 . oraenv >>> ORACLE_SID
@@ -6,7 +7,8 @@ su - oracle
 env |grep ORA
 sqlplus / as sysdba 
 
-To avoid setting environmental variables on each time we can export these environmental variables into .bash_profile files for oracle users as below. 
+To avoid setting environmental variables on each time we can export these environmental 
+variables into .bash_profile files for oracle users as below. 
 
 export ORACLE_SID=DEVDB
 export ORACLE_BASE=/u01/app/oracle

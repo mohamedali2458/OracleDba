@@ -267,3 +267,11 @@ output idea: count per HTTP status code.
 
 
 dc()
+count unique values.
+
+when distinct users, hosts, IPs, or domains matter.
+
+ex: DNS logs
+
+index=dns
+| stats
