@@ -1,0 +1,55 @@
+Data Guard — Step-by-Step Configuration
+
+Oracle 19c Data Guard Series
+This article is Part 1 of a 3-part Oracle 19c Data Guard series, based on my hands-on lab implementation.
+
+The series covers the complete journey from building a Physical Standby database to managing and testing Data Guard role transitions.
+
+Series Roadmap
+
+Part 1 — Build It
+
+Physical Standby & Active Data Guard
+
+➡️ This article covers the configuration of the Physical Standby database, RMAN Active Duplicate, Redo Transport, Redo Apply, and READ ONLY WITH APPLY.
+
+Part 2 — Manage It
+
+Data Guard Broker — Configure, Enable & Validate
+
+➡️ Covers configuring Oracle Data Guard Broker using DGMGRL, adding the standby database, enabling the Broker configuration, and validating the environment.
+
+Part 3 — Test It
+
+Switchover, Failover & Reinstatement
+
+➡️ Covers planned Switchover, Failover testing, handling the former primary database, Reinstatement, and final Data Guard validation.
+
+Part 2 and Part 3 will be published separately as part of this series.
+
+
+
+
+
+Introduction
+
+Oracle Data Guard is one of the key technologies used to provide database-level disaster recovery and high availability.
+
+In this environment, I configured an Oracle 19c Physical Standby Database and enabled Active Data Guard, allowing the standby database to remain open for read-only workloads while Redo Apply continues.
+
+The environment used in this setup:
+
+component                           value 
+primary database                    PRIMCA
+standby database                    STDBYCA
+Oracle Version                      19.32.0
+Database Type                       Physical Standby 
+Storage                             ASM
+Protection Mode                     MaxPerformance
+Duplicate Method                    RMAN Active Duplicate
+
+
+The overall flow was:
+
+primary database -> RMAN Active Duplicate -> Physical Standby -> Redo Transport -> Redo Apply -> READ ONLY WITH APPLY
+

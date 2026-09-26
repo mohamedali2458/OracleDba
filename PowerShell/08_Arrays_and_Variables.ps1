@@ -240,3 +240,73 @@ True
 
 https://www.youtube.com/watch?v=Hmkyn4yoLNQ
 56
+
+
+
+
+icm is alias for invoke-command 
+
+icm is the built-in alias for Invoke-Command, one of PowerShell's most-used cmdlets. 
+It runs a script block or script file either locally or on one/many remote computers.
+
+Invoke-Command -ComputerName <String[]> -ScriptBlock { <code> } [-Credential <PSCredential>]
+Invoke-Command -Session <PSSession[]> -ScriptBlock { <code> }
+Invoke-Command -ScriptBlock { <code> }   # runs locally, in a child scope
+
+Key parameters
+-ScriptBlock – the code to run, e.g. { Get-Process }
+-ComputerName – one or more remote machine names (uses WinRM under the hood)
+-Session – run against an existing PSSession (more efficient for repeated calls, since the connection stays open)
+-Credential – alternate credentials for the remote connection
+-FilePath – run a local .ps1 script's contents on the remote machine, instead of an inline block
+-ArgumentList – pass parameters into the script block
+-AsJob – run as a background job instead of waiting synchronously
+-ThrottleLimit – max number of concurrent connections when targeting many computers (default 32)
+
+
+Examples
+
+Run locally:
+
+powershell
+icm { Get-Date }
+
+Run on one remote computer:
+
+powershell
+icm -ComputerName Server01 -ScriptBlock { Get-Service -Name Spooler }
+
+Run on multiple computers at once (executes in parallel):
+
+powershell
+icm -ComputerName Server01,Server02,Server03 -ScriptBlock { Get-Process }
+
+
+Pass arguments into the script block:
+
+powershell
+icm -ComputerName Server01 -ScriptBlock { param($svc) Get-Service $svc } -ArgumentList "Spooler"
+
+Reuse a persistent session (faster for multiple calls):
+
+powershell
+$s = New-PSSession -ComputerName Server01
+icm -Session $s -ScriptBlock { Get-Process }
+icm -Session $s -ScriptBlock { Get-Service }
+Remove-PSSession $s
+
+Run a local script file remotely:
+
+powershell
+icm -ComputerName Server01 -FilePath C:\Scripts\CheckDisk.ps1
+
+Things worth knowing
+Requires PowerShell Remoting to be enabled on the target for -ComputerName usage (Enable-PSRemoting on the remote machine, and it must be reachable over WinRM, usually port 5985/5986).
+Output objects from remote runs get deserialized — they lose their original type and methods, becoming a flattened data-only version (properties still work, but you can't call live methods on them).
+Variables from your local session aren't automatically available inside the script block when run remotely — use -ArgumentList or the $using: scope modifier:
+powershell
+  $svcName = "Spooler"
+  icm -ComputerName Server01 { Get-Service $using:svcName }
+For one-off remote runs, -ComputerName is simpler; for many repeated commands against the same machine, a -Session is more efficient since it avoids reconnecting each time.
+
+Want an example tailored to something specific you're trying to do (e.g., running a command across many servers, or passing complex objects)?

@@ -275,3 +275,39 @@ ex: DNS logs
 
 index=dns
 | stats
+
+
+
+index="_audit" | table _time index,action,cap,info,linecount,splunk_server,timestamp,user | where user="admin"
+
+index="_audit" | fields
+
+
+
+
+
+
+Basic SPL Filtering CMDs
+===============
+Table
+Fields
+Dedup 
+Head 
+Tail 
+Reverse 
+Rename 
+Replace
+Sort 
+Search 
+
+
+index="main" sourcetype="vendor_sales"
+| search VendorID=1060
+
+index="main" sourcetype="vendor_sales"
+| stats count by VendorID
+| sort -count
+
+index="main" sourcetype="vendor_sales"
+| search VendorID=1060
+| table _time VendorID AcctID date_zone host index source sourcetype splunk_server
