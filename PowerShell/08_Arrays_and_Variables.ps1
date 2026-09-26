@@ -253,6 +253,8 @@ Invoke-Command -ComputerName <String[]> -ScriptBlock { <code> } [-Credential <PS
 Invoke-Command -Session <PSSession[]> -ScriptBlock { <code> }
 Invoke-Command -ScriptBlock { <code> }   # runs locally, in a child scope
 
+Invoke-Command -ComputerName DESKTOP-ULPSU6M -ScriptBlock { Get-Process *oracle*}
+
 Key parameters
 -ScriptBlock – the code to run, e.g. { Get-Process }
 -ComputerName – one or more remote machine names (uses WinRM under the hood)
