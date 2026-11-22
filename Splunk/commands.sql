@@ -11,7 +11,7 @@ Basic flow : Search data --> filter events --> calculate stats --> display resul
 
 index=web sourcetype=access_combined status=404
 | stats count by src_ip
-| sort -count
+| sort - count
 
 
 Types of Fields in Splunk
@@ -36,7 +36,8 @@ index=web status=404
 
 Default Fields in Splunk
 =========================
-Splunk automatically adds these fields to every event.  They help you identify when the event happened, where it came from, and how Splunk classified it.
+Splunk automatically adds these fields to every event.  They help you identify when the event happened, 
+where it came from, and how Splunk classified it.
 
 field, meaning, security use
 _time, Event timestamp, When the activity happened
@@ -311,3 +312,68 @@ index="main" sourcetype="vendor_sales"
 index="main" sourcetype="vendor_sales"
 | search VendorID=1060
 | table _time VendorID AcctID date_zone host index source sourcetype splunk_server
+
+
+index=botsv3 ("error" OR "failed" OR "failure")
+
+index=botsv3 src_ip="192.168.1.120"
+
+Basic SPL Filtering CMDs
+=========================
+
+Table 
+Fields
+Dedup
+Head
+Tail
+Reverse
+Rename
+Replace
+Sort
+Search
+
+index=net_index sourcetype="access_combined_wcookie"
+
+index=net_index sourcetype="access_combined_wcookie"
+| table action bytes categoryId clientip productId JSESSIONID method status 
+
+index=net_index sourcetype="access_combined_wcookie"
+| fields action bytes
+
+(we get events only)
+
+dedup 
+
+index=net_index sourcetype="access_combined_wcookie"
+| table action bytes categoryId clientip productId JSESSIONID method status 
+| dedup clientip status
+
+index=net_index sourcetype="access_combined_wcookie"
+| table action bytes categoryId clientip productId JSESSIONID method status 
+| dedup clientip
+| dedup status
+
+index=net_index sourcetype="access_combined_wcookie"
+| table action bytes categoryId clientip productId JSESSIONID method status 
+| fields - categoryId JSESSIONID
+| where productId!="" AND action!=""
+
+index=net_index sourcetype="access_combined_wcookie"
+| table action bytes categoryId clientip productId JSESSIONID method status 
+| fields - categoryId JSESSIONID
+| fillnull value="N/A" productId
+
+index=net_index sourcetype="access_combined_wcookie"
+| table action bytes categoryId clientip productId JSESSIONID method status 
+| fields - categoryId JSESSIONID
+| filldown productId action 
+
+index=net_index sourcetype="access_combined_wcookie"
+| table action bytes categoryId clientip productId JSESSIONID method status 
+| fields - categoryId JSESSIONID
+| dedup clientip
+| head 100 
+| tail 90
+
+https://youtu.be/VHeScW4uLzw?list=PLJbBHDY6tifc
+41:52

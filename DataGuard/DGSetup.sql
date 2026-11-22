@@ -349,7 +349,7 @@ rman target sys/manager@oradb auxiliary sys/manager@oradb_s2
 DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE NOFILENAMECHECK;
 
 
-Login to standby server: after rman DUPLICATE this must be in mount mode:
+--Login to standby server: after rman DUPLICATE this must be in mount mode:
 
 To start and stop MRP:
 For Active Data Guard, OPEN_MODE should show READ ONLY WITH APPLY, 
