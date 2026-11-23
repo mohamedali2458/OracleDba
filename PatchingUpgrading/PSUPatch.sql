@@ -1,8 +1,6 @@
 Step by step apply Rolling PSU Patch in Oracle Database 19c RAC environment :
 ===========================================================================
-  
 Patch Information:- Patch 30087906 – Database Release Update Revision 19.3.2.0.191015 
-
 
 Step:-1 Environment Details 
 

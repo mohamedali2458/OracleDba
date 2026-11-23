@@ -1,6 +1,7 @@
 Important Oracle 19c Patching Update (19.29 / 19.30)
 ===================================================
-Oracle has temporarily put the 19.30 DB Release Update on hold due to a RAC-specific issue that may lead to block and redo corruption during rolling updates.
+Oracle has temporarily put the 19.30 DB Release Update on hold due to a RAC-specific 
+issue that may lead to block and redo corruption during rolling updates.
 🔹 Impacted versions: 19.29 & 19.30 DBRUs
  🔹 Scope: RAC databases only (no impact to ASM, GI, Client, or non-RAC)
  🔹 Root cause: Bug 34352668 affecting RAC lock state handling

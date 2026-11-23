@@ -539,7 +539,7 @@ WHERE PROCESS = 'MRP0';
 Failover
 ========
 
-on primary: as a root user reboot the server to create failover situation
+--on primary: as a root user reboot the server to create failover situation
 
 on standby: login to dgmgrl
 here show configuration; will not work as primary is not reachable
@@ -575,12 +575,12 @@ Snapshot Standby
 ================
 DGMGRL> convert database 'PUNE' to snapshot standby;
 
---this will create a guaranteed restore point
+--this will create a guaranteed restore point on standby
 set linesize 300
 column name for a60
 select name,time from v$restore_point;
 
-To convert it back to physical standby:
+--To convert it back to physical standby:
 
 DGMGRL> convert database 'PUNE' to physical standby;
 
